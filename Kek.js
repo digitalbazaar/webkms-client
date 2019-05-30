@@ -5,23 +5,37 @@
 
 import {KmsClient} from './KmsClient.js';
 
+const JOSE_ALGORITHM_MAP = {
+  AesKeyWrappingKey2019: 'A256KW'
+};
+
 export class Kek {
   /**
    * Creates a new instance of a key encryption key.
    *
    * @param {Object} options - The options to use.
-   * @param {string} options.id - The ID of this key.
-   * @param {Object} options.authenticator - An API for creating digital
-   *   signatures using an authentication key for a KMS service.
+   * @param {string} options.id - The ID for this key.
+   * @param {string} options.type - The type for this key.
+   * @param {Object} [options.capability=undefined] - The OCAP-LD authorization
+   *   capability to use to authorize the invocation of KmsClient methods.
+   * @param {Object} options.invocationSigner - An API for signing
+   *   a capability invocation.
    * @param {KmsClient} [options.kmsClient] - An optional KmsClient to use.
    *
    * @returns {Kek} The new Kek instance.
    */
-  constructor({id, authenticator, kmsClient = new KmsClient()}) {
+  constructor({
+    id, type, capability, invocationSigner,
+    kmsClient = new KmsClient()
+  }) {
     this.id = id;
-    // TODO: support other algorithms
-    this.algorithm = 'A256KW';
-    this.authenticator = authenticator;
+    this.type = type;
+    this.algorithm = JOSE_ALGORITHM_MAP[type];
+    if(!this.algorithm) {
+      throw new Error(`Unknown key type "${this.type}".`);
+    }
+    this.capability = capability ? capability.id : undefined;
+    this.invocationSigner = invocationSigner;
     this.kmsClient = kmsClient;
   }
 
@@ -35,8 +49,9 @@ export class Kek {
    * @returns {Promise<string>} The base64url-encoded wrapped key bytes.
    */
   async wrapKey({unwrappedKey}) {
-    const {id: kekId, kmsClient, authenticator} = this;
-    return kmsClient.wrapKey({kekId, unwrappedKey, authenticator});
+    const {id: kekId, kmsClient, capability, invocationSigner} = this;
+    return kmsClient.wrapKey(
+      {kekId, unwrappedKey, capability, invocationSigner});
   }
 
   /**
@@ -49,15 +64,8 @@ export class Kek {
    * @returns {Promise<Uint8Array>} The key bytes.
    */
   async unwrapKey({wrappedKey}) {
-    const {id: kekId, kmsClient, authenticator} = this;
-    return kmsClient.unwrapKey({kekId, wrappedKey, authenticator});
-  }
-
-  // TODO: remove aliases for wrap and unwrap
-  async wrap({key}) {
-    return this.wrapKey({unwrappedKey: key});
-  }
-  async unwrap({wrappedKey}) {
-    return this.unwrapKey({wrappedKey});
+    const {id: kekId, kmsClient, capability, invocationSigner} = this;
+    return kmsClient.unwrapKey(
+      {kekId, wrappedKey, capability, invocationSigner});
   }
 }

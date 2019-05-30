@@ -6,7 +6,7 @@
 import crypto from './crypto.js';
 import cryptoLd from 'crypto-ld';
 const {Ed25519KeyPair} = cryptoLd;
-import {Ed25519Key} from './Ed25519Key.js';
+import {AsymmetricKey} from './AsymmetricKey.js';
 import {Kek} from './Kek.js';
 import {Hmac} from './Hmac.js';
 import {SeedCache} from './SeedCache.js';
@@ -22,7 +22,7 @@ export class ControllerKey {
    * be called directly. Use one of these methods to create a ControllerKey
    * instance.
    *
-   * A ControllerKey can be passed as an `authenticator` to a KmsClient, but
+   * A ControllerKey can be passed as an `invocationSigner` to a KmsClient, but
    * a KmsClient instance is typically used internally by other instances that
    * can be created via the ControllerKey API such as instances of the Kek
    * and Hmac classes.
@@ -38,8 +38,6 @@ export class ControllerKey {
    *   create the key.
    * @param {Object} options.key - An API with an `id` property, a
    *   `type` property, and a `sign` function for authentication purposes.
-   * @param {Object} options.signer - An API for creating digital signatures
-   *   using the key.
    * @param {KmsClient} [options.kmsClient] - An optional KmsClient to use.
    *
    * @returns {ControllerKey} the new instance.
@@ -94,51 +92,97 @@ export class ControllerKey {
       Class = Kek;
     } else if(type === 'Ed25519VerificationKey2018') {
       type = 'Ed25519VerificationKey2018';
-      Class = Ed25519Key;
+      Class = AsymmetricKey;
     } else {
       throw new Error(`Unknown key type "${type}".`);
     }
 
     const {kmsClient} = this;
-    const authenticator = this;
+    const invocationSigner = this;
     const keyDescription = await kmsClient.generateKey(
-      {keyId: id, kmsModule, type, authenticator});
+      {keyId: id, kmsModule, type, invocationSigner});
     const {id: newId} = keyDescription;
-    return new Class({id: newId, keyDescription, authenticator, kmsClient});
+    return new Class({id: newId, type, invocationSigner, kmsClient});
   }
 
   /**
-   * Gets a KEK API for wrapping and unwrapping cryptographic keys. The key ID
-   * is presumed to be associated with the KMS service assigned to this
-   * instance.
+   * Gets a KEK API for wrapping and unwrapping cryptographic keys. The API
+   * will use this ControllerKey instance to sign capability invocations to
+   * wrap or unwrap keys.
+   *
+   * If this ControllerKey is a controller of the KEK, then the API for it can
+   * returned by passing only the key description. Otherwise, an OCAP-LD
+   * authorization capability must also be passed; without this capability,
+   * calls to the returned API will not be authorized to perform KEK operations.
    *
    * @param {Object} options - The options to use.
-   * @param {string} options.id - The ID of the KEK.
+   * @param {string} options.id - The ID of the key.
+   * @param {string} options.type - The type of key
+   *   (e.g. `AesKeyWrappingKey2019`).
+   * @param {string} [options.capability=undefined] - The ID of the OCAP-LD
+   *   authorization capability to use to authorize the invocation of the
+   *   operations.
    *
    * @returns {Promise<Object>} The new Kek instance.
    */
-  async getKek({id}) {
+  async getKek({id, type, capability}) {
     const {kmsClient} = this;
-    const authenticator = this;
-    // FIXME: call kmsClient.getKeyDescription()? ...to get key algorithm?
-    return new Kek({id, authenticator, kmsClient});
+    const invocationSigner = this;
+    return new Kek({id, type, capability, invocationSigner, kmsClient});
   }
 
   /**
-   * Gets an HMAC API for signing and verifying cryptographic keys. The key ID
-   * is presumed to be associated with the KMS service assigned to this
-   * instance.
+   * Gets an HMAC API for signing and verifying data. The API
+   * will use this ControllerKey instance to sign capability invocations to
+   * sign or verify data.
+   *
+   * If this ControllerKey is a controller of the HMAC, then the API for it can
+   * returned by passing only the key description. Otherwise, an OCAP-LD
+   * authorization capability must also be passed; without this capability,
+   * calls to the returned API will not be authorized to perform HMAC
+   * operations.
    *
    * @param {Object} options - The options to use.
-   * @param {string} options.id - The ID of the HMAC key.
+   * @param {string} options.id - The ID of the key.
+   * @param {string} options.type - The type of key (e.g. `Sha256HmacKey2019`).
+   * @param {string} [options.capability=undefined] - The ID of the OCAP-LD
+   *   authorization capability to use to authorize the invocation of the
+   *   operations.
    *
    * @returns {Promise<Object>} The new Hmac instance.
    */
-  async getHmac({id}) {
+  async getHmac({id, type, capability}) {
     const {kmsClient} = this;
-    const authenticator = this;
-    // FIXME: call kmsClient.getKeyDescription()? ...to get key algorithm?
-    return new Hmac({id, authenticator, kmsClient});
+    const invocationSigner = this;
+    return new Hmac({id, type, capability, invocationSigner, kmsClient});
+  }
+
+  /**
+   * Gets an AsymmetricKey API for signing and verifying data. The API
+   * will use this ControllerKey instance to sign capability invocations to
+   * sign or verify data.
+   *
+   * If this ControllerKey is a controller of the AsymmetricKey, then the API
+   * for it can returned by passing only the key description. Otherwise, an
+   * authorization capability must also be passed; without this capability,
+   * calls to the returned API will not be authorized to perform asymmetric key
+   * operations.
+   *
+   * @param {Object} options - The options to use.
+   * @param {string} options.id - The ID of the key.
+   * @param {string} options.type - The type of key
+   *   (e.g. `Ed25519VerificationKey2018`).
+   * @param {string} [options.capability=undefined] - The ID of the OCAP-LD
+   *   authorization capability to use to authorize the invocation of the
+   *   operations.
+   *
+   * @returns {Promise<Object>} The new Hmac instance.
+   */
+  async getAsymmetricKey({id, type, capability}) {
+    const {kmsClient} = this;
+    const invocationSigner = this;
+    return new AsymmetricKey(
+      {id, type, capability, invocationSigner, kmsClient});
   }
 
   /**

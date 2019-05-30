@@ -16,13 +16,13 @@ export class Ed25519Key {
    * @param {string} options.id - The ID of this key.
    * @param {Object} options.keyDescription - A key description object,
    *   specific to the key type.
-   * @param {Object} options.authenticator - An API for creating digital
-   *   signatures using an authentication key for a KMS service.
+   * @param {Object} options.invocationSigner - An API for signing
+   *   authorization capability invocations for a KMS service.
    * @param {KmsClient} [options.kmsClient] - An optional KmsClient to use.
    *
    * @returns {Ed25519} The new Ed25519 instance.
    */
-  constructor({id, keyDescription, authenticator, kmsClient}) {
+  constructor({id, keyDescription, invocationSigner, kmsClient}) {
     // `id` contains the public id exposed by the publicNode API
     this.id = id || '';
     this.type = 'Ed25519VerificationKey2018';
@@ -30,7 +30,7 @@ export class Ed25519Key {
     // this is the private key ID only, not key material
     this.privateKey = privateKey;
     this.publicKeyBase58 = publicKeyBase58;
-    this.authenticator = authenticator;
+    this.invocationSigner = invocationSigner;
     this.kmsClient = kmsClient;
   }
 
@@ -69,8 +69,9 @@ export class Ed25519Key {
    * @returns {Promise<Uint8Array>} The signature.
    */
   async sign({data}) {
-    const {privateKey: keyId, kmsClient, authenticator} = this;
-    const signatureValue = await kmsClient.sign({keyId, data, authenticator});
+    const {privateKey: keyId, kmsClient, invocationSigner} = this;
+    const signatureValue = await kmsClient.sign(
+      {keyId, data, invocationSigner});
     return base64url.decode(signatureValue);
   }
 }
