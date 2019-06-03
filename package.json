@@ -13,8 +13,8 @@
     "lint": "eslint ."
   },
   "files": [
+    "AsymmetricKey.js",
     "ControllerKey.js",
-    "Ed25519Key.js",
     "Hmac.js",
     "Kek.js",
     "KmsClient.js",
