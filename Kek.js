@@ -34,7 +34,7 @@ export class Kek {
     if(!this.algorithm) {
       throw new Error(`Unknown key type "${this.type}".`);
     }
-    this.capability = capability ? capability.id : undefined;
+    this.capability = capability ? capability.id || capability : undefined;
     this.invocationSigner = invocationSigner;
     this.kmsClient = kmsClient;
   }

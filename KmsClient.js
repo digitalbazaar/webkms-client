@@ -32,9 +32,9 @@ export class KmsClient {
    * @param {string} options.keyId - The ID of the new key.
    * @param {string} options.kmsModule - The KMS module to use.
    * @param {string} options.type - The key type (e.g. 'AesKeyWrappingKey2019').
-   * @param {String} [options.capability=options.keyId] - The ID of
-   *   the OCAP-LD authorization capability to use to authorize the invocation
-   *   of this operation.
+   * @param {string|Object} [options.capability=options.keyId] - The ID of or
+   *   full the OCAP-LD authorization capability to use to authorize the
+   *   invocation of this operation.
    * @param {Object} options.invocationSigner - An API with an
    *   `id` property, a `type` property, and a `sign` function for signing
    *   a capability invocation.
@@ -85,9 +85,9 @@ export class KmsClient {
    * @param {string} options.kekId - The ID of the wrapping key to use.
    * @param {Uint8Array} options.unwrappedKey - The unwrapped key material as
    *   a Uint8Array.
-   * @param {String} [options.capability=options.kekId] - The ID of
-   *   the OCAP-LD authorization capability to use to authorize the invocation
-   *   of this operation.
+   * @param {string|Object} [options.capability=options.kekId] - The ID of or
+   *   full the OCAP-LD authorization capability to use to authorize the
+   *   invocation of this operation.
    * @param {Object} options.invocationSigner - An API with an
    *   `id` property, a `type` property, and a `sign` function for signing
    *   a capability invocation.
@@ -119,9 +119,9 @@ export class KmsClient {
    * @param {string} options.kekId - The ID of the unwrapping key to use.
    * @param {string} options.wrappedKey - The wrapped key material as a
    *   base64url-encoded string.
-   * @param {String} [options.capability=options.kekId] - The ID of
-   *   the OCAP-LD authorization capability to use to authorize the invocation
-   *   of this operation.
+   * @param {string|Object} [options.capability=options.kekId] - The ID of or
+   *   full the OCAP-LD authorization capability to use to authorize the
+   *   invocation of this operation.
    * @param {Object} options.invocationSigner - An API with an
    *   `id` property, a `type` property, and a `sign` function for signing
    *   a capability invocation.
@@ -158,6 +158,9 @@ export class KmsClient {
    * @param {String} [options.capability=options.keyId] - The ID of
    *   the OCAP-LD authorization capability to use to authorize the invocation
    *   of this operation.
+   * @param {string|Object} [options.capability=options.keyId] - The ID of or
+   *   full the OCAP-LD authorization capability to use to authorize the
+   *   invocation of this operation.
    * @param {Object} options.invocationSigner - An API with an
    *   `id` property, a `type` property, and a `sign` function for signing
    *   a capability invocation.
@@ -193,9 +196,9 @@ export class KmsClient {
    * @param {Uint8Array} options.data - The data to verify as a Uint8Array.
    * @param {string} options.signature - The base64url-encoded signature to
    *   verify.
-   * @param {String} [options.capability=options.keyId] - The ID of
-   *   the OCAP-LD authorization capability to use to authorize the invocation
-   *   of this operation.
+   * @param {string|Object} [options.capability=options.keyId] - The ID of or
+   *   full the OCAP-LD authorization capability to use to authorize the
+   *   invocation of this operation.
    * @param {Object} options.invocationSigner - An API with an
    *   `id` property, a `type` property, and a `sign` function for signing
    *   a capability invocation.
