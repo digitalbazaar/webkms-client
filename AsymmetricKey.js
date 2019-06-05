@@ -28,7 +28,7 @@ export class AsymmetricKey {
   }) {
     this.id = id;
     this.type = type;
-    this.capability = capability ? capability.id || capability : undefined;
+    this.capability = capability && capability.id;
     this.invocationSigner = invocationSigner;
     this.kmsClient = kmsClient;
   }

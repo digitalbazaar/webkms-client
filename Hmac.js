@@ -34,7 +34,7 @@ export class Hmac {
     if(!this.algorithm) {
       throw new Error(`Unknown key type "${this.type}".`);
     }
-    this.capability = capability ? capability.id || capability : undefined;
+    this.capability = capability && capability.id;
     this.invocationSigner = invocationSigner;
     this.kmsClient = kmsClient;
   }
