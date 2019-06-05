@@ -3,6 +3,7 @@
  */
 'use strict';
 
+export {AsymmetricKey} from './AsymmetricKey.js';
 export {ControllerKey} from './ControllerKey.js';
 export {Hmac} from './Hmac.js';
 export {Kek} from './Kek.js';
