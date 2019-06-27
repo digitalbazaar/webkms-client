@@ -186,24 +186,29 @@ export class ControllerKey {
   }
 
   /**
-   * Deterministically generates a key from a secret and a handle.
+   * Deterministically generates a key from a secret, a handle, and a
+   * key name.
    *
    * @param {Object} options - The options to use.
    * @param {string|Uint8Array} [options.secret] - A secret to use as input
    *   when generating the key, e.g., a bcrypt hash of a password.
    * @param {string} options.handle - A semantic identifier that is mixed
    *   with the secret like a salt and, if `cache` is true, will be used to
-   *   identify the key in the cache. A common use for this field is to use
+   *   identify the seed in the cache. A common use for this field is to use
    *   the account ID for a user in a system.
-   * @param {boolean} [options.cache=true] - Use `true` to cache the key,
-   *   `false` not to; a cached key must be cleared via `clearCache` or it will
-   *   persist until the user clears their local website storage.
+   * @param {keyName} [options.keyName='root'] - An optional name to use to
+   *   generate the key.
+   * @param {boolean} [options.cache=true] - Use `true` to cache the seed for
+   *   the key, `false` not to; a cached seed must be cleared via `clearCache`
+   *   or it will persist until the user clears their local website storage.
    * @param {KmsClient} [options.kmsClient] - An optional KmsClient to use.
    *
    * @returns {Promise<ControllerKey>} The new ControllerKey instance.
    */
-  static async fromSecret(
-    {secret, handle, cache = true, kmsClient = new KmsClient()}) {
+  static async fromSecret({
+    secret, handle, keyName = 'root', cache = true,
+    kmsClient = new KmsClient()
+  }) {
     if(typeof handle !== 'string') {
       throw new TypeError('"handle" must be a string.');
     }
@@ -215,6 +220,10 @@ export class ControllerKey {
 
     // compute salted SHA-256 hash as the seed for the key
     const seed = await _computeSaltedHash({secret, salt: handle});
+    // TODO: instead of generating only one key from the seed, consider using
+    // the seed in an HMAC that allows multiple other seeds to be generated,
+    // allowing for multiple keys that can be generated via HMAC(keyName)
+    //const key = await _keyFromSeedAndName({seed, keyName});
     const key = await _keyFromSeed({seed});
 
     // cache seed if requested
@@ -240,13 +249,16 @@ export class ControllerKey {
    *
    * @param {Object} options - The options to use.
    * @param {string} options.handle - The semantic identifier that was used to
-   *   create the key and differentiate it in the cache.
+   *   create the key seed and differentiate it in the cache.
+   * @param {keyName} [options.keyName='root'] - An optional name to use to
+   *   generate the key.
    * @param {KmsClient} [options.kmsClient] - An optional KmsClient to use.
    *
    * @returns {Promise<ControllerKey>} The new ControllerKey instance
    *   or `null` if no cached key for `handle` could be loaded.
    */
-  static async fromCache({handle, kmsClient = new KmsClient()}) {
+  static async fromCache(
+    {handle, keyName = 'root', kmsClient = new KmsClient()}) {
     if(typeof handle !== 'string') {
       throw new TypeError('"handle" must be a string.');
     }
@@ -254,6 +266,10 @@ export class ControllerKey {
     if(!seed) {
       return null;
     }
+    // TODO: instead of generating only one key from the seed, consider using
+    // the seed in an HMAC that allows multiple other seeds to be generated,
+    // allowing for multiple keys that can be generated via HMAC(keyName)
+    //const key = await _keyFromSeedAndName({seed, keyName});
     const key = await _keyFromSeed({seed});
     return new ControllerKey({handle, key, kmsClient});
   }
@@ -325,4 +341,15 @@ async function _keyFromSeed({seed}) {
   key.id = `did:key:${keyPair.fingerprint()}`;
   key.type = keyPair.type;
   return key;
+}
+
+async function _keyFromSeedAndName({seed, keyName}) {
+  const extractable = false;
+  const key = await crypto.subtle.importKey(
+    'raw', seed, {name: 'HMAC', hash: {name: 'SHA-256'}}, extractable,
+    ['sign']);
+  const nameBuffer = _stringToUint8Array(keyName);
+  const signature = new Uint8Array(
+    await crypto.subtle.sign(key.algorithm, key, nameBuffer));
+  return _keyFromSeed({seed: signature});
 }
