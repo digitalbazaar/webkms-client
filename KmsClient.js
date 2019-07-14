@@ -5,11 +5,9 @@
 
 import axios from 'axios';
 import base64url from 'base64url-universal';
-import jsigs from 'jsonld-signatures';
-import {CapabilityInvocation} from 'ocapld';
+import {signCapabilityInvocation} from 'http-signature-zcap-invoke';
 
-const {SECURITY_CONTEXT_V2_URL, sign, suites} = jsigs;
-const {Ed25519Signature2018} = suites;
+const DEFAULT_HEADERS = {Accept: 'application/ld+json, application/json'};
 
 export class KmsClient {
   /**
@@ -32,33 +30,46 @@ export class KmsClient {
    * @param {string} options.keyId - The ID of the new key.
    * @param {string} options.kmsModule - The KMS module to use.
    * @param {string} options.type - The key type (e.g. 'AesKeyWrappingKey2019').
-   * @param {string|Object} [options.capability=options.keyId] - The ID of or
-   *   full the OCAP-LD authorization capability to use to authorize the
-   *   invocation of this operation.
+   * @param {string} [options.capability=undefined] - The OCAP-LD authorization
+   *   capability to use to authorize the invocation of this operation.
    * @param {Object} options.invocationSigner - An API with an
-   *   `id` property, a `type` property, and a `sign` function for signing
-   *   a capability invocation.
+   *   `id` property and a `sign` function for signing a capability invocation.
    *
-   * @returns {Promise<Object>} The key description for the key, including,
-   *   at a minimum, its `id`.
+   * @returns {Promise<Object>} The key description for the key.
    */
-  async generateKey(
-    {keyId, kmsModule, type, capability = keyId, invocationSigner}) {
+  async generateKey({keyId, kmsModule, type, capability, invocationSigner}) {
     _assert(keyId, 'keyId', 'string');
     _assert(kmsModule, 'kmsModule', 'string');
     _assert(type, 'type', 'string');
     _assert(invocationSigner, 'invocationSigner', 'object');
-    return _postOperation({
-      url: keyId,
-      operation: {
-        type: 'GenerateKeyOperation',
-        invocationTarget: {id: keyId, type, controller: invocationSigner.id},
-        kmsModule
-      },
-      capability,
-      invocationSigner,
-      httpsAgent: this.httpsAgent
-    });
+
+    const operation = {
+      type: 'GenerateKeyOperation',
+      invocationTarget: {id: keyId, type, controller: invocationSigner.id},
+      kmsModule
+    };
+
+    try {
+      // sign HTTP header
+      const url = keyId;
+      const headers = await signCapabilityInvocation({
+        url, method: 'post', headers: DEFAULT_HEADERS,
+        json: operation, capability, invocationSigner,
+        capabilityAction: 'generateKey'
+      });
+      // send request
+      const {httpsAgent} = this;
+      const response = await axios.post(url, operation, {headers, httpsAgent});
+      return response.data;
+    } catch(e) {
+      const {response = {}} = e;
+      if(response.status === 409) {
+        const err = new Error('Duplicate error.');
+        err.name = 'DuplicateError';
+        throw err;
+      }
+      throw e;
+    }
   }
 
   /**
@@ -66,15 +77,38 @@ export class KmsClient {
    *
    * @param {Object} options - The options to use.
    * @param {string} options.keyId - The ID of the key.
+   * @param {string} [options.capability=undefined] - The OCAP-LD authorization
+   *   capability to use to authorize the invocation of this operation.
+   * @param {Object} options.invocationSigner - An API with an
+   *   `id` property and a `sign` function for signing a capability invocation.
    *
    * @returns {Promise<Object>} The key description.
    */
-  async getKeyDescription({keyId}) {
-    const response = await axios({
-      url: keyId,
-      method: 'GET',
-      httpsAgent: this.httpsAgent
-    });
+  async getKeyDescription({keyId, capability, invocationSigner}) {
+    _assert(keyId, 'keyId', 'string');
+    _assert(invocationSigner, 'invocationSigner', 'object');
+
+    const url = keyId;
+    let response;
+    try {
+      // sign HTTP header
+      const headers = await signCapabilityInvocation({
+        url, method: 'get', headers: DEFAULT_HEADERS,
+        capability, invocationSigner,
+        capabilityAction: 'read'
+      });
+      // send request
+      const {httpsAgent} = this;
+      response = await axios.get(url, {headers, httpsAgent});
+    } catch(e) {
+      response = e.response || {};
+      if(response.status === 404) {
+        const err = new Error('Key description not found.');
+        err.name = 'NotFoundError';
+        throw err;
+      }
+      throw e;
+    }
     return response.data;
   }
 
@@ -85,31 +119,44 @@ export class KmsClient {
    * @param {string} options.kekId - The ID of the wrapping key to use.
    * @param {Uint8Array} options.unwrappedKey - The unwrapped key material as
    *   a Uint8Array.
-   * @param {string|Object} [options.capability=options.kekId] - The ID of or
-   *   full the OCAP-LD authorization capability to use to authorize the
-   *   invocation of this operation.
+   * @param {string} [options.capability=undefined] - The OCAP-LD authorization
+   *   capability to use to authorize the invocation of this operation.
    * @param {Object} options.invocationSigner - An API with an
-   *   `id` property, a `type` property, and a `sign` function for signing
-   *   a capability invocation.
+   *   `id` property and a `sign` function for signing a capability invocation.
    *
    * @returns {Promise<string>} The base64url-encoded wrapped key bytes.
    */
-  async wrapKey({kekId, unwrappedKey, capability = kekId, invocationSigner}) {
+  async wrapKey({kekId, unwrappedKey, capability, invocationSigner}) {
     _assert(kekId, 'kekId', 'string');
     _assert(unwrappedKey, 'unwrappedKey', 'Uint8Array');
     _assert(invocationSigner, 'invocationSigner', 'object');
-    const {wrappedKey} = await _postOperation({
-      url: kekId,
-      operation: {
-        type: 'WrapKeyOperation',
-        invocationTarget: kekId,
-        unwrappedKey: base64url.encode(unwrappedKey)
-      },
-      capability,
-      invocationSigner,
-      httpsAgent: this.httpsAgent
-    });
-    return wrappedKey;
+
+    const operation = {
+      type: 'WrapKeyOperation',
+      invocationTarget: kekId,
+      unwrappedKey: base64url.encode(unwrappedKey)
+    };
+    try {
+      // sign HTTP header
+      const url = kekId;
+      const headers = await signCapabilityInvocation({
+        url, method: 'post', headers: DEFAULT_HEADERS,
+        json: operation, capability, invocationSigner,
+        capabilityAction: 'wrapKey'
+      });
+      // send request
+      const {httpsAgent} = this;
+      const response = await axios.post(url, operation, {headers, httpsAgent});
+      return response.data.wrappedKey;
+    } catch(e) {
+      const {response = {}} = e;
+      if(response.status === 404) {
+        const err = new Error('Key encryption key not found.');
+        err.name = 'NotFoundError';
+        throw err;
+      }
+      throw e;
+    }
   }
 
   /**
@@ -119,31 +166,44 @@ export class KmsClient {
    * @param {string} options.kekId - The ID of the unwrapping key to use.
    * @param {string} options.wrappedKey - The wrapped key material as a
    *   base64url-encoded string.
-   * @param {string|Object} [options.capability=options.kekId] - The ID of or
-   *   full the OCAP-LD authorization capability to use to authorize the
-   *   invocation of this operation.
+   * @param {string} [options.capability=undefined] - The OCAP-LD authorization
+   *   capability to use to authorize the invocation of this operation.
    * @param {Object} options.invocationSigner - An API with an
-   *   `id` property, a `type` property, and a `sign` function for signing
-   *   a capability invocation.
+   *   `id` property and a `sign` function for signing a capability invocation.
    *
    * @returns {Promise<Uint8Array>} The unwrapped key material.
    */
-  async unwrapKey({kekId, wrappedKey, capability = kekId, invocationSigner}) {
+  async unwrapKey({kekId, wrappedKey, capability, invocationSigner}) {
     _assert(kekId, 'kekId', 'string');
     _assert(wrappedKey, 'wrappedKey', 'string');
     _assert(invocationSigner, 'invocationSigner', 'object');
-    const {unwrappedKey} = await _postOperation({
-      url: kekId,
-      operation: {
-        type: 'UnwrapKeyOperation',
-        invocationTarget: kekId,
-        wrappedKey
-      },
-      capability,
-      invocationSigner,
-      httpsAgent: this.httpsAgent
-    });
-    return base64url.decode(unwrappedKey);
+
+    const operation = {
+      type: 'UnwrapKeyOperation',
+      invocationTarget: kekId,
+      wrappedKey
+    };
+    try {
+      // sign HTTP header
+      const url = kekId;
+      const headers = await signCapabilityInvocation({
+        url, method: 'post', headers: DEFAULT_HEADERS,
+        json: operation, capability, invocationSigner,
+        capabilityAction: 'unwrapKey'
+      });
+      // send request
+      const {httpsAgent} = this;
+      const response = await axios.post(url, operation, {headers, httpsAgent});
+      return base64url.decode(response.data.unwrappedKey);
+    } catch(e) {
+      const {response = {}} = e;
+      if(response.status === 404) {
+        const err = new Error('Key encryption key not found.');
+        err.name = 'NotFoundError';
+        throw err;
+      }
+      throw e;
+    }
   }
 
   /**
@@ -155,34 +215,44 @@ export class KmsClient {
    * @param {Object} options - The options to use.
    * @param {string} options.keyId - The ID of the signing key to use.
    * @param {Uint8Array} options.data - The data to sign as a Uint8Array.
-   * @param {String} [options.capability=options.keyId] - The ID of
-   *   the OCAP-LD authorization capability to use to authorize the invocation
-   *   of this operation.
-   * @param {string|Object} [options.capability=options.keyId] - The ID of or
-   *   full the OCAP-LD authorization capability to use to authorize the
-   *   invocation of this operation.
+   * @param {string} [options.capability=undefined] - The OCAP-LD authorization
+   *   capability to use to authorize the invocation of this operation.
    * @param {Object} options.invocationSigner - An API with an
-   *   `id` property, a `type` property, and a `sign` function for signing
-   *   a capability invocation.
+   *   `id` property and a `sign` function for signing a capability invocation.
    *
    * @returns {Promise<string>} The base64url-encoded signature.
    */
-  async sign({keyId, data, capability = keyId, invocationSigner}) {
+  async sign({keyId, data, capability, invocationSigner}) {
     _assert(keyId, 'keyId', 'string');
     _assert(data, 'data', 'Uint8Array');
     _assert(invocationSigner, 'invocationSigner', 'object');
-    const {signatureValue} = await _postOperation({
-      url: keyId,
-      operation: {
-        type: 'SignOperation',
-        invocationTarget: keyId,
-        verifyData: base64url.encode(data)
-      },
-      capability,
-      invocationSigner,
-      httpsAgent: this.httpsAgent
-    });
-    return signatureValue;
+
+    const operation = {
+      type: 'SignOperation',
+      invocationTarget: keyId,
+      verifyData: base64url.encode(data)
+    };
+    try {
+      // sign HTTP header
+      const url = keyId;
+      const headers = await signCapabilityInvocation({
+        url, method: 'post', headers: DEFAULT_HEADERS,
+        json: operation, capability, invocationSigner,
+        capabilityAction: 'sign'
+      });
+      // send request
+      const {httpsAgent} = this;
+      const response = await axios.post(url, operation, {headers, httpsAgent});
+      return response.data.signatureValue;
+    } catch(e) {
+      const {response = {}} = e;
+      if(response.status === 404) {
+        const err = new Error('Key not found.');
+        err.name = 'NotFoundError';
+        throw err;
+      }
+      throw e;
+    }
   }
 
   /**
@@ -196,75 +266,98 @@ export class KmsClient {
    * @param {Uint8Array} options.data - The data to verify as a Uint8Array.
    * @param {string} options.signature - The base64url-encoded signature to
    *   verify.
-   * @param {string|Object} [options.capability=options.keyId] - The ID of or
-   *   full the OCAP-LD authorization capability to use to authorize the
-   *   invocation of this operation.
+   * @param {string} [options.capability=undefined] - The OCAP-LD authorization
+   *   capability to use to authorize the invocation of this operation.
    * @param {Object} options.invocationSigner - An API with an
-   *   `id` property, a `type` property, and a `sign` function for signing
-   *   a capability invocation.
+   *   `id` property and a `sign` function for signing a capability invocation.
    *
    * @returns {Promise<boolean>} `true` if verified, `false` if not.
    */
-  async verify({keyId, data, signature, capability = keyId, invocationSigner}) {
+  async verify({keyId, data, signature, capability, invocationSigner}) {
     _assert(keyId, 'keyId', 'string');
     _assert(data, 'data', 'Uint8Array');
     _assert(signature, 'signature', 'string');
     _assert(invocationSigner, 'invocationSigner', 'object');
-    const {verified} = await _postOperation({
-      url: keyId,
-      operation: {
-        type: 'VerifyOperation',
-        invocationTarget: keyId,
-        verifyData: base64url.encode(data),
-        signatureValue: signature
-      },
-      capability,
-      invocationSigner,
-      httpsAgent: this.httpsAgent
-    });
-    return verified;
+
+    const operation = {
+      type: 'VerifyOperation',
+      invocationTarget: keyId,
+      verifyData: base64url.encode(data),
+      signatureValue: signature
+    };
+    try {
+      // sign HTTP header
+      const url = keyId;
+      const headers = await signCapabilityInvocation({
+        url, method: 'post', headers: DEFAULT_HEADERS,
+        json: operation, capability, invocationSigner,
+        capabilityAction: 'verify'
+      });
+      // send request
+      const {httpsAgent} = this;
+      const response = await axios.post(url, operation, {headers, httpsAgent});
+      return response.data.verified;
+    } catch(e) {
+      const {response = {}} = e;
+      if(response.status === 404) {
+        const err = new Error('Key not found.');
+        err.name = 'NotFoundError';
+        throw err;
+      }
+      throw e;
+    }
   }
-}
 
-/**
- * Posts an operation to the KMS service.
- *
- * @param {Object} options - The options to use.
- * @param {string} options.url - The URL to post to, such as a key identifier.
- * @param {Object} options.operation - The operation to run.
- * @param {String} [options.capability=options.url] - The ID of the OCAP-LD
- *   authorization capability to use to authorize the invocation of the
- *   operation.
- * @param {Object} options.invocationSigner - An API with an `id` property, a
- *   `type` property, and a `sign` function for digitally signing capability
- *   invocations.
- * @param {https.Agent} [options.httpsAgent=undefined] - An optional
- *   node.js `https.Agent` instance to use when making requests.
- *
- * @returns {Promise<Object>} Resolves to the result of the operation.
- */
-async function _postOperation(
-  {url, operation, capability = url, invocationSigner, httpsAgent}) {
-  // attach capability invocation to operation
-  operation = {'@context': SECURITY_CONTEXT_V2_URL, ...operation};
-  const signer = invocationSigner;
-  const data = await sign(operation, {
-    // TODO: map `invocationSigner.type` to signature suite
-    suite: new Ed25519Signature2018({
-      signer,
-      verificationMethod: signer.id
-    }),
-    purpose: new CapabilityInvocation({capability})
-  });
+  /**
+   * Derives a shared secret via the given peer public key, typically for use
+   * as one parameter for computing a shared key. It should not be used as
+   * a shared key itself, but rather input into a key derivation function (KDF)
+   * to produce a shared key.
+   *
+   * @param {Object} options - The options to use.
+   * @param {string} options.keyId - The ID of the key agreement key to use.
+   * @param {Object} options.publicKey - The public key to compute the shared
+   *   secret against; the public key type must match the key agreement key's
+   *   type.
+   * @param {string} [options.capability=undefined] - The OCAP-LD authorization
+   *   capability to use to authorize the invocation of this operation.
+   * @param {Object} options.invocationSigner - An API with an
+   *   `id` property and a `sign` function for signing a capability invocation.
+   *
+   * @returns {Promise<Uint8Array>} The shared secret bytes.
+   */
+  async deriveSecret({keyId, publicKey, capability, invocationSigner}) {
+    _assert(keyId, 'keyId', 'string');
+    _assert(publicKey, 'publicKey', 'object');
+    _assert(invocationSigner, 'invocationSigner', 'object');
 
-  // send operation
-  const response = await axios({
-    url,
-    method: 'POST',
-    data,
-    httpsAgent
-  });
-  return response.data;
+    const operation = {
+      type: 'DeriveSecretOperation',
+      invocationTarget: keyId,
+      publicKey
+    };
+    try {
+      // sign HTTP header
+      const url = keyId;
+      const headers = await signCapabilityInvocation({
+        url, method: 'post', headers: DEFAULT_HEADERS,
+        json: operation, capability, invocationSigner,
+        capabilityAction: 'deriveSecret'
+      });
+      // send request
+      const {httpsAgent} = this;
+      const response = await axios.post(url, operation, {headers, httpsAgent});
+      return base64url.decode(response.data.secret);
+    } catch(e) {
+      const {response = {}} = e;
+      if(response.status === 404) {
+        const err = new Error('Key agreement key not found.');
+        err.name = 'NotFoundError';
+        throw err;
+      }
+      throw e;
+    }
+  }
 }
 
 async function _assert(variable, name, types) {

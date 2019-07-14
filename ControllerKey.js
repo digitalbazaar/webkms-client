@@ -8,6 +8,7 @@ import cryptoLd from 'crypto-ld';
 const {Ed25519KeyPair} = cryptoLd;
 import {AsymmetricKey} from './AsymmetricKey.js';
 import {Kek} from './Kek.js';
+import {KeyAgreementKey} from './KeyAgreementKey.js';
 import {Hmac} from './Hmac.js';
 import {SeedCache} from './SeedCache.js';
 import {KmsClient} from './KmsClient.js';
@@ -93,6 +94,9 @@ export class ControllerKey {
     } else if(type === 'Ed25519VerificationKey2018') {
       type = 'Ed25519VerificationKey2018';
       Class = AsymmetricKey;
+    } else if(type === 'X25519KeyAgreementKey2019') {
+      type = 'X25519KeyAgreementKey2019';
+      Class = KeyAgreementKey;
     } else {
       throw new Error(`Unknown key type "${type}".`);
     }
@@ -182,6 +186,34 @@ export class ControllerKey {
     const {kmsClient} = this;
     const invocationSigner = this;
     return new AsymmetricKey(
+      {id, type, capability, invocationSigner, kmsClient});
+  }
+
+  /**
+   * Gets a KeyAgreementKey API for deriving shared secrets. The API will use
+   * this ControllerKey instance to sign capability invocations to derive
+   * shared secrets.
+   *
+   * If this ControllerKey is a controller of the KeyAgreementKey, then the API
+   * for it can returned by passing only the key description. Otherwise, an
+   * authorization capability must also be passed; without this capability,
+   * calls to the returned API will not be authorized to perform key agreement
+   * key operations.
+   *
+   * @param {Object} options - The options to use.
+   * @param {string} options.id - The ID of the key.
+   * @param {string} options.type - The type of key
+   *   (e.g. `X25519KeyAgreementKey2019`).
+   * @param {string} [options.capability=undefined] - The ID of the OCAP-LD
+   *   authorization capability to use to authorize the invocation of the
+   *   operations.
+   *
+   * @returns {Promise<Object>} The new Hmac instance.
+   */
+  async getKeyAgreementKey({id, type, capability}) {
+    const {kmsClient} = this;
+    const invocationSigner = this;
+    return new KeyAgreementKey(
       {id, type, capability, invocationSigner, kmsClient});
   }
 
