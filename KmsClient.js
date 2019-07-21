@@ -501,15 +501,18 @@ export class KmsClient {
    * @param {Object} options - The options to use.
    * @param {string} options.url - The url to post the configuration to.
    * @param {string} options.config - The keystore's configuration.
+   * @param {https.Agent} [options.httpsAgent=undefined] - An optional
+   *   node.js `https.Agent` instance to use when making requests.
    *
    * @return {Promise<Object>} resolves to the configuration for the newly
    *   created keystore.
    */
-  static async createKeystore({url = '/kms/keystores', config}) {
+  static async createKeystore({url = '/kms/keystores', config, httpsAgent}) {
     _assert(url, 'url', 'string');
     _assert(config, 'config', 'object');
     _assert(config.controller, 'config.controller', 'string');
-    const response = await axios.post(url, config, {headers: DEFAULT_HEADERS});
+    const response = await axios.post(
+      url, config, {headers: DEFAULT_HEADERS, httpsAgent});
     return response.data;
   }
 
@@ -517,13 +520,16 @@ export class KmsClient {
    * Gets the configuration for a keystore by its ID.
    *
    * @param {Object} options - The options to use.
-   * @param {string} poptions.id the keystore's ID.
+   * @param {string} options.id the keystore's ID.
+   * @param {https.Agent} [options.httpsAgent=undefined] - An optional
+   *   node.js `https.Agent` instance to use when making requests.
    *
    * @return {Promise<Object>} resolves to the configuration for the keystore.
    */
-  static async getKeystore({id}) {
+  static async getKeystore({id, httpsAgent}) {
     _assert(id, 'id', 'string');
-    const response = await axios.get(id, {headers: DEFAULT_HEADERS});
+    const response = await axios.get(
+      id, {headers: DEFAULT_HEADERS, httpsAgent});
     return response.data;
   }
 
@@ -534,15 +540,19 @@ export class KmsClient {
    * @param {string} [options.url] - The url to query.
    * @param {string} options.controller the keystore's controller.
    * @param {string} options.referenceId the keystore's reference ID.
+   * @param {https.Agent} [options.httpsAgent=undefined] - An optional
+   *   node.js `https.Agent` instance to use when making requests.
    *
    * @return {Promise<Object>} resolves to the configuration for the keystore.
    */
-  static async findKeystore({url = '/kms/keystores', controller, referenceId}) {
+  static async findKeystore(
+    {url = '/kms/keystores', controller, referenceId, httpsAgent}) {
     _assert(controller, 'controller', 'string');
     _assert(referenceId, 'referenceId', 'string');
     const response = await axios.get(url, {
       params: {controller, referenceId},
-      headers: DEFAULT_HEADERS
+      headers: DEFAULT_HEADERS,
+      httpsAgent
     });
     return response.data[0] || null;
   }
