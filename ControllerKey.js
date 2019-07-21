@@ -84,16 +84,16 @@ export class ControllerKey {
     // for the time being, fips and recommended are the same; there is no
     // other standardized key wrapping algorithm
     let Class;
-    if(type === 'hmac') {
+    if(type === 'hmac' || type === 'Sha256HmacKey2019') {
       type = 'Sha256HmacKey2019';
       Class = Hmac;
-    } else if(type === 'kek') {
+    } else if(type === 'kek' || type === 'AesKeyWrappingKey2019') {
       type = 'AesKeyWrappingKey2019';
       Class = Kek;
     } else if(type === 'Ed25519VerificationKey2018') {
       type = 'Ed25519VerificationKey2018';
       Class = AsymmetricKey;
-    } else if(type === 'X25519KeyAgreementKey2019') {
+    } else if(type === 'keyAgreement' || type === 'X25519KeyAgreementKey2019') {
       type = 'X25519KeyAgreementKey2019';
       Class = KeyAgreementKey;
     } else {
@@ -170,7 +170,10 @@ export class ControllerKey {
    * operations.
    *
    * @param {Object} options - The options to use.
-   * @param {string} options.id - The ID of the key.
+   * @param {string} options.id - The public ID of the key; if the public ID
+   *   is different from the private KMS ID, pass it separately as `kmsId`.
+   * @param {string} [options.kmsId=options.id] - The private ID of this key
+   *   with the KMS.
    * @param {string} options.type - The type of key
    *   (e.g. `Ed25519VerificationKey2018`).
    * @param {Object} [options.capability=undefined] - The OCAP-LD authorization
@@ -178,11 +181,11 @@ export class ControllerKey {
    *
    * @returns {Promise<Object>} The new Hmac instance.
    */
-  async getAsymmetricKey({id, type, capability}) {
+  async getAsymmetricKey({id, kmsId, type, capability}) {
     const {kmsClient} = this;
     const invocationSigner = this;
     return new AsymmetricKey(
-      {id, type, capability, invocationSigner, kmsClient});
+      {id, kmsId, type, capability, invocationSigner, kmsClient});
   }
 
   /**
@@ -197,7 +200,10 @@ export class ControllerKey {
    * key operations.
    *
    * @param {Object} options - The options to use.
-   * @param {string} options.id - The ID of the key.
+   * @param {string} options.id - The public ID of the key; if the public ID
+   *   is different from the private KMS ID, pass it separately as `kmsId`.
+   * @param {string} [options.kmsId=options.id] - The private ID of this key
+   *   with the KMS.
    * @param {string} options.type - The type of key
    *   (e.g. `X25519KeyAgreementKey2019`).
    * @param {Object} [options.capability=undefined] - The OCAP-LD authorization
@@ -205,11 +211,11 @@ export class ControllerKey {
    *
    * @returns {Promise<Object>} The new Hmac instance.
    */
-  async getKeyAgreementKey({id, type, capability}) {
+  async getKeyAgreementKey({id, kmsId, type, capability}) {
     const {kmsClient} = this;
     const invocationSigner = this;
     return new KeyAgreementKey(
-      {id, type, capability, invocationSigner, kmsClient});
+      {id, kmsId, type, capability, invocationSigner, kmsClient});
   }
 
   /**

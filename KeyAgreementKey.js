@@ -11,8 +11,10 @@ export class KeyAgreementKey {
    *
    * @param {Object} options - The options to use.
    * @param {string} options.id - The public key ID to use when expressing
-   *   this key; this may be different from the key ID used to identify the
-   *   key with the KMS.
+   *   this key publicly; this may be different from the key ID used to
+   *   identify the key with the KMS, which case pass `kmsId` as well.
+   * @param {string} [options.kmsId=options.id] - The private key ID used to
+   *   identify the key with the KMS.
    * @param {Object} [options.capability=undefined] - The OCAP-LD authorization
    *   capability to use to authorize the invocation of KmsClient methods.
    * @param {Object} options.invocationSigner - An API for signing
@@ -22,10 +24,11 @@ export class KeyAgreementKey {
    * @returns {KeyAgreementKey} The new AsymmetricKey instance.
    */
   constructor({
-    id, type, capability, invocationSigner,
+    id, kmsId = id, type, capability, invocationSigner,
     kmsClient = new KmsClient()
   }) {
     this.id = id;
+    this.kmsId = kmsId;
     this.type = type;
     this.capability = capability;
     this.invocationSigner = invocationSigner;
@@ -54,7 +57,7 @@ export class KeyAgreementKey {
         `The given public key type "${publicKey.type}" does not match this ` +
         `key agreement key's ${this.type}.`);
     }
-    const {id: keyId, kmsClient, capability, invocationSigner} = this;
+    const {kmsId: keyId, kmsClient, capability, invocationSigner} = this;
     return kmsClient.deriveSecret(
       {keyId, publicKey, capability, invocationSigner});
   }

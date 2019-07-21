@@ -11,8 +11,11 @@ export class AsymmetricKey {
    * Creates a new instance of an asymmetric key.
    *
    * @param {Object} options - The options to use.
-   * @param {string} options.id - The public key ID to use when signing
-   *   with this key; this may be different from the key ID used to
+   * @param {string} options.id - The public key ID to use when expressing
+   *   this key publicly (i.e., as a verification method); this may be
+   *   different from the key ID used to identify the key with the KMS, which
+   *   case pass `kmsId` as well.
+   * @param {string} [options.kmsId=options.id] - The private key ID used to
    *   identify the key with the KMS.
    * @param {Object} [options.capability=undefined] - The OCAP-LD authorization
    *   capability to use to authorize the invocation of KmsClient methods.
@@ -23,10 +26,11 @@ export class AsymmetricKey {
    * @returns {AsymmetricKey} The new AsymmetricKey instance.
    */
   constructor({
-    id, type, capability, invocationSigner,
+    id, kmsId = id, type, capability, invocationSigner,
     kmsClient = new KmsClient()
   }) {
     this.id = id;
+    this.kmsId = kmsId;
     this.type = type;
     this.capability = capability;
     this.invocationSigner = invocationSigner;
@@ -45,7 +49,7 @@ export class AsymmetricKey {
    * @returns {Promise<Uint8Array>} The signature.
    */
   async sign({data}) {
-    const {id: keyId, kmsClient, capability, invocationSigner} = this;
+    const {kmsId: keyId, kmsClient, capability, invocationSigner} = this;
     const signatureValue = await kmsClient.sign(
       {keyId, data, capability, invocationSigner});
     return base64url.decode(signatureValue);
@@ -65,7 +69,7 @@ export class AsymmetricKey {
    * @returns {Promise<boolean>} `true` if verified, `false` if not.
    */
   async verify({data, signature}) {
-    const {id: keyId, kmsClient, capability, invocationSigner} = this;
+    const {kmsId: keyId, kmsClient, capability, invocationSigner} = this;
     return kmsClient.verify(
       {keyId, data, signature, capability, invocationSigner});
   }
