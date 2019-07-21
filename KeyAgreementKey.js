@@ -27,7 +27,7 @@ export class KeyAgreementKey {
   }) {
     this.id = id;
     this.type = type;
-    this.capability = capability && capability.id;
+    this.capability = capability;
     this.invocationSigner = invocationSigner;
     this.kmsClient = kmsClient;
   }

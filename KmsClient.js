@@ -7,6 +7,7 @@ import axios from 'axios';
 import base64url from 'base64url-universal';
 import {signCapabilityInvocation} from 'http-signature-zcap-invoke';
 
+const SECURITY_CONTEXT_V2_URL = 'https://w3id.org/security/v2';
 const DEFAULT_HEADERS = {Accept: 'application/ld+json, application/json'};
 
 export class KmsClient {
@@ -14,20 +15,24 @@ export class KmsClient {
    * Creates a new KmsClient.
    *
    * @param {Object} options - The options to use.
+   * @param {string} [keystore=undefined] the ID of the keystore that must be a
+   *   URL that refers to the keystore's root storage location; if not given,
+   *   then a separate capability must be given to each method called on the
+   *   client instance.
    * @param {https.Agent} [options.httpsAgent=undefined] - An optional
    *   node.js `https.Agent` instance to use when making requests.
    *
    * @returns {KmsClient} The new instance.
    */
-  constructor({httpsAgent} = {}) {
+  constructor({keystore, httpsAgent} = {}) {
+    this.keystore = keystore;
     this.httpsAgent = httpsAgent;
   }
 
   /**
-   * Generates a new cryptographic key.
+   * Generates a new cryptographic key in the keystore.
    *
    * @param {Object} options - The options to use.
-   * @param {string} options.keyId - The ID of the new key.
    * @param {string} options.kmsModule - The KMS module to use.
    * @param {string} options.type - The key type (e.g. 'AesKeyWrappingKey2019').
    * @param {string} [options.capability=undefined] - The OCAP-LD authorization
@@ -37,21 +42,29 @@ export class KmsClient {
    *
    * @returns {Promise<Object>} The key description for the key.
    */
-  async generateKey({keyId, kmsModule, type, capability, invocationSigner}) {
-    _assert(keyId, 'keyId', 'string');
+  async generateKey({kmsModule, type, capability, invocationSigner}) {
     _assert(kmsModule, 'kmsModule', 'string');
     _assert(type, 'type', 'string');
     _assert(invocationSigner, 'invocationSigner', 'object');
 
     const operation = {
+      '@context': SECURITY_CONTEXT_V2_URL,
       type: 'GenerateKeyOperation',
-      invocationTarget: {id: keyId, type, controller: invocationSigner.id},
+      invocationTarget: {type, controller: invocationSigner.id},
       kmsModule
     };
 
+    // determine url from capability or use defaults
+    let url;
+    if(capability) {
+      url = KmsClient._getInvocationTarget({capability});
+    } else {
+      url = `${this.keystore}/keys`;
+      capability = `${this.keystore}/zcaps/keys`;
+    }
+
     try {
       // sign HTTP header
-      const url = keyId;
       const headers = await signCapabilityInvocation({
         url, method: 'post', headers: DEFAULT_HEADERS,
         json: operation, capability, invocationSigner,
@@ -76,7 +89,7 @@ export class KmsClient {
    * Gets the key description for the given key ID.
    *
    * @param {Object} options - The options to use.
-   * @param {string} options.keyId - The ID of the key.
+   * @param {string} [options.keyId] - The ID of the key.
    * @param {string} [options.capability=undefined] - The OCAP-LD authorization
    *   capability to use to authorize the invocation of this operation.
    * @param {Object} options.invocationSigner - An API with an
@@ -85,10 +98,16 @@ export class KmsClient {
    * @returns {Promise<Object>} The key description.
    */
   async getKeyDescription({keyId, capability, invocationSigner}) {
-    _assert(keyId, 'keyId', 'string');
     _assert(invocationSigner, 'invocationSigner', 'object');
 
-    const url = keyId;
+    let url;
+    if(capability) {
+      url = KmsClient._getInvocationTarget({capability});
+    } else {
+      _assert(keyId, 'keyId', 'string');
+      url = capability = keyId;
+    }
+
     let response;
     try {
       // sign HTTP header
@@ -132,13 +151,21 @@ export class KmsClient {
     _assert(invocationSigner, 'invocationSigner', 'object');
 
     const operation = {
+      '@context': SECURITY_CONTEXT_V2_URL,
       type: 'WrapKeyOperation',
       invocationTarget: kekId,
       unwrappedKey: base64url.encode(unwrappedKey)
     };
+
+    let url;
+    if(capability) {
+      url = KmsClient._getInvocationTarget({capability});
+    } else {
+      url = capability = kekId;
+    }
+
     try {
       // sign HTTP header
-      const url = kekId;
       const headers = await signCapabilityInvocation({
         url, method: 'post', headers: DEFAULT_HEADERS,
         json: operation, capability, invocationSigner,
@@ -179,13 +206,21 @@ export class KmsClient {
     _assert(invocationSigner, 'invocationSigner', 'object');
 
     const operation = {
+      '@context': SECURITY_CONTEXT_V2_URL,
       type: 'UnwrapKeyOperation',
       invocationTarget: kekId,
       wrappedKey
     };
+
+    let url;
+    if(capability) {
+      url = KmsClient._getInvocationTarget({capability});
+    } else {
+      url = capability = kekId;
+    }
+
     try {
       // sign HTTP header
-      const url = kekId;
       const headers = await signCapabilityInvocation({
         url, method: 'post', headers: DEFAULT_HEADERS,
         json: operation, capability, invocationSigner,
@@ -228,13 +263,21 @@ export class KmsClient {
     _assert(invocationSigner, 'invocationSigner', 'object');
 
     const operation = {
+      '@context': SECURITY_CONTEXT_V2_URL,
       type: 'SignOperation',
       invocationTarget: keyId,
       verifyData: base64url.encode(data)
     };
+
+    let url;
+    if(capability) {
+      url = KmsClient._getInvocationTarget({capability});
+    } else {
+      url = capability = keyId;
+    }
+
     try {
       // sign HTTP header
-      const url = keyId;
       const headers = await signCapabilityInvocation({
         url, method: 'post', headers: DEFAULT_HEADERS,
         json: operation, capability, invocationSigner,
@@ -280,14 +323,22 @@ export class KmsClient {
     _assert(invocationSigner, 'invocationSigner', 'object');
 
     const operation = {
+      '@context': SECURITY_CONTEXT_V2_URL,
       type: 'VerifyOperation',
       invocationTarget: keyId,
       verifyData: base64url.encode(data),
       signatureValue: signature
     };
+
+    let url;
+    if(capability) {
+      url = KmsClient._getInvocationTarget({capability});
+    } else {
+      url = capability = keyId;
+    }
+
     try {
       // sign HTTP header
-      const url = keyId;
       const headers = await signCapabilityInvocation({
         url, method: 'post', headers: DEFAULT_HEADERS,
         json: operation, capability, invocationSigner,
@@ -332,13 +383,21 @@ export class KmsClient {
     _assert(invocationSigner, 'invocationSigner', 'object');
 
     const operation = {
+      '@context': SECURITY_CONTEXT_V2_URL,
       type: 'DeriveSecretOperation',
       invocationTarget: keyId,
       publicKey
     };
+
+    let url;
+    if(capability) {
+      url = KmsClient._getInvocationTarget({capability});
+    } else {
+      url = capability = keyId;
+    }
+
     try {
       // sign HTTP header
-      const url = keyId;
       const headers = await signCapabilityInvocation({
         url, method: 'post', headers: DEFAULT_HEADERS,
         json: operation, capability, invocationSigner,
@@ -357,6 +416,153 @@ export class KmsClient {
       }
       throw e;
     }
+  }
+
+  /**
+   * Stores a delegated authorization capability, enabling it to be invoked by
+   * its designated invoker.
+   *
+   * @param {Object} options - The options to use.
+   * @param {Object} options.capabilityToEnable the capability to enable.
+   * @param {Object} options.invocationSigner - An API with an
+   *   `id` property and a `sign` function for signing a capability invocation.
+   *
+   * @return {Promise<Object>} resolves once the operation completes.
+   */
+  async enableCapability({capabilityToEnable, invocationSigner}) {
+    _assert(capabilityToEnable, 'capabilityToEnable', 'object');
+    _assert(invocationSigner, 'invocationSigner', 'object');
+
+    const url = `${this.keystore}/authorizations`;
+    const capability = `${this.keystore}/zcaps/authorizations`;
+    try {
+      // sign HTTP header
+      const headers = await signCapabilityInvocation({
+        url, method: 'post', headers: DEFAULT_HEADERS,
+        json: capabilityToEnable, capability, invocationSigner,
+        capabilityAction: 'write'
+      });
+      // send request
+      const {httpsAgent} = this;
+      await axios.post(url, capabilityToEnable, {headers, httpsAgent});
+    } catch(e) {
+      const {response = {}} = e;
+      if(response.status === 409) {
+        const err = new Error('Duplicate error.');
+        err.name = 'DuplicateError';
+        throw err;
+      }
+      throw e;
+    }
+  }
+
+  /**
+   * Removes a previously stored delegated authorization capability, preventing
+   * it from being invoked by its designated invoker.
+   *
+   * @param {Object} options - The options to use.
+   * @param {Object} options.id the ID of the capability to revoke.
+   * @param {Object} options.invocationSigner - An API with an
+   *   `id` property and a `sign` function for signing a capability invocation.
+   *
+   * @return {Promise<Boolean>} resolves to `true` if the document was deleted
+   *   and `false` if it did not exist.
+   */
+  async disableCapability({id, invocationSigner}) {
+    _assert(id, 'id', 'string');
+    _assert(invocationSigner, 'invocationSigner', 'object');
+
+    const url = `${this.keystore}/authorizations?id=${encodeURIComponent(id)}`;
+    const capability = `${this.keystore}/zcaps/authorizations`;
+    try {
+      // sign HTTP header
+      const headers = await signCapabilityInvocation({
+        url, method: 'delete', headers: DEFAULT_HEADERS,
+        capability, invocationSigner,
+        // TODO: should `delete` be used here as a separate action?
+        capabilityAction: 'write'
+      });
+      // send request
+      const {httpsAgent} = this;
+      await axios.delete(url, {headers, httpsAgent});
+    } catch(e) {
+      const {response = {}} = e;
+      if(response.status === 404) {
+        return false;
+      }
+      throw e;
+    }
+    return true;
+  }
+
+  /**
+   * Creates a new keystore using the given configuration.
+   *
+   * @param {Object} options - The options to use.
+   * @param {string} options.url - The url to post the configuration to.
+   * @param {string} options.config - The keystore's configuration.
+   *
+   * @return {Promise<Object>} resolves to the configuration for the newly
+   *   created keystore.
+   */
+  static async createKeystore({url = '/kms/keystores', config}) {
+    _assert(url, 'url', 'string');
+    _assert(config, 'config', 'object');
+    _assert(config.controller, 'config.controller', 'string');
+    const response = await axios.post(url, config, {headers: DEFAULT_HEADERS});
+    return response.data;
+  }
+
+  /**
+   * Gets the configuration for a keystore by its ID.
+   *
+   * @param {Object} options - The options to use.
+   * @param {string} poptions.id the keystore's ID.
+   *
+   * @return {Promise<Object>} resolves to the configuration for the keystore.
+   */
+  static async getKeystore({id}) {
+    _assert(id, 'id', 'string');
+    const response = await axios.get(id, {headers: DEFAULT_HEADERS});
+    return response.data;
+  }
+
+  /**
+   * Finds the configuration for a keystore by its controller and reference ID.
+   *
+   * @param {Object} options - The options to use.
+   * @param {string} [options.url] - The url to query.
+   * @param {string} options.controller the keystore's controller.
+   * @param {string} options.referenceId the keystore's reference ID.
+   *
+   * @return {Promise<Object>} resolves to the configuration for the keystore.
+   */
+  static async findKeystore({url = '/kms/keystores', controller, referenceId}) {
+    _assert(controller, 'controller', 'string');
+    _assert(referenceId, 'referenceId', 'string');
+    const response = await axios.get(url, {
+      params: {controller, referenceId},
+      headers: DEFAULT_HEADERS
+    });
+    return response.data[0] || null;
+  }
+
+  static _getInvocationTarget({capability}) {
+    if(!(capability && typeof capability === 'object')) {
+      // no capability provided
+      return null;
+    }
+    let result;
+    const {invocationTarget} = capability;
+    if(invocationTarget && typeof invocationTarget === 'object') {
+      result = invocationTarget.id;
+    } else {
+      result = invocationTarget;
+    }
+    if(typeof result !== 'string') {
+      throw new TypeError('"capability.invocationTarget" is invalid.');
+    }
+    return result;
   }
 }
 

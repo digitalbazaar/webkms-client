@@ -69,7 +69,6 @@ export class ControllerKey {
    * recommended algorithm.
    *
    * @param {Object} options - The options to use.
-   * @param {string} options.id - The ID of the new key.
    * @param {string} options.type - The type of key to create (`hmac` or `kek`).
    * @param {string} options.kmsModule - The name of the KMS module to use to
    *   generate the key.
@@ -79,7 +78,7 @@ export class ControllerKey {
    *
    * @returns {Promise<Object>} A Kek or Hmac instance.
    */
-  async generateKey({id, type, kmsModule, version = 'recommended'}) {
+  async generateKey({type, kmsModule, version = 'recommended'}) {
     _assertVersion(version);
 
     // for the time being, fips and recommended are the same; there is no
@@ -104,7 +103,7 @@ export class ControllerKey {
     const {kmsClient} = this;
     const invocationSigner = this;
     const keyDescription = await kmsClient.generateKey(
-      {keyId: id, kmsModule, type, invocationSigner});
+      {kmsModule, type, invocationSigner});
     const {id: newId} = keyDescription;
     return new Class({id: newId, type, invocationSigner, kmsClient});
   }
@@ -123,9 +122,8 @@ export class ControllerKey {
    * @param {string} options.id - The ID of the key.
    * @param {string} options.type - The type of key
    *   (e.g. `AesKeyWrappingKey2019`).
-   * @param {string} [options.capability=undefined] - The ID of the OCAP-LD
-   *   authorization capability to use to authorize the invocation of the
-   *   operations.
+   * @param {Object} [options.capability=undefined] - The OCAP-LD authorization
+   *   capability to use to authorize the invocation of the operations.
    *
    * @returns {Promise<Object>} The new Kek instance.
    */
@@ -149,9 +147,8 @@ export class ControllerKey {
    * @param {Object} options - The options to use.
    * @param {string} options.id - The ID of the key.
    * @param {string} options.type - The type of key (e.g. `Sha256HmacKey2019`).
-   * @param {string} [options.capability=undefined] - The ID of the OCAP-LD
-   *   authorization capability to use to authorize the invocation of the
-   *   operations.
+   * @param {Object} [options.capability=undefined] - The OCAP-LD authorization
+   *   capability to use to authorize the invocation of the operations.
    *
    * @returns {Promise<Object>} The new Hmac instance.
    */
@@ -176,9 +173,8 @@ export class ControllerKey {
    * @param {string} options.id - The ID of the key.
    * @param {string} options.type - The type of key
    *   (e.g. `Ed25519VerificationKey2018`).
-   * @param {string} [options.capability=undefined] - The ID of the OCAP-LD
-   *   authorization capability to use to authorize the invocation of the
-   *   operations.
+   * @param {Object} [options.capability=undefined] - The OCAP-LD authorization
+   *   capability to use to authorize the invocation of the operations.
    *
    * @returns {Promise<Object>} The new Hmac instance.
    */
@@ -204,9 +200,8 @@ export class ControllerKey {
    * @param {string} options.id - The ID of the key.
    * @param {string} options.type - The type of key
    *   (e.g. `X25519KeyAgreementKey2019`).
-   * @param {string} [options.capability=undefined] - The ID of the OCAP-LD
-   *   authorization capability to use to authorize the invocation of the
-   *   operations.
+   * @param {Object} [options.capability=undefined] - The OCAP-LD authorization
+   *   capability to use to authorize the invocation of the operations.
    *
    * @returns {Promise<Object>} The new Hmac instance.
    */
@@ -218,16 +213,17 @@ export class ControllerKey {
   }
 
   /**
-   * Deterministically generates a key from a secret, a handle, and a
-   * key name.
+   * Deterministically generates a key from a secret, a semantic handle to
+   * uniquely identify the secret, and a key name. The same secret can be
+   * used to generate multiple keys by using different key names.
    *
    * @param {Object} options - The options to use.
    * @param {string|Uint8Array} [options.secret] - A secret to use as input
    *   when generating the key, e.g., a bcrypt hash of a password.
-   * @param {string} options.handle - A semantic identifier that is mixed
-   *   with the secret like a salt and, if `cache` is true, will be used to
-   *   identify the seed in the cache. A common use for this field is to use
-   *   the account ID for a user in a system.
+   * @param {string} options.handle - A semantic identifier for the secret
+   *   that is mixed with it like a salt to produce a seed, and, if `cache` is
+   *   true, will be used to identify the seed in the cache. A common use for
+   *   this field is to use the account ID for a user in a system.
    * @param {keyName} [options.keyName='root'] - An optional name to use to
    *   generate the key.
    * @param {boolean} [options.cache=true] - Use `true` to cache the seed for
@@ -238,7 +234,7 @@ export class ControllerKey {
    * @returns {Promise<ControllerKey>} The new ControllerKey instance.
    */
   static async fromSecret({
-    secret, handle, keyName = 'root', cache = true,
+    secret, handle, keyName = 'default', cache = true,
     kmsClient = new KmsClient()
   }) {
     if(typeof handle !== 'string') {
@@ -252,11 +248,7 @@ export class ControllerKey {
 
     // compute salted SHA-256 hash as the seed for the key
     const seed = await _computeSaltedHash({secret, salt: handle});
-    // TODO: instead of generating only one key from the seed, consider using
-    // the seed in an HMAC that allows multiple other seeds to be generated,
-    // allowing for multiple keys that can be generated via HMAC(keyName)
-    //const key = await _keyFromSeedAndName({seed, keyName});
-    const key = await _keyFromSeed({seed});
+    const key = await _keyFromSeedAndName({seed, keyName});
 
     // cache seed if requested
     if(cache) {
@@ -281,8 +273,8 @@ export class ControllerKey {
    *
    * @param {Object} options - The options to use.
    * @param {string} options.handle - The semantic identifier that was used to
-   *   create the key seed and differentiate it in the cache.
-   * @param {keyName} [options.keyName='root'] - An optional name to use to
+   *   create the seed and differentiate it in the cache.
+   * @param {keyName} [options.keyName='default'] - An optional name to use to
    *   generate the key.
    * @param {KmsClient} [options.kmsClient] - An optional KmsClient to use.
    *
@@ -290,7 +282,7 @@ export class ControllerKey {
    *   or `null` if no cached key for `handle` could be loaded.
    */
   static async fromCache(
-    {handle, keyName = 'root', kmsClient = new KmsClient()}) {
+    {handle, keyName = 'default', kmsClient = new KmsClient()}) {
     if(typeof handle !== 'string') {
       throw new TypeError('"handle" must be a string.');
     }
@@ -298,11 +290,7 @@ export class ControllerKey {
     if(!seed) {
       return null;
     }
-    // TODO: instead of generating only one key from the seed, consider using
-    // the seed in an HMAC that allows multiple other seeds to be generated,
-    // allowing for multiple keys that can be generated via HMAC(keyName)
-    //const key = await _keyFromSeedAndName({seed, keyName});
-    const key = await _keyFromSeed({seed});
+    const key = await _keyFromSeedAndName({seed, keyName});
     return new ControllerKey({handle, key, kmsClient});
   }
 
@@ -364,24 +352,24 @@ async function _computeSaltedHash({secret, salt}) {
   return new Uint8Array(await crypto.subtle.digest(algorithm, toHash));
 }
 
-async function _keyFromSeed({seed}) {
-  // generate Ed25519 key from seed
-  const keyPair = await Ed25519KeyPair.generate({seed});
-
-  // create key and specify ID for key using fingerprint
-  const key = keyPair.signer();
-  key.id = `did:key:${keyPair.fingerprint()}`;
-  key.type = keyPair.type;
-  return key;
-}
-
 async function _keyFromSeedAndName({seed, keyName}) {
   const extractable = false;
-  const key = await crypto.subtle.importKey(
+  const hmacKey = await crypto.subtle.importKey(
     'raw', seed, {name: 'HMAC', hash: {name: 'SHA-256'}}, extractable,
     ['sign']);
   const nameBuffer = _stringToUint8Array(keyName);
   const signature = new Uint8Array(
-    await crypto.subtle.sign(key.algorithm, key, nameBuffer));
-  return _keyFromSeed({seed: signature});
+    await crypto.subtle.sign(hmacKey.algorithm, hmacKey, nameBuffer));
+
+  // generate Ed25519 key from HMAC signature
+  const keyPair = await Ed25519KeyPair.generate({seed: signature});
+
+  // create key and specify ID for key using fingerprint
+  const key = keyPair.signer();
+  // TODO: for `did:key` a `fingerprint` is insufficient, the whole public key
+  // is needed; this only works at the moment because an ed25519 public key
+  // *is* its fingerprint
+  key.id = `did:key:${keyPair.fingerprint()}`;
+  key.type = keyPair.type;
+  return key;
 }
