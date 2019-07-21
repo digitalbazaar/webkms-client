@@ -198,7 +198,8 @@ export class KmsClient {
    * @param {Object} options.invocationSigner - An API with an
    *   `id` property and a `sign` function for signing a capability invocation.
    *
-   * @returns {Promise<Uint8Array>} The unwrapped key material.
+   * @returns {Promise<Uint8Array|null>} Resolves to the unwrapped key material
+   *   or null if the unwrapping failed because the key did not match.
    */
   async unwrapKey({kekId, wrappedKey, capability, invocationSigner}) {
     _assert(kekId, 'kekId', 'string');
@@ -229,6 +230,9 @@ export class KmsClient {
       // send request
       const {httpsAgent} = this;
       const response = await axios.post(url, operation, {headers, httpsAgent});
+      if(response.data.unwrappedKey === null) {
+        return null;
+      }
       return base64url.decode(response.data.unwrappedKey);
     } catch(e) {
       const {response = {}} = e;

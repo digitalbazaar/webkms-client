@@ -61,7 +61,8 @@ export class Kek {
    * @param {string} options.wrappedKey - The wrapped key material as a
    *   base64url-encoded string.
    *
-   * @returns {Promise<Uint8Array>} The key bytes.
+   * @returns {Promise<Uint8Array|null>} Resolves to the key bytes or null if
+   *   the unwrapping fails because the key does not match.
    */
   async unwrapKey({wrappedKey}) {
     const {id: kekId, kmsClient, capability, invocationSigner} = this;
