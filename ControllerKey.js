@@ -37,17 +37,19 @@ export class ControllerKey {
    * @param {Object} options - The options to use.
    * @param {string} options.handle - The semantic identifier that was used to
    *   create the key.
-   * @param {Object} options.key - An API with an `id` property, a
+   * @param {Object} options.signer - An API with an `id` property, a
    *   `type` property, and a `sign` function for authentication purposes.
+   * @param {Object} options.keyPair - The underlying key pair.
    * @param {KmsClient} [options.kmsClient] - An optional KmsClient to use.
    *
    * @returns {ControllerKey} the new instance.
    */
-  constructor({handle, key, kmsClient = new KmsClient()}) {
+  constructor({handle, signer, keyPair, kmsClient = new KmsClient()}) {
     this.handle = handle;
-    this.id = key.id;
-    this.type = key.type;
-    this._key = key;
+    this.id = signer.id;
+    this.type = signer.type;
+    this._signer = signer;
+    this._keyPair = keyPair;
     this.kmsClient = kmsClient;
   }
 
@@ -60,7 +62,7 @@ export class ControllerKey {
    * @returns {Promise<Uint8Array>} resolves to the signature.
    */
   async sign({data}) {
-    return this._key.sign({data});
+    return this._signer.sign({data});
   }
 
   /**
@@ -254,14 +256,14 @@ export class ControllerKey {
 
     // compute salted SHA-256 hash as the seed for the key
     const seed = await _computeSaltedHash({secret, salt: handle});
-    const key = await _keyFromSeedAndName({seed, keyName});
+    const {signer, keyPair} = await _keyFromSeedAndName({seed, keyName});
 
     // cache seed if requested
     if(cache) {
       await _seedCache.set(handle, seed);
     }
 
-    return new ControllerKey({handle, key, kmsClient});
+    return new ControllerKey({handle, signer, keyPair, kmsClient});
   }
 
   static async fromBiometric() {
@@ -296,8 +298,8 @@ export class ControllerKey {
     if(!seed) {
       return null;
     }
-    const key = await _keyFromSeedAndName({seed, keyName});
-    return new ControllerKey({handle, key, kmsClient});
+    const {signer, keyPair} = await _keyFromSeedAndName({seed, keyName});
+    return new ControllerKey({handle, signer, keyPair, kmsClient});
   }
 
   /**
@@ -371,11 +373,8 @@ async function _keyFromSeedAndName({seed, keyName}) {
   const keyPair = await Ed25519KeyPair.generate({seed: signature});
 
   // create key and specify ID for key using fingerprint
-  const key = keyPair.signer();
-  // TODO: for `did:key` a `fingerprint` is insufficient, the whole public key
-  // is needed; this only works at the moment because an ed25519 public key
-  // *is* its fingerprint
-  key.id = `did:key:${keyPair.fingerprint()}`;
-  key.type = keyPair.type;
-  return key;
+  const signer = keyPair.signer();
+  signer.id = `did:key:${keyPair.fingerprint()}`;
+  signer.type = keyPair.type;
+  return {signer, keyPair};
 }
