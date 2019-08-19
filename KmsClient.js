@@ -10,24 +10,17 @@ import {signCapabilityInvocation} from 'http-signature-zcap-invoke';
 const SECURITY_CONTEXT_V2_URL = 'https://w3id.org/security/v2';
 const DEFAULT_HEADERS = {Accept: 'application/ld+json, application/json'};
 
-/**
- * A node https module.
- *
- * @typedef {object} https
- * @see https://nodejs.org/docs/latest-v11.x/api/https.html
- */
-
 export class KmsClient {
   /**
    * Creates a new KmsClient.
    *
    * @param {object} options - The options to use.
    * @param {string} [options.keystore=undefined] - The ID of the keystore
-   * that must be a URL that refers to the keystore's root storage
-   * location; if not given,
+   *   that must be a URL that refers to the keystore's root storage
+   *   location; if not given,
    *   then a separate capability must be given to each method called on the
    *   client instance.
-   * @param {https.Agent} [options.httpsAgent=undefined] - An optional
+   * @param {object} [options.httpsAgent=undefined] - An optional
    *   node.js `https.Agent` instance to use when making requests.
    *
    * @returns {KmsClient} The new instance.
@@ -513,7 +506,7 @@ export class KmsClient {
    * @param {object} options - The options to use.
    * @param {string} options.url - The url to post the configuration to.
    * @param {string} options.config - The keystore's configuration.
-   * @param {https.Agent} [options.httpsAgent=undefined] - An optional
+   * @param {object} [options.httpsAgent=undefined] - An optional
    *   node.js `https.Agent` instance to use when making requests.
    *
    * @returns {Promise<object>} Resolves to the configuration for the newly
@@ -533,7 +526,7 @@ export class KmsClient {
    *
    * @param {object} options - The options to use.
    * @param {string} options.id - The keystore's ID.
-   * @param {https.Agent} [options.httpsAgent=undefined] - An optional
+   * @param {object} [options.httpsAgent=undefined] - An optional
    *   node.js `https.Agent` instance to use when making requests.
    *
    * @returns {Promise<object>} Resolves to the configuration for the keystore.
@@ -552,7 +545,7 @@ export class KmsClient {
    * @param {string} [options.url] - The url to query.
    * @param {string} options.controller - The keystore's controller.
    * @param {string} options.referenceId - The keystore's reference ID.
-   * @param {https.Agent} [options.httpsAgent=undefined] - An optional
+   * @param {object} [options.httpsAgent=undefined] - An optional
    *   node.js `https.Agent` instance to use when making requests.
    *
    * @returns {Promise<object>} Resolves to the configuration for the keystore.
