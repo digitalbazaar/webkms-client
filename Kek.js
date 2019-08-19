@@ -13,12 +13,12 @@ export class Kek {
   /**
    * Creates a new instance of a key encryption key.
    *
-   * @param {Object} options - The options to use.
+   * @param {object} options - The options to use.
    * @param {string} options.id - The ID for this key.
    * @param {string} options.type - The type for this key.
-   * @param {Object} [options.capability=undefined] - The OCAP-LD authorization
+   * @param {object} [options.capability=undefined] - The OCAP-LD authorization
    *   capability to use to authorize the invocation of KmsClient methods.
-   * @param {Object} options.invocationSigner - An API for signing
+   * @param {object} options.invocationSigner - An API for signing
    *   a capability invocation.
    * @param {KmsClient} [options.kmsClient] - An optional KmsClient to use.
    *
@@ -42,9 +42,9 @@ export class Kek {
   /**
    * Wraps a cryptographic key.
    *
-   * @param {Object} options - The options to use.
-   * @param {Uint8Array} options.unwrappedKey - The key material as a
-   *   Uint8Array.
+   * @param {object} options - The options to use.
+   * @param {Uint8Array} options.unwrappedKey - The key material
+   *   as a Uint8Array.
    *
    * @returns {Promise<string>} The base64url-encoded wrapped key bytes.
    */
@@ -57,7 +57,7 @@ export class Kek {
   /**
    * Unwraps a cryptographic key.
    *
-   * @param {Object} options - The options to use.
+   * @param {object} options - The options to use.
    * @param {string} options.wrappedKey - The wrapped key material as a
    *   base64url-encoded string.
    *

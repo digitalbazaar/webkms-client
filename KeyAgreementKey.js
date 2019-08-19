@@ -9,15 +9,15 @@ export class KeyAgreementKey {
   /**
    * Creates a new instance of a key agreement key.
    *
-   * @param {Object} options - The options to use.
+   * @param {object} options - The options to use.
    * @param {string} options.id - The public key ID to use when expressing
    *   this key publicly; this may be different from the key ID used to
    *   identify the key with the KMS, which case pass `kmsId` as well.
    * @param {string} [options.kmsId=options.id] - The private key ID used to
    *   identify the key with the KMS.
-   * @param {Object} [options.capability=undefined] - The OCAP-LD authorization
+   * @param {object} [options.capability=undefined] - The OCAP-LD authorization
    *   capability to use to authorize the invocation of KmsClient methods.
-   * @param {Object} options.invocationSigner - An API for signing
+   * @param {object} options.invocationSigner - An API for signing
    *   a capability invocation.
    * @param {KmsClient} [options.kmsClient] - An optional KmsClient to use.
    *
@@ -41,8 +41,8 @@ export class KeyAgreementKey {
   * a shared key itself, but rather input into a key derivation function (KDF)
   * to produce a shared key.
    *
-   * @param {Object} options - The options to use.
-   * @param {Object} options.publicKey - The public key to compute the shared
+   * @param {object} options - The options to use.
+   * @param {object} options.publicKey - The public key to compute the shared
    *   secret against; the public key type must match this KeyAgreementKey's
    *   type.
    *

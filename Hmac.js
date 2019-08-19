@@ -13,12 +13,12 @@ export class Hmac {
   /**
    * Creates a new instance of an HMAC.
    *
-   * @param {Object} options - The options to use.
+   * @param {object} options - The options to use.
    * @param {string} options.id - The ID for the hmac key.
    * @param {string} options.type - The type for the hmac.
-   * @param {Object} [options.capability=undefined] - The OCAP-LD authorization
+   * @param {object} [options.capability=undefined] - The OCAP-LD authorization
    *   capability to use to authorize the invocation of KmsClient methods.
-   * @param {Object} options.invocationSigner - An API for signing
+   * @param {object} options.invocationSigner - An API for signing
    *   a capability invocation.
    * @param {KmsClient} [options.kmsClient] - An optional KmsClient to use.
    *
@@ -45,7 +45,7 @@ export class Hmac {
    * hashing the data first may present interoperability issues so choose
    * wisely.
    *
-   * @param {Object} options - The options to use.
+   * @param {object} options - The options to use.
    * @param {Uint8Array} options.data - The data to sign as a Uint8Array.
    *
    * @returns {Promise<string>} The base64url-encoded signature.
@@ -61,7 +61,7 @@ export class Hmac {
    * hashing the data first may present interoperability issues so choose
    * wisely.
    *
-   * @param {Object} options - The options to use.
+   * @param {object} options - The options to use.
    * @param {Uint8Array} options.data - The data to sign as a Uint8Array.
    * @param {string} options.signature - The base64url-encoded signature
    *   to verify.
