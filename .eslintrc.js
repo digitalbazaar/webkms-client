@@ -1,6 +1,9 @@
 module.exports = {
   root: true,
-  extends: ['eslint-config-digitalbazaar'],
+  extends: [
+    'eslint-config-digitalbazaar',
+    'eslint-config-digitalbazaar/jsdoc'
+  ],
   env: {
     node: true
   },
@@ -8,6 +11,7 @@ module.exports = {
     CryptoKey: true,
     TextDecoder: true,
     TextEncoder: true,
-    Uint8Array: true
+    Uint8Array: true,
+    window: true
   }
 }

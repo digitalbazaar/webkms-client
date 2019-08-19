@@ -34,15 +34,15 @@ export class ControllerKey {
    * ControllerKey.fromBiometric();
    * ControllerKey.fromFido();
    *
-   * @param {Object} options - The options to use.
+   * @param {object} options - The options to use.
    * @param {string} options.handle - The semantic identifier that was used to
    *   create the key.
-   * @param {Object} options.signer - An API with an `id` property, a
+   * @param {object} options.signer - An API with an `id` property, a
    *   `type` property, and a `sign` function for authentication purposes.
-   * @param {Object} options.keyPair - The underlying key pair.
+   * @param {object} options.keyPair - The underlying key pair.
    * @param {KmsClient} [options.kmsClient] - An optional KmsClient to use.
    *
-   * @returns {ControllerKey} the new instance.
+   * @returns {ControllerKey} The new instance.
    */
   constructor({handle, signer, keyPair, kmsClient = new KmsClient()}) {
     this.handle = handle;
@@ -56,10 +56,10 @@ export class ControllerKey {
   /**
    * Digitally signs the given data.
    *
-   * @param {Object} options - The options to use.
+   * @param {object} options - The options to use.
    * @param {Uint8Array} options.data - The data to sign.
    *
-   * @returns {Promise<Uint8Array>} resolves to the signature.
+   * @returns {Promise<Uint8Array>} Resolves to the signature.
    */
   async sign({data}) {
     return this._signer.sign({data});
@@ -70,7 +70,7 @@ export class ControllerKey {
    * key. It can be generated using a FIPS-compliant algorithm or the latest
    * recommended algorithm.
    *
-   * @param {Object} options - The options to use.
+   * @param {object} options - The options to use.
    * @param {string} options.type - The type of key to create (`hmac` or `kek`).
    * @param {string} options.kmsModule - The name of the KMS module to use to
    *   generate the key.
@@ -78,7 +78,7 @@ export class ControllerKey {
    *   use FIPS-compliant ciphers, `recommended` to use the latest recommended
    *   ciphers.
    *
-   * @returns {Promise<Object>} A Kek or Hmac instance.
+   * @returns {Promise<object>} A Kek or Hmac instance.
    */
   async generateKey({type, kmsModule, version = 'recommended'}) {
     _assertVersion(version);
@@ -121,14 +121,14 @@ export class ControllerKey {
    * without this capability, calls to the returned API will not be authorized
    * to perform KEK operations.
    *
-   * @param {Object} options - The options to use.
+   * @param {object} options - The options to use.
    * @param {string} options.id - The ID of the key.
    * @param {string} options.type - The type of key
    *   (e.g. `AesKeyWrappingKey2019`).
-   * @param {Object} [options.capability=undefined] - The OCAP-LD authorization
+   * @param {object} [options.capability=undefined] - The OCAP-LD authorization
    *   capability to use to authorize the invocation of the operations.
    *
-   * @returns {Promise<Object>} The new Kek instance.
+   * @returns {Promise<object>} The new Kek instance.
    */
   async getKek({id, type, capability}) {
     const {kmsClient} = this;
@@ -142,18 +142,19 @@ export class ControllerKey {
    * sign or verify data.
    *
    * If this ControllerKey is a controller of the HMAC, then the API for it can
-   * be returned by passing only the key description. Otherwise, an OCAP-LD
-   * authorization capability must also be passed; without this capability,
+   * be returned by passing only the key description (the id and type).
+   * Otherwise, an OCAP-LD authorization capability must also be passed;
+   * without this capability,
    * calls to the returned API will not be authorized to perform HMAC
    * operations.
    *
-   * @param {Object} options - The options to use.
+   * @param {object} options - The options to use.
    * @param {string} options.id - The ID of the key.
    * @param {string} options.type - The type of key (e.g. `Sha256HmacKey2019`).
-   * @param {Object} [options.capability=undefined] - The OCAP-LD authorization
+   * @param {object} [options.capability=undefined] - The OCAP-LD authorization
    *   capability to use to authorize the invocation of the operations.
    *
-   * @returns {Promise<Object>} The new Hmac instance.
+   * @returns {Promise<object>} The new Hmac instance.
    */
   async getHmac({id, type, capability}) {
     const {kmsClient} = this;
@@ -167,22 +168,22 @@ export class ControllerKey {
    * sign or verify data.
    *
    * If this ControllerKey is a controller of the AsymmetricKey, then the API
-   * for it can be returned by passing only the key type. Otherwise, an
-   * authorization capability must also be passed; without this capability,
-   * calls to the returned API will not be authorized to perform asymmetric key
-   * operations.
+   * for it can be returned by passing only the id and type.
+   * Otherwise, an authorization capability must also be passed;
+   * without this capability, calls to the returned API will not be
+   * authorized to perform asymmetric key operations.
    *
-   * @param {Object} options - The options for generating an Asymmetric Key.
+   * @param {object} options - The options for generating an Asymmetric Key.
    * @param {string} options.id - The public ID of the key; if the public ID
    *   is different from the private KMS ID, pass it separately as `kmsId`.
    * @param {string} [options.kmsId=options.id] - The private ID of this key
    *   with the KMS.
    * @param {string} options.type - The type of key
    *   (e.g. `Ed25519VerificationKey2018`).
-   * @param {Object} [options.capability=undefined] - The OCAP-LD authorization
+   * @param {object} [options.capability=undefined] - The OCAP-LD authorization
    *   capability to use to authorize the invocation of the operations.
    *
-   * @returns {Promise<Object>} The new Hmac instance.
+   * @returns {Promise<object>} The new Hmac instance.
    */
   async getAsymmetricKey({id, kmsId, type, capability}) {
     const {kmsClient} = this;
@@ -197,22 +198,22 @@ export class ControllerKey {
    * shared secrets.
    *
    * If this ControllerKey is a controller of the KeyAgreementKey, then the API
-   * for it can be returned by passing only the key description. Otherwise, an
-   * authorization capability must also be passed; without this capability,
-   * calls to the returned API will not be authorized to perform key agreement
-   * key operations.
+   * for it can be returned by passing only the id and type.
+   * Otherwise, an authorization capability must also be passed;
+   * without this capability, calls to the returned API will not be
+   * authorized to perform key agreement key operations.
    *
-   * @param {Object} options - The options to use.
+   * @param {object} options - The options to use.
    * @param {string} options.id - The public ID of the key; if the public ID
    *   is different from the private KMS ID, pass it separately as `kmsId`.
    * @param {string} [options.kmsId=options.id] - The private ID of this key
    *   with the KMS.
    * @param {string} options.type - The type of key
    *   (e.g. `X25519KeyAgreementKey2019`).
-   * @param {Object} [options.capability=undefined] - The OCAP-LD authorization
+   * @param {object} [options.capability=undefined] - The OCAP-LD authorization
    *   capability to use to authorize the invocation of the operations.
    *
-   * @returns {Promise<Object>} The new Hmac instance.
+   * @returns {Promise<object>} The new Hmac instance.
    */
   async getKeyAgreementKey({id, kmsId, type, capability}) {
     const {kmsClient} = this;
@@ -226,14 +227,14 @@ export class ControllerKey {
    * uniquely identify the secret, and a key name. The same secret can be
    * used to generate multiple keys by using different key names.
    *
-   * @param {Object} options - The options to use.
+   * @param {object} options - The options to use.
    * @param {string|Uint8Array} [options.secret] - A secret to use as input
    *   when generating the key, e.g., a bcrypt hash of a password.
    * @param {string} options.handle - A semantic identifier for the secret
    *   that is mixed with it like a salt to produce a seed, and, if `cache` is
    *   true, will be used to identify the seed in the cache. A common use for
    *   this field is to use the account ID for a user in a system.
-   * @param {keyName} [options.keyName='root'] - An optional name to use to
+   * @param {string} [options.keyName='root'] - An optional name to use to
    *   generate the key.
    * @param {boolean} [options.cache=true] - Use `true` to cache the seed for
    *   the key, `false` not to; a cached seed must be cleared via `clearCache`
@@ -280,10 +281,10 @@ export class ControllerKey {
    * the key for the given account has been previously cached. To clear this
    * key to prevent future loading, call `clearCache` with the key's `handle`.
    *
-   * @param {Object} options - The options to use.
+   * @param {object} options - The options to use.
    * @param {string} options.handle - The semantic identifier that was used to
    *   create the seed and differentiate it in the cache.
-   * @param {keyName} [options.keyName='default'] - An optional name to use to
+   * @param {string} [options.keyName='default'] - An optional name to use to
    *   generate the key.
    * @param {KmsClient} [options.kmsClient] - An optional KmsClient to use.
    *
@@ -308,7 +309,7 @@ export class ControllerKey {
    * via `fromSecret` with `cache` set to `true` in order to ensure the key
    * cannot be loaded via `fromCache`.
    *
-   * @param {Object} options - The options to use.
+   * @param {object} options - The options for the caches.
    * @param {string} options.handle - The semantic identifier that was used to
    *   create the key and differentiate it in the cache.
    *
