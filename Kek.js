@@ -12,7 +12,7 @@ const JOSE_ALGORITHM_MAP = {
 export class Kek {
   /**
    * Creates a new instance of a key encryption key.
-   * Used to protect the master encryption key e.g. Controller Key.
+   * Used to protect the content encryption key.
    *
    * @param {object} options - The options to use.
    * @param {string} options.id - The ID for this key.
