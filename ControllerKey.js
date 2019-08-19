@@ -116,7 +116,7 @@ export class ControllerKey {
    * wrap or unwrap keys.
    *
    * If this ControllerKey is a controller of the KEK, then the API for it can
-   * be returned by passing only the key description (the id and type).
+   * be returned by passing only the key id and type.
    * Otherwise, an OCAP-LD authorization capability must also be passed;
    * without this capability, calls to the returned API will not be authorized
    * to perform KEK operations.
@@ -142,7 +142,7 @@ export class ControllerKey {
    * sign or verify data.
    *
    * If this ControllerKey is a controller of the HMAC, then the API for it can
-   * be returned by passing only the key description (the id and type).
+   * be returned by passing only the key id and type.
    * Otherwise, an OCAP-LD authorization capability must also be passed;
    * without this capability,
    * calls to the returned API will not be authorized to perform HMAC
