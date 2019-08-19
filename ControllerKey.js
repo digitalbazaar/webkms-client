@@ -20,13 +20,16 @@ const _seedCache = new SeedCache();
 export class ControllerKey {
   /**
    * Creates a new instance of a ControllerKey.
+   *
    * A ControllerKey can be passed as an `invocationSigner` to a KmsClient, but
    * a KmsClient instance is typically used internally by other instances that
    * can be created via the ControllerKey API such as instances of the Kek
    * and Hmac classes.
    *
-   * This function should never be called directly.
-   * Use one of these methods to create a ControllerKey instance.
+   * The ControllerKey should never be called directly.
+   * It should always be created via a static method on the class.
+   * Use one of the static methods in examples to create
+   * a ControllerKey instance.
    *
    * @example
    * ControllerKey.fromSecret();
@@ -116,8 +119,8 @@ export class ControllerKey {
    * wrap or unwrap keys.
    *
    * If this ControllerKey is a controller of the KEK, then the API for it can
-   * be returned by passing only the key id and type.
-   * Otherwise, an OCAP-LD authorization capability must also be passed;
+   * be returned by passing only the key id and type. Otherwise,
+   * an OCAP-LD authorization capability must also be passed;
    * without this capability, calls to the returned API will not be authorized
    * to perform KEK operations.
    *
@@ -142,11 +145,10 @@ export class ControllerKey {
    * sign or verify data.
    *
    * If this ControllerKey is a controller of the HMAC, then the API for it can
-   * be returned by passing only the key id and type.
-   * Otherwise, an OCAP-LD authorization capability must also be passed;
-   * without this capability,
-   * calls to the returned API will not be authorized to perform HMAC
-   * operations.
+   * be returned by passing only the key id and type. Otherwise,
+   * an OCAP-LD authorization capability must also be passed;
+   * without this capability, calls to the returned API will not
+   * be authorized to perform HMAC operations.
    *
    * @param {object} options - The options to use.
    * @param {string} options.id - The ID of the key.
@@ -168,10 +170,10 @@ export class ControllerKey {
    * sign or verify data.
    *
    * If this ControllerKey is a controller of the AsymmetricKey, then the API
-   * for it can be returned by passing only the id and type.
-   * Otherwise, an authorization capability must also be passed;
-   * without this capability, calls to the returned API will not be
-   * authorized to perform asymmetric key operations.
+   * for it can be returned by passing only the id and type. Otherwise,
+   * an authorization capability must also be passed; without this capability,
+   * calls to the returned API will not be authorized to perform asymmetric
+   * key operations.
    *
    * @param {object} options - The options for generating an Asymmetric Key.
    * @param {string} options.id - The public ID of the key; if the public ID
@@ -198,10 +200,10 @@ export class ControllerKey {
    * shared secrets.
    *
    * If this ControllerKey is a controller of the KeyAgreementKey, then the API
-   * for it can be returned by passing only the id and type.
-   * Otherwise, an authorization capability must also be passed;
-   * without this capability, calls to the returned API will not be
-   * authorized to perform key agreement key operations.
+   * for it can be returned by passing only the id and type. Otherwise,
+   * an authorization capability must also be passed; without this capability,
+   * calls to the returned API will not be authorized to perform key
+   * agreement key operations.
    *
    * @param {object} options - The options to use.
    * @param {string} options.id - The public ID of the key; if the public ID
