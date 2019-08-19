@@ -19,14 +19,14 @@ const _seedCache = new SeedCache();
 
 export class ControllerKey {
   /**
-   * Creates a new instance of a ControllerKey. This function should never
-   * be called directly. Use one of these methods to create a ControllerKey
-   * instance.
-   *
+   * Creates a new instance of a ControllerKey.
    * A ControllerKey can be passed as an `invocationSigner` to a KmsClient, but
    * a KmsClient instance is typically used internally by other instances that
    * can be created via the ControllerKey API such as instances of the Kek
    * and Hmac classes.
+   *
+   * This function should never be called directly.
+   * Use one of these methods to create a ControllerKey instance.
    *
    * @example
    * ControllerKey.fromSecret();
@@ -116,9 +116,10 @@ export class ControllerKey {
    * wrap or unwrap keys.
    *
    * If this ControllerKey is a controller of the KEK, then the API for it can
-   * returned by passing only the key description. Otherwise, an OCAP-LD
-   * authorization capability must also be passed; without this capability,
-   * calls to the returned API will not be authorized to perform KEK operations.
+   * be returned by passing only the key description (the id and type).
+   * Otherwise, an OCAP-LD authorization capability must also be passed;
+   * without this capability, calls to the returned API will not be authorized
+   * to perform KEK operations.
    *
    * @param {Object} options - The options to use.
    * @param {string} options.id - The ID of the key.
@@ -141,7 +142,7 @@ export class ControllerKey {
    * sign or verify data.
    *
    * If this ControllerKey is a controller of the HMAC, then the API for it can
-   * returned by passing only the key description. Otherwise, an OCAP-LD
+   * be returned by passing only the key description. Otherwise, an OCAP-LD
    * authorization capability must also be passed; without this capability,
    * calls to the returned API will not be authorized to perform HMAC
    * operations.
@@ -166,12 +167,12 @@ export class ControllerKey {
    * sign or verify data.
    *
    * If this ControllerKey is a controller of the AsymmetricKey, then the API
-   * for it can returned by passing only the key description. Otherwise, an
+   * for it can be returned by passing only the key type. Otherwise, an
    * authorization capability must also be passed; without this capability,
    * calls to the returned API will not be authorized to perform asymmetric key
    * operations.
    *
-   * @param {Object} options - The options to use.
+   * @param {Object} options - The options for generating an Asymmetric Key.
    * @param {string} options.id - The public ID of the key; if the public ID
    *   is different from the private KMS ID, pass it separately as `kmsId`.
    * @param {string} [options.kmsId=options.id] - The private ID of this key
@@ -196,7 +197,7 @@ export class ControllerKey {
    * shared secrets.
    *
    * If this ControllerKey is a controller of the KeyAgreementKey, then the API
-   * for it can returned by passing only the key description. Otherwise, an
+   * for it can be returned by passing only the key description. Otherwise, an
    * authorization capability must also be passed; without this capability,
    * calls to the returned API will not be authorized to perform key agreement
    * key operations.
