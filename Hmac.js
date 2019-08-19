@@ -23,6 +23,7 @@ export class Hmac {
    * @param {KmsClient} [options.kmsClient] - An optional KmsClient to use.
    *
    * @returns {Hmac} The new Hmac instance.
+   * @see https://tools.ietf.org/html/rfc2104
    */
   constructor({
     id, type, capability, invocationSigner,
