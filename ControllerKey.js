@@ -175,7 +175,7 @@ export class ControllerKey {
    * calls to the returned API will not be authorized to perform asymmetric
    * key operations.
    *
-   * @param {object} options - The options for generating an Asymmetric Key.
+   * @param {object} options - The options to use.
    * @param {string} options.id - The public ID of the key; if the public ID
    *   is different from the private KMS ID, pass it separately as `kmsId`.
    * @param {string} [options.kmsId=options.id] - The private ID of this key
@@ -311,7 +311,7 @@ export class ControllerKey {
    * via `fromSecret` with `cache` set to `true` in order to ensure the key
    * cannot be loaded via `fromCache`.
    *
-   * @param {object} options - The options for the caches.
+   * @param {object} options - The options to use.
    * @param {string} options.handle - The semantic identifier that was used to
    *   create the key and differentiate it in the cache.
    *
