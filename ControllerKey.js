@@ -26,9 +26,9 @@ export class ControllerKey {
    * can be created via the ControllerKey API such as instances of the Kek
    * and Hmac classes.
    *
-   * The ControllerKey should never be called directly. It should always be
-   * created via a static method on the class. Use one of the static methods
-   * in the examples to create a ControllerKey instance.
+   * The ControllerKey constructor should never be called directly. It should
+   * always be created via a static method on the class. Use one of the static
+   * methods in the examples to create a ControllerKey instance.
    *
    * @example
    * ControllerKey.fromSecret();
