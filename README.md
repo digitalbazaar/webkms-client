@@ -1,2 +1,2 @@
-# web-kms-client
-A JavaScript Web Kms client library
+# webkms-client
+A JavaScript WebKMS client library

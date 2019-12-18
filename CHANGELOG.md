@@ -1,4 +1,4 @@
-# web-kms-client ChangeLog
+# webkms-client ChangeLog
 
 ## 1.0.0 - TBD
 

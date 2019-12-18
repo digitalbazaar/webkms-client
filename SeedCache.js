@@ -5,7 +5,7 @@
 
 import base64url from 'base64url-universal';
 
-const SEED_CACHE_KEY = 'bedrock-web-kms-seed-cache';
+const SEED_CACHE_KEY = 'webkms-seed-cache';
 
 export class SeedCache {
   constructor() {
