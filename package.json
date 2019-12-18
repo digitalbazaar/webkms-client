@@ -1,7 +1,7 @@
 {
   "name": "webkms-client",
   "version": "0.0.1-0",
-  "description": "JavaScript Web KMS client",
+  "description": "JavaScript WebKMS client",
   "license": "BSD-3-Clause",
   "main": "index.js",
   "scripts": {
