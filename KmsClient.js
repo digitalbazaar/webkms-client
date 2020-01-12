@@ -429,17 +429,22 @@ export class KmsClient {
    *
    * @param {object} options - The options to use.
    * @param {object} options.capabilityToEnable - The capability to enable.
+   * @param {string} [options.capability=undefined] - The OCAP-LD authorization
+   *   capability to use to authorize the invocation of this operation.
    * @param {object} options.invocationSigner - An API with an
    *   `id` property and a `sign` function for signing a capability invocation.
    *
    * @returns {Promise<object>} Resolves once the operation completes.
    */
-  async enableCapability({capabilityToEnable, invocationSigner}) {
+  async enableCapability({capabilityToEnable, capability, invocationSigner}) {
     _assert(capabilityToEnable, 'capabilityToEnable', 'object');
     _assert(invocationSigner, 'invocationSigner', 'object');
 
-    const url = `${this.keystore}/authorizations`;
-    const capability = `${this.keystore}/zcaps/authorizations`;
+    const url = KmsClient._getInvocationTarget({capability}) ||
+      `${this.keystore}/authorizations`;
+    if(!capability) {
+      capability = `${this.keystore}/zcaps/authorizations`;
+    }
     try {
       // sign HTTP header
       const headers = await signCapabilityInvocation({
@@ -467,18 +472,26 @@ export class KmsClient {
    *
    * @param {object} options - The options to use.
    * @param {object} options.id - The ID of the capability to revoke.
+   * @param {string} [options.capability=undefined] - The OCAP-LD authorization
+   *   capability to use to authorize the invocation of this operation.
    * @param {object} options.invocationSigner - An API with an
    *   `id` property and a `sign` function for signing a capability invocation.
    *
    * @returns {Promise<boolean>} Resolves to `true` if the document was deleted
    *   and `false` if it did not exist.
    */
-  async disableCapability({id, invocationSigner}) {
+  async disableCapability({id, capability, invocationSigner}) {
     _assert(id, 'id', 'string');
     _assert(invocationSigner, 'invocationSigner', 'object');
 
-    const url = `${this.keystore}/authorizations?id=${encodeURIComponent(id)}`;
-    const capability = `${this.keystore}/zcaps/authorizations`;
+    let url = KmsClient._getInvocationTarget({capability}) ||
+      `${this.keystore}/authorizations`;
+    if(url.endsWith('/authorizations')) {
+      url += `?id=${encodeURIComponent(id)}`;
+    }
+    if(!capability) {
+      capability = `${this.keystore}/zcaps/authorizations`;
+    }
     try {
       // sign HTTP header
       const headers = await signCapabilityInvocation({
