@@ -133,6 +133,48 @@ export class KmsClient {
   }
 
   /**
+   * Store a capability revocation.
+   *
+   * @param {object} options - The options to use.
+   * @param {object} options.capabilityToRevoke - The capability to enable.
+   * @param {string} [options.capability=undefined] - The zcap authorization
+   *   capability to use to authorize the invocation of this operation.
+   * @param {object} options.invocationSigner - An API with an
+   *   `id` property and a `sign` function for signing a capability invocation.
+   *
+   * @returns {Promise<object>} Resolves once the operation completes.
+   */
+  async revokeCapability({capabilityToRevoke, capability, invocationSigner}) {
+    _assert(capabilityToRevoke, 'capabilityToRevoke', 'object');
+    _assert(invocationSigner, 'invocationSigner', 'object');
+
+    const url = KmsClient._getInvocationTarget({capability}) ||
+      `${this.keystore}/revocations`;
+    if(!capability) {
+      capability = `${this.keystore}/zcaps/revocations`;
+    }
+    try {
+      // sign HTTP header
+      const headers = await signCapabilityInvocation({
+        url, method: 'post', headers: DEFAULT_HEADERS,
+        json: capabilityToRevoke, capability, invocationSigner,
+        capabilityAction: 'write'
+      });
+      // send request
+      const {httpsAgent} = this;
+      await axios.post(url, capabilityToRevoke, {headers, httpsAgent});
+    } catch(e) {
+      const {response = {}} = e;
+      if(response.status === 409) {
+        const err = new Error('Duplicate error.');
+        err.name = 'DuplicateError';
+        throw err;
+      }
+      throw e;
+    }
+  }
+
+  /**
    * Wraps a cryptographic key using a key encryption key (KEK).
    *
    * @param {object} options - The options to use.

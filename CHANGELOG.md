@@ -1,5 +1,8 @@
 # webkms-client ChangeLog
 
+### Added
+- Add `revokeCapability` API.
+
 ## 1.1.0 - 2020-01-11
 
 ### Added
