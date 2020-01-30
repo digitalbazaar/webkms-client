@@ -1,5 +1,10 @@
 # webkms-client ChangeLog
 
+## 2.0.0 - TBD
+
+### Changed
+- **BREAKING**: Remove `enableCapability` and `removeCapability` APIs.
+
 ## 1.1.0 - 2020-01-11
 
 ### Added
