@@ -1,5 +1,5 @@
 /*!
- * Copyright (c) 2019 Digital Bazaar, Inc. All rights reserved.
+ * Copyright (c) 2019-2020 Digital Bazaar, Inc. All rights reserved.
  */
 'use strict';
 
@@ -48,8 +48,8 @@ export class ControllerKey {
    */
   constructor({handle, signer, keyPair, kmsClient = new KmsClient()}) {
     this.handle = handle;
-    this.id = signer.id;
-    this.type = signer.type;
+    // FIXME: fix conflation between being a `key` and an entity with keys
+    this.id = signer.id.split('#')[0];
     this._signer = signer;
     this._keyPair = keyPair;
     this.kmsClient = kmsClient;
@@ -376,7 +376,8 @@ async function _keyFromSeedAndName({seed, keyName}) {
 
   // create key and specify ID for key using fingerprint
   const signer = keyPair.signer();
-  signer.id = `did:key:${keyPair.fingerprint()}`;
+  const fingerprint = keyPair.fingerprint();
+  signer.id = `did:key:${fingerprint}#${fingerprint}`;
   signer.type = keyPair.type;
   return {signer, keyPair};
 }
