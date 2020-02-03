@@ -14,10 +14,11 @@
   },
   "files": [
     "AsymmetricKey.js",
-    "ControllerKey.js",
+    "CapabilityAgent.js",
     "Hmac.js",
     "Kek.js",
     "KeyAgreementKey.js",
+    "KeystoreAgent.js",
     "KmsClient.js",
     "SeedCache.js",
     "crypto-browser.js",
