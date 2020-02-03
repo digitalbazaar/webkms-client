@@ -1,5 +1,5 @@
 /*!
- * Copyright (c) 2019 Digital Bazaar, Inc. All rights reserved.
+ * Copyright (c) 2019-2020 Digital Bazaar, Inc. All rights reserved.
  */
 'use strict';
 
@@ -22,12 +22,14 @@ export class AsymmetricKey {
    * @param {object} options.invocationSigner - An API for signing
    *   a capability invocation.
    * @param {KmsClient} [options.kmsClient] - An optional KmsClient to use.
+   * @param {object} [options.keyDescription] - An optional `keyDescription` to
+   *   cache.
    *
    * @returns {AsymmetricKey} The new AsymmetricKey instance.
    */
   constructor({
     id, kmsId = id, type, capability, invocationSigner,
-    kmsClient = new KmsClient()
+    kmsClient = new KmsClient(), keyDescription
   }) {
     this.id = id;
     this.kmsId = kmsId;
@@ -35,6 +37,21 @@ export class AsymmetricKey {
     this.capability = capability;
     this.invocationSigner = invocationSigner;
     this.kmsClient = kmsClient;
+    this._keyDescription = keyDescription;
+
+    // set key information from capability as needed
+    if(capability && typeof capability.invocationTarget === 'object') {
+      const {invocationTarget} = capability;
+      if(!this.id) {
+        this.id = invocationTarget.verificationMethod || invocationTarget.id;
+      }
+      if(!this.kmsId) {
+        this.kmsId = invocationTarget.id;
+      }
+      if(!this.type) {
+        this.type = invocationTarget.type;
+      }
+    }
   }
 
   /**
@@ -72,5 +89,22 @@ export class AsymmetricKey {
     const {kmsId: keyId, kmsClient, capability, invocationSigner} = this;
     return kmsClient.verify(
       {keyId, data, signature, capability, invocationSigner});
+  }
+
+  /**
+   * Gets the key description for this key.
+   *
+   * @param {object} options - The options to use.
+   *
+   * @returns {Promise<object>} The key description.
+   */
+  async getKeyDescription({} = {}) {
+    if(!this._keyDescription) {
+      const {kmsId: keyId, kmsClient, capability, invocationSigner} = this;
+      this._keyDescription = await kmsClient.getKeyDescription(
+        {keyId, capability, invocationSigner});
+    }
+    // return clone of cached description
+    return JSON.parse(JSON.stringify(this._keyDescription));
   }
 }
