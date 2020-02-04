@@ -91,10 +91,11 @@ export class KeystoreAgent {
    * will use this KeystoreAgent instance to sign capability invocations to
    * wrap or unwrap keys.
    *
-   * If this KeystoreAgent is a controller of the KEK, then the API for it
-   * can be returned by passing only the key id and type. Otherwise, an OCAP-LD
-   * authorization capability must also be passed; without this capability,
-   * calls to the returned API will not be authorized to perform KEK operations.
+   * If this KeystoreAgent's CapabilityAgent is a controller of the KEK, then
+   * the API for it can be returned by passing only the key id and type.
+   * Otherwise, an Authorization Capability (zcap) must also be passed;
+   * without this capability, calls to the returned API will not be authorized
+   * to perform KEK operations.
    *
    * @param {object} options - The options to use.
    * @param {string} options.id - The ID of the key.
@@ -116,11 +117,11 @@ export class KeystoreAgent {
    * will use this KeystoreAgent instance to sign capability invocations to
    * sign or verify data.
    *
-   * If this KeystoreAgent is a controller of the HMAC, then the API for
-   * it can be returned by passing only the key id and type. Otherwise,
-   * an OCAP-LD authorization capability must also be passed; without this
-   * capability, calls to the returned API will not be authorized to
-   * perform HMAC operations.
+   * If this KeystoreAgent's CapabilityAgent is a controller of the HMAC, then
+   * the API for it can be returned by passing only the key id and type.
+   * Otherwise, an Authorization Capability (zcap) must also be passed;
+   * without this capability, calls to the returned API will not be authorized
+   * to perform HMAC operations.
    *
    * @param {object} options - The options to use.
    * @param {string} options.id - The ID of the key.
@@ -141,11 +142,11 @@ export class KeystoreAgent {
    * will use this KeystoreAgent instance to sign capability invocations to
    * sign or verify data.
    *
-   * If this KeystoreAgent is a controller of the AsymmetricKey, then
-   * the API for it can be returned by passing only the id and type. Otherwise,
-   * an authorization capability must also be passed; without this capability,
-   * calls to the returned API will not be authorized to perform asymmetric
-   * key operations.
+   * If this KeystoreAgent's CapabilityAgent is a controller of
+   * the AsymmetricKey, then the API for it can be returned by passing only the
+   * key id and type. Otherwise, an Authorization Capability (zcap) must also
+   * be passed; without this capability, calls to the returned API will not be
+   * authorized to perform asymmetric key operations.
    *
    * @param {object} options - The options to use.
    * @param {string} options.id - The public ID of the key; if the public ID
@@ -171,11 +172,11 @@ export class KeystoreAgent {
    * this KeystoreAgent instance to sign capability invocations to derive
    * shared secrets.
    *
-   * If this KeystoreAgent is a controller of the KeyAgreementKey, then
-   * the API for it can be returned by passing only the id and type. Otherwise,
-   * an authorization capability must also be passed; without this capability,
-   * calls to the returned API will not be authorized to perform key
-   * agreement key operations.
+   * If this KeystoreAgent's CapabilityAgent is a controller of
+   * the KeyAgreementKey, then the API for it can be returned by passing only
+   * the key id and type. Otherwise, an Authorization Capability (zcap) must
+   * also be passed; without this capability, calls to the returned API will
+   * not be authorized to perform key agreement key operations.
    *
    * @param {object} options - The options to use.
    * @param {string} options.id - The public ID of the key; if the public ID
