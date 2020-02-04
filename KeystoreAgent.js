@@ -78,7 +78,7 @@ export class KeystoreAgent {
     }
 
     const {capabilityAgent, kmsClient} = this;
-    const invocationSigner = capabilityAgent.getInvocationSigner();
+    const invocationSigner = capabilityAgent.getSigner();
     const keyDescription = await kmsClient.generateKey(
       {kmsModule, type, invocationSigner});
     const {id: newId} = keyDescription;
@@ -107,7 +107,7 @@ export class KeystoreAgent {
    */
   async getKek({id, type, capability}) {
     const {capabilityAgent, kmsClient} = this;
-    const invocationSigner = capabilityAgent.getInvocationSigner();
+    const invocationSigner = capabilityAgent.getSigner();
     return new Kek({id, type, capability, invocationSigner, kmsClient});
   }
 
@@ -132,7 +132,7 @@ export class KeystoreAgent {
    */
   async getHmac({id, type, capability}) {
     const {capabilityAgent, kmsClient} = this;
-    const invocationSigner = capabilityAgent.getInvocationSigner();
+    const invocationSigner = capabilityAgent.getSigner();
     return new Hmac({id, type, capability, invocationSigner, kmsClient});
   }
 
@@ -161,7 +161,7 @@ export class KeystoreAgent {
    */
   async getAsymmetricKey({id, kmsId, type, capability}) {
     const {capabilityAgent, kmsClient} = this;
-    const invocationSigner = capabilityAgent.getInvocationSigner();
+    const invocationSigner = capabilityAgent.getSigner();
     return new AsymmetricKey(
       {id, kmsId, type, capability, invocationSigner, kmsClient});
   }
@@ -191,7 +191,7 @@ export class KeystoreAgent {
    */
   async getKeyAgreementKey({id, kmsId, type, capability}) {
     const {capabilityAgent, kmsClient} = this;
-    const invocationSigner = capabilityAgent.getInvocationSigner();
+    const invocationSigner = capabilityAgent.getSigner();
     return new KeyAgreementKey(
       {id, kmsId, type, capability, invocationSigner, kmsClient});
   }

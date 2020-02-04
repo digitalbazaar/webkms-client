@@ -18,7 +18,7 @@ export class CapabilityAgent {
    * instance that is, by default, bound to a particular keystore.
    *
    * A CapabilityAgent can provide an `invocationSigner` to a KmsClient
-   * via its `getInvocationSigner` API, but a KmsClient instance is typically
+   * via its `getSigner` API, but a KmsClient instance is typically
    * used internally by other instances that can be created via
    * the CapabilityAgent API such as instances of the Kek and Hmac classes.
    *
@@ -55,12 +55,13 @@ export class CapabilityAgent {
   }
 
   /**
-   * Gets a signer API for signing capability invocations.
+   * Gets a signer API, typically for signing capability invocation or
+   * delegation proofs.
    *
    * @returns {object} An API with an `id` property, a `type` property, and a
    *   `sign` function.
    */
-  getInvocationSigner() {
+  getSigner() {
     return this.signer;
   }
 
