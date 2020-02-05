@@ -7,7 +7,6 @@ import crypto from './crypto.js';
 import cryptoLd from 'crypto-ld';
 const {Ed25519KeyPair} = cryptoLd;
 import {SeedCache} from './SeedCache.js';
-import {KmsClient} from './KmsClient.js';
 import {TextDecoder, TextEncoder} from './util.js';
 
 const _seedCache = new SeedCache();
@@ -38,20 +37,16 @@ export class CapabilityAgent {
    * @param {object} options.signer - An API with an `id` property, a
    *   `type` property, and a `sign` function.
    * @param {object} options.keyPair - The underlying key pair.
-   * @param {KmsClient} [options.kmsClient] - An optional KmsClient to use.
    *
    * @returns {CapabilityAgent} The new instance.
    */
-  constructor({
-    handle, signer, keyPair, kmsClient = new KmsClient()
-  }) {
+  constructor({handle, signer, keyPair}) {
     this.handle = handle;
     // signer is a did:key
     this.id = signer.id.split('#')[0];
     this.signer = signer;
     // reference to core key pair used for invocation signing
     this._keyPair = keyPair;
-    this.kmsClient = kmsClient;
   }
 
   /**
@@ -82,13 +77,11 @@ export class CapabilityAgent {
    * @param {boolean} [options.cache=true] - Use `true` to cache the seed for
    *   the key, `false` not to; a cached seed must be cleared via `clearCache`
    *   or it will persist until the user clears their local website storage.
-   * @param {KmsClient} [options.kmsClient] - An optional KmsClient to use.
    *
    * @returns {Promise<CapabilityAgent>} The new CapabilityAgent instance.
    */
   static async fromSecret({
-    secret, handle, keyName = 'default', cache = true,
-    kmsClient = new KmsClient()
+    secret, handle, keyName = 'default', cache = true
   }) {
     if(typeof handle !== 'string') {
       throw new TypeError('"handle" must be a string.');
@@ -108,7 +101,7 @@ export class CapabilityAgent {
       await _seedCache.set(handle, seed);
     }
 
-    return new CapabilityAgent({handle, signer, keyPair, kmsClient});
+    return new CapabilityAgent({handle, signer, keyPair});
   }
 
   static async fromBiometric() {
@@ -131,13 +124,11 @@ export class CapabilityAgent {
    *   cache.
    * @param {string} [options.keyName='default'] - An optional name to use to
    *   generate the root key for the CapabilityAgent.
-   * @param {KmsClient} [options.kmsClient] - An optional KmsClient to use.
    *
    * @returns {Promise<CapabilityAgent>} The new CapabilityAgent instance
    *   or `null` if no cached CapabilityAgent for `handle` could be loaded.
    */
-  static async fromCache(
-    {handle, keyName = 'default', kmsClient = new KmsClient()}) {
+  static async fromCache({handle, keyName = 'default'}) {
     if(typeof handle !== 'string') {
       throw new TypeError('"handle" must be a string.');
     }
@@ -146,7 +137,7 @@ export class CapabilityAgent {
       return null;
     }
     const {signer, keyPair} = await _keyFromSeedAndName({seed, keyName});
-    return new CapabilityAgent({handle, signer, keyPair, kmsClient});
+    return new CapabilityAgent({handle, signer, keyPair});
   }
 
   /**
