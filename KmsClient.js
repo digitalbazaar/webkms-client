@@ -51,7 +51,10 @@ export class KmsClient {
     const operation = {
       '@context': SECURITY_CONTEXT_V2_URL,
       type: 'GenerateKeyOperation',
-      invocationTarget: {type},
+      invocationTarget: {
+        controller: invocationSigner.id,
+        type
+      },
       kmsModule
     };
 
