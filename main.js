@@ -3,6 +3,10 @@
  */
 'use strict';
 
+/**
+ * WebKMS client for Javascript.
+ * @module webkms
+ */
 export {AsymmetricKey} from './AsymmetricKey.js';
 export {CapabilityAgent} from './CapabilityAgent.js';
 export {Hmac} from './Hmac.js';

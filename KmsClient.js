@@ -10,6 +10,11 @@ import {signCapabilityInvocation} from 'http-signature-zcap-invoke';
 const SECURITY_CONTEXT_V2_URL = 'https://w3id.org/security/v2';
 const DEFAULT_HEADERS = {Accept: 'application/ld+json, application/json'};
 
+/**
+ * @class
+ * @classdesc A WebKMS Client used to interface with a KMS.
+ * @memberof module:webkms
+ */
 export class KmsClient {
   /**
    * Creates a new KmsClient.
@@ -32,6 +37,7 @@ export class KmsClient {
 
   /**
    * Generates a new cryptographic key in the keystore.
+   * @alias webkms:generateKey
    *
    * @param {object} options - The options to use.
    * @param {string} options.kmsModule - The KMS module to use.
@@ -88,6 +94,7 @@ export class KmsClient {
 
   /**
    * Gets the key description for the given key ID.
+   * @alias webkms:getKeyDescription
    *
    * @param {object} options - The options to use.
    * @param {string} [options.keyId] - The ID of the key.
@@ -134,6 +141,7 @@ export class KmsClient {
 
   /**
    * Store a capability revocation.
+   * @alias webkms:revokeCapability
    *
    * @param {object} options - The options to use.
    * @param {object} options.capabilityToRevoke - The capability to enable.
@@ -176,6 +184,7 @@ export class KmsClient {
 
   /**
    * Wraps a cryptographic key using a key encryption key (KEK).
+   * @alias webkms:wrapKey
    *
    * @param {object} options - The options to use.
    * @param {string} options.kekId - The ID of the wrapping key to use.
@@ -231,6 +240,7 @@ export class KmsClient {
 
   /**
    * Unwraps a cryptographic key using a key encryption key (KEK).
+   * @alias webkms:unwrapKey
    *
    * @param {object} options - The options to use.
    * @param {string} options.kekId - The ID of the unwrapping key to use.
@@ -293,6 +303,7 @@ export class KmsClient {
    * this data is intended to be secret it should be hashed first. However,
    * hashing the data first may present interoperability issues so choose
    * wisely.
+   * @alias webkms:sign
    *
    * @param {object} options - The options to use.
    * @param {string} options.keyId - The ID of the signing key to use.
@@ -350,6 +361,7 @@ export class KmsClient {
    * this data is intended to be secret it should be hashed first. However,
    * hashing the data first may present interoperability issues so choose
    * wisely.
+   * @alias webkms:verify
    *
    * @param {object} options - The options to use.
    * @param {string} options.keyId - The ID of the signing key to use.
@@ -411,6 +423,7 @@ export class KmsClient {
    * as one parameter for computing a shared key. It should not be used as
    * a shared key itself, but rather input into a key derivation function (KDF)
    * to produce a shared key.
+   * @alias webkms:deriveSecret
    *
    * @param {object} options - The options to use.
    * @param {string} options.keyId - The ID of the key agreement key to use.
@@ -468,6 +481,7 @@ export class KmsClient {
   /**
    * Stores a delegated authorization capability, enabling it to be invoked by
    * its designated invoker.
+   * @alias webkms:enableCapability
    *
    * @param {object} options - The options to use.
    * @param {object} options.capabilityToEnable - The capability to enable.
@@ -511,6 +525,7 @@ export class KmsClient {
   /**
    * Removes a previously stored delegated authorization capability, preventing
    * it from being invoked by its designated invoker.
+   * @alias webkms:disableCapability
    *
    * @param {object} options - The options to use.
    * @param {object} options.id - The ID of the capability to revoke.
@@ -557,6 +572,7 @@ export class KmsClient {
 
   /**
    * Creates a new keystore using the given configuration.
+   * @alias webkms:createKeystore
    *
    * @param {object} options - The options to use.
    * @param {string} options.url - The url to post the configuration to.
@@ -578,6 +594,7 @@ export class KmsClient {
 
   /**
    * Gets the configuration for a keystore by its ID.
+   * @alias webkms:getKeystore
    *
    * @param {object} options - The options to use.
    * @param {string} options.id - The keystore's ID.
@@ -595,6 +612,7 @@ export class KmsClient {
 
   /**
    * Finds the configuration for a keystore by its controller and reference ID.
+   * @alias webkms:findKeystore
    *
    * @param {object} options - The options to use.
    * @param {string} [options.url] - The url to query.
