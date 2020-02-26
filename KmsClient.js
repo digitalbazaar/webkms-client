@@ -144,7 +144,7 @@ export class KmsClient {
    * @alias webkms:revokeCapability
    *
    * @param {object} options - The options to use.
-   * @param {object} options.capabilityToRevoke - The capability to enable.
+   * @param {object} options.capabilityToRevoke - The capability to revoke.
    * @param {string} [options.capability=undefined] - The zcap authorization
    *   capability to use to authorize the invocation of this operation.
    * @param {object} options.invocationSigner - An API with an
