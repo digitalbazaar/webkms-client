@@ -13,5 +13,6 @@ module.exports = {
     TextEncoder: true,
     Uint8Array: true,
     window: true
-  }
+  },
+  ignorePatterns: ['dist/']
 }
