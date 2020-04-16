@@ -1,7 +1,9 @@
+*.lcov
 *.log
 *.sw[nop]
 *~
 .cache
+.nyc_output
 .project
 .settings
 .vscode
