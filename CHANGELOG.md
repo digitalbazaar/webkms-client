@@ -1,5 +1,13 @@
 # webkms-client ChangeLog
 
+## 2.1.0 - 2020-04-21
+
+### Added
+- Setup CI and coverage workflow.
+
+### Changed
+- Update deps.
+
 ## 2.0.1 - 2020-02-10
 
 ### Changed
