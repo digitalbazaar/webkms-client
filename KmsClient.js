@@ -1,14 +1,11 @@
 /*!
  * Copyright (c) 2019 Digital Bazaar, Inc. All rights reserved.
  */
-'use strict';
-
-import axios from 'axios';
 import base64url from 'base64url-universal';
+import {httpClient, DEFAULT_HEADERS} from '@digitalbazaar/http-client';
 import {signCapabilityInvocation} from 'http-signature-zcap-invoke';
 
 const SECURITY_CONTEXT_V2_URL = 'https://w3id.org/security/v2';
-const DEFAULT_HEADERS = {Accept: 'application/ld+json, application/json'};
 
 /**
  * @class
@@ -79,12 +76,13 @@ export class KmsClient {
         capabilityAction: 'generateKey'
       });
       // send request
-      const {httpsAgent} = this;
-      const response = await axios.post(url, operation, {headers, httpsAgent});
-      return response.data;
+      const {httpsAgent: agent} = this;
+      const result = await httpClient.post(url, {
+        agent, headers, json: operation
+      });
+      return result.data;
     } catch(e) {
-      const {response = {}} = e;
-      if(response.status === 409) {
+      if(e.status === 409) {
         const err = new Error('Duplicate error.');
         err.name = 'DuplicateError';
         throw err;
@@ -118,7 +116,6 @@ export class KmsClient {
       url = capability = keyId;
     }
 
-    let response;
     try {
       // sign HTTP header
       const headers = await signCapabilityInvocation({
@@ -127,18 +124,17 @@ export class KmsClient {
         capabilityAction: 'read'
       });
       // send request
-      const {httpsAgent} = this;
-      response = await axios.get(url, {headers, httpsAgent});
+      const {httpsAgent: agent} = this;
+      const result = await httpClient.get(url, {agent, headers});
+      return result.data;
     } catch(e) {
-      response = e.response || {};
-      if(response.status === 404) {
+      if(e.status === 404) {
         const err = new Error('Key description not found.');
         err.name = 'NotFoundError';
         throw err;
       }
       throw e;
     }
-    return response.data;
   }
 
   /**
@@ -172,11 +168,10 @@ export class KmsClient {
         capabilityAction: 'write'
       });
       // send request
-      const {httpsAgent} = this;
-      await axios.post(url, capabilityToRevoke, {headers, httpsAgent});
+      const {httpsAgent: agent} = this;
+      await httpClient.post(url, {agent, headers, json: capabilityToRevoke});
     } catch(e) {
-      const {response = {}} = e;
-      if(response.status === 409) {
+      if(e.status === 409) {
         const err = new Error('Duplicate error.');
         err.name = 'DuplicateError';
         throw err;
@@ -228,12 +223,13 @@ export class KmsClient {
         capabilityAction: 'wrapKey'
       });
       // send request
-      const {httpsAgent} = this;
-      const response = await axios.post(url, operation, {headers, httpsAgent});
-      return response.data.wrappedKey;
+      const {httpsAgent: agent} = this;
+      const result = await httpClient.post(url, {
+        agent, headers, json: operation
+      });
+      return result.data.wrappedKey;
     } catch(e) {
-      const {response = {}} = e;
-      if(response.status === 404) {
+      if(e.status === 404) {
         const err = new Error('Key encryption key not found.');
         err.name = 'NotFoundError';
         throw err;
@@ -286,15 +282,16 @@ export class KmsClient {
         capabilityAction: 'unwrapKey'
       });
       // send request
-      const {httpsAgent} = this;
-      const response = await axios.post(url, operation, {headers, httpsAgent});
-      if(response.data.unwrappedKey === null) {
+      const {httpsAgent: agent} = this;
+      const result = await httpClient.post(url, {
+        agent, headers, json: operation
+      });
+      if(result.data.unwrappedKey === null) {
         return null;
       }
-      return base64url.decode(response.data.unwrappedKey);
+      return base64url.decode(result.data.unwrappedKey);
     } catch(e) {
-      const {response = {}} = e;
-      if(response.status === 404) {
+      if(e.status === 404) {
         const err = new Error('Key encryption key not found.');
         err.name = 'NotFoundError';
         throw err;
@@ -348,12 +345,13 @@ export class KmsClient {
         capabilityAction: 'sign'
       });
       // send request
-      const {httpsAgent} = this;
-      const response = await axios.post(url, operation, {headers, httpsAgent});
-      return response.data.signatureValue;
+      const {httpsAgent: agent} = this;
+      const result = await httpClient.post(url, {
+        agent, headers, json: operation
+      });
+      return result.data.signatureValue;
     } catch(e) {
-      const {response = {}} = e;
-      if(response.status === 404) {
+      if(e.status === 404) {
         const err = new Error('Key not found.');
         err.name = 'NotFoundError';
         throw err;
@@ -411,12 +409,13 @@ export class KmsClient {
         capabilityAction: 'verify'
       });
       // send request
-      const {httpsAgent} = this;
-      const response = await axios.post(url, operation, {headers, httpsAgent});
-      return response.data.verified;
+      const {httpsAgent: agent} = this;
+      const result = await httpClient.post(url, {
+        agent, headers, json: operation
+      });
+      return result.data.verified;
     } catch(e) {
-      const {response = {}} = e;
-      if(response.status === 404) {
+      if(e.status === 404) {
         const err = new Error('Key not found.');
         err.name = 'NotFoundError';
         throw err;
@@ -472,12 +471,13 @@ export class KmsClient {
         capabilityAction: 'deriveSecret'
       });
       // send request
-      const {httpsAgent} = this;
-      const response = await axios.post(url, operation, {headers, httpsAgent});
-      return base64url.decode(response.data.secret);
+      const {httpsAgent: agent} = this;
+      const result = await httpClient.post(url, {
+        agent, headers, json: operation
+      });
+      return base64url.decode(result.data.secret);
     } catch(e) {
-      const {response = {}} = e;
-      if(response.status === 404) {
+      if(e.status === 404) {
         const err = new Error('Key agreement key not found.');
         err.name = 'NotFoundError';
         throw err;
@@ -518,11 +518,12 @@ export class KmsClient {
         capabilityAction: 'write'
       });
       // send request
-      const {httpsAgent} = this;
-      await axios.post(url, capabilityToEnable, {headers, httpsAgent});
+      const {httpsAgent: agent} = this;
+      await httpClient.post(url, {
+        agent, headers, json: capabilityToEnable
+      });
     } catch(e) {
-      const {response = {}} = e;
-      if(response.status === 409) {
+      if(e.status === 409) {
         const err = new Error('Duplicate error.');
         err.name = 'DuplicateError';
         throw err;
@@ -568,11 +569,10 @@ export class KmsClient {
         capabilityAction: 'write'
       });
       // send request
-      const {httpsAgent} = this;
-      await axios.delete(url, {headers, httpsAgent});
+      const {httpsAgent: agent} = this;
+      await httpClient.delete(url, {agent, headers});
     } catch(e) {
-      const {response = {}} = e;
-      if(response.status === 404) {
+      if(e.status === 404) {
         return false;
       }
       throw e;
@@ -598,9 +598,10 @@ export class KmsClient {
     _assert(url, 'url', 'string');
     _assert(config, 'config', 'object');
     _assert(config.controller, 'config.controller', 'string');
-    const response = await axios.post(
-      url, config, {headers: DEFAULT_HEADERS, httpsAgent});
-    return response.data;
+    const result = await httpClient.post(url, {
+      agent: httpsAgent, json: config
+    });
+    return result.data;
   }
 
   /**
@@ -617,9 +618,8 @@ export class KmsClient {
    */
   static async getKeystore({id, httpsAgent}) {
     _assert(id, 'id', 'string');
-    const response = await axios.get(
-      id, {headers: DEFAULT_HEADERS, httpsAgent});
-    return response.data;
+    const result = await httpClient.get(id, {agent: httpsAgent});
+    return result.data;
   }
 
   /**
@@ -640,12 +640,11 @@ export class KmsClient {
     {url = '/kms/keystores', controller, referenceId, httpsAgent}) {
     _assert(controller, 'controller', 'string');
     _assert(referenceId, 'referenceId', 'string');
-    const response = await axios.get(url, {
+    const result = await httpClient.get(url, {
+      agent: httpsAgent,
       params: {controller, referenceId},
-      headers: DEFAULT_HEADERS,
-      httpsAgent
     });
-    return response.data[0] || null;
+    return result.data[0] || null;
   }
 
   static _getInvocationTarget({capability}) {
