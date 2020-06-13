@@ -34,7 +34,8 @@
     "base64url-universal": "^1.1.0",
     "esm": "^3.2.25",
     "http-signature-zcap-invoke": "^1.1.1",
-    "isomorphic-webcrypto": "^2.3.2"
+    "isomorphic-webcrypto": "^2.3.2",
+    "lru-cache": "^5.1.1"
   },
   "devDependencies": {
     "@babel/core": "^7.4.3",

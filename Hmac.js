@@ -3,8 +3,11 @@
  */
 'use strict';
 
+import base64url from 'base64url-universal';
+import LRU from 'lru-cache';
 import {KmsClient} from './KmsClient.js';
 
+const MAX_CACHE_SIZE = 100;
 const JOSE_ALGORITHM_MAP = {
   Sha256HmacKey2019: 'HS256'
 };
@@ -30,6 +33,7 @@ export class Hmac {
     kmsClient = new KmsClient()
   }) {
     this.id = id;
+    this.cache = new LRU(MAX_CACHE_SIZE);
     this.type = type;
     this.algorithm = JOSE_ALGORITHM_MAP[type];
     if(!this.algorithm) {
@@ -48,12 +52,24 @@ export class Hmac {
    *
    * @param {object} options - The options to use.
    * @param {Uint8Array} options.data - The data to sign as a Uint8Array.
+   * @param {boolean} options.useCache - Enable the use of a cache.
    *
    * @returns {Promise<string>} The base64url-encoded signature.
    */
-  async sign({data}) {
+  async sign({data, useCache = true}) {
+    if(useCache) {
+      const sig = this.cache.get(base64url.encode(data));
+      if(sig) {
+        return sig;
+      }
+    }
     const {id: keyId, kmsClient, capability, invocationSigner} = this;
-    return kmsClient.sign({keyId, data, capability, invocationSigner});
+    const sig = await kmsClient.sign(
+      {keyId, data, capability, invocationSigner});
+    if(useCache) {
+      this.cache.set(base64url.encode(data), sig);
+    }
+    return sig;
   }
 
   /**
@@ -66,12 +82,23 @@ export class Hmac {
    * @param {Uint8Array} options.data - The data to sign as a Uint8Array.
    * @param {string} options.signature - The base64url-encoded signature
    *   to verify.
+   * @param {boolean} options.useCache - Enable the use of a cache.
    *
    * @returns {Promise<boolean>} `true` if verified, `false` if not.
    */
-  async verify({data, signature}) {
+  async verify({data, signature, useCache = true}) {
+    if(useCache) {
+      const sig = this.cache.get(base64url.encode(data));
+      if(sig) {
+        return sig;
+      }
+    }
     const {id: keyId, kmsClient, capability, invocationSigner} = this;
-    return kmsClient.verify(
+    const sig = await kmsClient.verify(
       {keyId, data, signature, capability, invocationSigner});
+    if(useCache) {
+      this.cache.set(base64url.encode(data), sig);
+    }
+    return sig;
   }
 }
