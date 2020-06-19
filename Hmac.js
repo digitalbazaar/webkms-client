@@ -34,6 +34,7 @@ export class Hmac {
   }) {
     this.id = id;
     this.cache = new LRU(MAX_CACHE_SIZE);
+    this._requests = new LRU();
     this.type = type;
     this.algorithm = JOSE_ALGORITHM_MAP[type];
     if(!this.algorithm) {
@@ -57,20 +58,37 @@ export class Hmac {
    * @returns {Promise<string>} The base64url-encoded signature.
    */
   async sign({data, useCache = true}) {
-    const cacheKey = `sign-${base64url.encode(data)}`
+    const cacheKey = `sign-${base64url.encode(data)}`;
     if(useCache) {
       const signature = this.cache.get(cacheKey);
       if(signature) {
         return signature;
       }
     }
-    const {id: keyId, kmsClient, capability, invocationSigner} = this;
-    const signature = await kmsClient.sign(
-      {keyId, data, capability, invocationSigner});
-    if(useCache) {
-      this.cache.set(cacheKey, signature);
+
+    let promise = this._requests.get(cacheKey);
+
+    if(promise) {
+      return promise;
     }
-    return signature;
+
+    promise = (async () => {
+      const {id: keyId, kmsClient, capability, invocationSigner} = this;
+      return kmsClient.sign(
+        {keyId, data, capability, invocationSigner});
+    })();
+
+    this._requests.set(cacheKey, promise);
+
+    try {
+      const signature = await promise;
+      if(useCache) {
+        this.cache.set(cacheKey, signature);
+      }
+      return signature;
+    } finally {
+      this._requests.delete(cacheKey);
+    }
   }
 
   /**
@@ -88,19 +106,36 @@ export class Hmac {
    * @returns {Promise<boolean>} `true` if verified, `false` if not.
    */
   async verify({data, signature, useCache = true}) {
-    const cacheKey = `verify-${base64url.encode(data)}`
+    const cacheKey = `verify-${base64url.encode(data)}`;
     if(useCache) {
       const verifiedSignature = this.cache.get(cacheKey);
       if(verifiedSignature) {
         return signature === verifiedSignature;
       }
     }
-    const {id: keyId, kmsClient, capability, invocationSigner} = this;
-    const verified = await kmsClient.verify(
-      {keyId, data, signature, capability, invocationSigner});
-    if(useCache && verified) {
-      this.cache.set(cacheKey, signature);
+
+    let promise = this._requests.get(cacheKey);
+
+    if(promise) {
+      return promise;
     }
-    return verified;
+
+    promise = (async () => {
+      const {id: keyId, kmsClient, capability, invocationSigner} = this;
+      return kmsClient.verify(
+        {keyId, data, signature, capability, invocationSigner});
+    })();
+
+    this._requests.set(cacheKey, promise);
+
+    try {
+      const verified = await promise;
+      if(useCache && verified) {
+        this.cache.set(cacheKey, signature);
+      }
+      return verified;
+    } finally {
+      this._requests.delete(cacheKey);
+    }
   }
 }
