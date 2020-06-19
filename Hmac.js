@@ -120,7 +120,7 @@ export class Hmac {
 
     const {id: keyId, kmsClient, capability, invocationSigner} = this;
     promise = kmsClient.verify(
-        {keyId, data, signature, capability, invocationSigner});
+      {keyId, data, signature, capability, invocationSigner});
 
     this.cache.set(requestCacheKey, promise);
 
