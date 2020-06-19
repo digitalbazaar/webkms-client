@@ -84,7 +84,7 @@ export class Hmac {
       }
       return signature;
     } finally {
-      this.cache.delete(requestCacheKey);
+      this.cache.del(requestCacheKey);
     }
   }
 
@@ -131,7 +131,7 @@ export class Hmac {
       }
       return verified;
     } finally {
-      this.cache.delete(requestCacheKey);
+      this.cache.del(requestCacheKey);
     }
   }
 }
