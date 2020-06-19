@@ -1,6 +1,10 @@
 # webkms-client
 A JavaScript WebKMS client library
 
+# Spec Reference
+
+[W3C CCG Latest Draft](https://w3c-ccg.github.io/webkms/)
+
 # API Reference
 ## Modules
 
