@@ -57,19 +57,20 @@ export class Hmac {
    * @returns {Promise<string>} The base64url-encoded signature.
    */
   async sign({data, useCache = true}) {
+    const cacheKey = `sign-${base64url.encode(data)}`
     if(useCache) {
-      const sig = this.cache.get(base64url.encode(data));
-      if(sig) {
-        return sig;
+      const signature = this.cache.get(cacheKey);
+      if(signature) {
+        return signature;
       }
     }
     const {id: keyId, kmsClient, capability, invocationSigner} = this;
-    const sig = await kmsClient.sign(
+    const signature = await kmsClient.sign(
       {keyId, data, capability, invocationSigner});
     if(useCache) {
-      this.cache.set(base64url.encode(data), sig);
+      this.cache.set(cacheKey, signature);
     }
-    return sig;
+    return signature;
   }
 
   /**
@@ -87,18 +88,19 @@ export class Hmac {
    * @returns {Promise<boolean>} `true` if verified, `false` if not.
    */
   async verify({data, signature, useCache = true}) {
+    const cacheKey = `verify-${base64url.encode(data)}`
     if(useCache) {
-      const sig = this.cache.get(base64url.encode(data));
-      if(sig) {
-        return sig;
+      const verifiedSignature = this.cache.get(cacheKey);
+      if(verifiedSignature) {
+        return signature === verifiedSignature;
       }
     }
     const {id: keyId, kmsClient, capability, invocationSigner} = this;
-    const sig = await kmsClient.verify(
+    const verified = await kmsClient.verify(
       {keyId, data, signature, capability, invocationSigner});
-    if(useCache) {
-      this.cache.set(base64url.encode(data), sig);
+    if(useCache && verified) {
+      this.cache.set(cacheKey, signature);
     }
-    return sig;
+    return verified;
   }
 }
