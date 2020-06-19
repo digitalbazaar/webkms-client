@@ -1,5 +1,10 @@
 # webkms-client ChangeLog
 
+## 2.2.0 - 2020-06-19
+
+### Changed
+- Use `@digitialbazaar/http-client` in place of `axios` for HTTP requests.
+
 ## 2.1.0 - 2020-04-21
 
 ### Added
