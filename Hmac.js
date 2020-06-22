@@ -7,6 +7,7 @@ import base64url from 'base64url-universal';
 import LRU from 'lru-cache';
 import {KmsClient} from './KmsClient.js';
 
+const MAX_CACHE_AGE = 1000;
 const MAX_CACHE_SIZE = 100;
 const JOSE_ALGORITHM_MAP = {
   Sha256HmacKey2019: 'HS256'
@@ -33,7 +34,6 @@ export class Hmac {
     kmsClient = new KmsClient()
   }) {
     this.id = id;
-    this.cache = new LRU(MAX_CACHE_SIZE);
     this.type = type;
     this.algorithm = JOSE_ALGORITHM_MAP[type];
     if(!this.algorithm) {
@@ -42,6 +42,8 @@ export class Hmac {
     this.capability = capability;
     this.invocationSigner = invocationSigner;
     this.kmsClient = kmsClient;
+    this.cache = new LRU({max: MAX_CACHE_SIZE, maxAge: MAX_CACHE_AGE});
+    this._pruneCacheTimer = null;
   }
 
   /**
@@ -58,7 +60,6 @@ export class Hmac {
    */
   async sign({data, useCache = true}) {
     const cacheKey = `sign-${base64url.encode(data)}`;
-    const requestCacheKey = `request-${cacheKey}`;
     if(useCache) {
       const signature = this.cache.get(cacheKey);
       if(signature) {
@@ -66,25 +67,31 @@ export class Hmac {
       }
     }
 
-    let promise = this.cache.get(requestCacheKey);
-
-    if(promise) {
-      return promise;
-    }
-
     const {id: keyId, kmsClient, capability, invocationSigner} = this;
-    promise = kmsClient.sign({keyId, data, capability, invocationSigner});
+    const promise = kmsClient.sign({keyId, data, capability, invocationSigner});
 
-    this.cache.set(requestCacheKey, promise);
+    if(useCache) {
+      // 1. Set promise in cache
+      this.cache.set(cacheKey, promise);
+
+      // 2. Clear existing timer
+      if(this._pruneCacheTimer) {
+        clearTimeout(this._pruneCacheTimer);
+      }
+
+      // 3. Update timer to clear cache `MAX_CACHE_AGE` ms from "now"
+      this._pruneCacheTimer = setTimeout(() =>
+        this.cache.prune(), MAX_CACHE_AGE);
+    }
 
     try {
       const signature = await promise;
-      if(useCache) {
-        this.cache.set(cacheKey, signature);
-      }
       return signature;
-    } finally {
-      this.cache.del(requestCacheKey);
+    } catch(e) {
+      if(useCache) {
+        this.cache.del(cacheKey);
+      }
+      throw e;
     }
   }
 
@@ -104,34 +111,39 @@ export class Hmac {
    */
   async verify({data, signature, useCache = true}) {
     const cacheKey = `verify-${base64url.encode(data)}`;
-    const requestCacheKey = `request-${cacheKey}`;
     if(useCache) {
-      const verifiedSignature = this.cache.get(cacheKey);
-      if(verifiedSignature) {
-        return signature === verifiedSignature;
+      const verified = this.cache.get(cacheKey);
+      if(verified !== undefined) {
+        return verified;
       }
-    }
-
-    let promise = this.cache.get(requestCacheKey);
-
-    if(promise) {
-      return promise;
     }
 
     const {id: keyId, kmsClient, capability, invocationSigner} = this;
-    promise = kmsClient.verify(
+    const promise = kmsClient.verify(
       {keyId, data, signature, capability, invocationSigner});
 
-    this.cache.set(requestCacheKey, promise);
+    if(useCache) {
+      // 1. Set promise in cache
+      this.cache.set(cacheKey, promise);
+
+      // 2. Clear existing timer
+      if(this._pruneCacheTimer) {
+        clearTimeout(this._pruneCacheTimer);
+      }
+
+      // 3. Update timer to clear cache `MAX_CACHE_AGE` ms from "now"
+      this._pruneCacheTimer = setTimeout(() =>
+        this.cache.prune(), MAX_CACHE_AGE);
+    }
 
     try {
       const verified = await promise;
-      if(useCache && verified) {
-        this.cache.set(cacheKey, signature);
-      }
       return verified;
-    } finally {
-      this.cache.del(requestCacheKey);
+    } catch(e) {
+      if(useCache) {
+        this.cache.del(cacheKey);
+      }
+      throw e;
     }
   }
 }
