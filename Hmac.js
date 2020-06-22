@@ -54,7 +54,7 @@ export class Hmac {
    *
    * @param {object} options - The options to use.
    * @param {Uint8Array} options.data - The data to sign as a Uint8Array.
-   * @param {boolean} options.useCache - Enable the use of a cache.
+   * @param {boolean} [options.useCache=true] - Enable the use of a cache.
    *
    * @returns {Promise<string>} The base64url-encoded signature.
    */
@@ -74,14 +74,11 @@ export class Hmac {
       // 1. Set promise in cache
       this.cache.set(cacheKey, promise);
 
-      // 2. Clear existing timer
-      if(this._pruneCacheTimer) {
-        clearTimeout(this._pruneCacheTimer);
+      // 2. Schedule cache pruning if not already scheduled
+      if(!this._pruneCacheTimer) {
+        this._pruneCacheTimer = setTimeout(
+          () => this._pruneCache(), MAX_CACHE_AGE);
       }
-
-      // 3. Update timer to clear cache `MAX_CACHE_AGE` ms from "now"
-      this._pruneCacheTimer = setTimeout(() =>
-        this.cache.prune(), MAX_CACHE_AGE);
     }
 
     try {
@@ -105,7 +102,7 @@ export class Hmac {
    * @param {Uint8Array} options.data - The data to sign as a Uint8Array.
    * @param {string} options.signature - The base64url-encoded signature
    *   to verify.
-   * @param {boolean} options.useCache - Enable the use of a cache.
+   * @param {boolean} [options.useCache=true] - Enable the use of a cache.
    *
    * @returns {Promise<boolean>} `true` if verified, `false` if not.
    */
@@ -126,14 +123,11 @@ export class Hmac {
       // 1. Set promise in cache
       this.cache.set(cacheKey, promise);
 
-      // 2. Clear existing timer
-      if(this._pruneCacheTimer) {
-        clearTimeout(this._pruneCacheTimer);
+      // 2. Schedule cache pruning if not already scheduled
+      if(!this._pruneCacheTimer) {
+        this._pruneCacheTimer = setTimeout(
+          () => this._pruneCache(), MAX_CACHE_AGE);
       }
-
-      // 3. Update timer to clear cache `MAX_CACHE_AGE` ms from "now"
-      this._pruneCacheTimer = setTimeout(() =>
-        this.cache.prune(), MAX_CACHE_AGE);
     }
 
     try {
@@ -144,6 +138,18 @@ export class Hmac {
         this.cache.del(cacheKey);
       }
       throw e;
+    }
+  }
+
+  _pruneCache() {
+    this.cache.prune();
+    if(this.cache.length === 0) {
+      // cache is empty, do not schedule pruning
+      this._pruneCacheTimer = null;
+    } else {
+      // schedule another run
+      this._pruneCacheTimer = setTimeout(() =>
+        this._pruneCache(), MAX_CACHE_AGE);
     }
   }
 }
