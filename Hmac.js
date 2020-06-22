@@ -7,7 +7,7 @@ import base64url from 'base64url-universal';
 import LRU from 'lru-cache';
 import {KmsClient} from './KmsClient.js';
 
-const MAX_CACHE_AGE = 1000;
+const MAX_CACHE_AGE = 3000;
 const MAX_CACHE_SIZE = 100;
 const JOSE_ALGORITHM_MAP = {
   Sha256HmacKey2019: 'HS256'
