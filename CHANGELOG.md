@@ -1,5 +1,10 @@
 # webkms-client ChangeLog
 
+## 2.3.0 - 2020-06-24
+
+### Added
+- Add an LRU cache to improve performance for HMAC operations.
+
 ## 2.2.0 - 2020-06-19
 
 ### Changed
