@@ -1,5 +1,10 @@
 # webkms-client ChangeLog
 
+## 2.3.1 - 2020-08-14
+
+### Fixed
+- Fix searchParams option httpClient.get API call.
+
 ## 2.3.0 - 2020-06-24
 
 ### Added
