@@ -642,7 +642,7 @@ export class KmsClient {
     _assert(referenceId, 'referenceId', 'string');
     const result = await httpClient.get(url, {
       agent: httpsAgent,
-      params: {controller, referenceId},
+      searchParams: {controller, referenceId},
     });
     return result.data[0] || null;
   }
