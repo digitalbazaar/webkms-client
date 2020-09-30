@@ -15,4 +15,4 @@ module.exports = {
     window: true
   },
   ignorePatterns: ['dist/']
-}
+};
