@@ -1,5 +1,10 @@
 # webkms-client ChangeLog
 
+## 2.3.2 - 2020-09-30
+
+### Fixed
+- Move `crypto-ld` from devDependencies to dependencies.
+
 ## 2.3.1 - 2020-08-14
 
 ### Fixed
