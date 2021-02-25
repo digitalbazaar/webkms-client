@@ -51,7 +51,7 @@
     "eslint": "^7.10.0",
     "eslint-config-digitalbazaar": "^2.6.1",
     "eslint-plugin-jsdoc": "^30.6.2",
-    "karma": "^4.0.1",
+    "karma": "^6.1.1",
     "karma-babel-preprocessor": "^8.0.0",
     "karma-chai": "^0.1.0",
     "karma-chrome-launcher": "^2.2.0",
