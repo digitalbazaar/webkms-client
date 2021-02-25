@@ -24,6 +24,7 @@ export class AsymmetricKey {
    * @param {KmsClient} [options.kmsClient] - An optional KmsClient to use.
    * @param {object} [options.keyDescription] - An optional `keyDescription` to
    *   cache.
+   * @param {string} [options.type] - A type for the key instance.
    *
    * @returns {AsymmetricKey} The new AsymmetricKey instance.
    */

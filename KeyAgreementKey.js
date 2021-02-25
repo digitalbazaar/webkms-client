@@ -20,6 +20,7 @@ export class KeyAgreementKey {
    * @param {object} options.invocationSigner - An API for signing
    *   a capability invocation.
    * @param {KmsClient} [options.kmsClient] - An optional KmsClient to use.
+   * @param {string} [options.type] - A type for the key instance.
    *
    * @returns {KeyAgreementKey} The new AsymmetricKey instance.
    */
