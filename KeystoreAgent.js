@@ -196,6 +196,22 @@ export class KeystoreAgent {
     return new KeyAgreementKey(
       {id, kmsId, type, capability, invocationSigner, kmsClient});
   }
+
+  /**
+   * Update a keystore using the given configuration.
+   *
+   * @param {object} options - The options to use.
+   * @param {string} [options.capability=undefined] - The ZCAP authorization
+   *   capability to use to authorize the invocation of this operation.
+   * @param {string} options.config - The keystore's configuration.
+   *
+   * @returns {Promise<object>} Resolves to the new keystore configuration.
+   */
+  async updateConfig({capability, config}) {
+    const {capabilityAgent, kmsClient} = this;
+    const invocationSigner = capabilityAgent.getSigner();
+    return kmsClient.updateKeystore({capability, config, invocationSigner});
+  }
 }
 
 function _assertVersion(version) {

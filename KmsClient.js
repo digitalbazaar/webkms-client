@@ -29,7 +29,7 @@ export class KmsClient {
    */
   constructor({keystore, httpsAgent} = {}) {
     this.keystore = keystore;
-    this.httpsAgent = httpsAgent;
+    this.agent = httpsAgent;
   }
 
   /**
@@ -76,7 +76,7 @@ export class KmsClient {
         capabilityAction: 'generateKey'
       });
       // send request
-      const {httpsAgent: agent} = this;
+      const {agent} = this;
       const result = await httpClient.post(url, {
         agent, headers, json: operation
       });
@@ -124,7 +124,7 @@ export class KmsClient {
         capabilityAction: 'read'
       });
       // send request
-      const {httpsAgent: agent} = this;
+      const {agent} = this;
       const result = await httpClient.get(url, {agent, headers});
       return result.data;
     } catch(e) {
@@ -168,7 +168,7 @@ export class KmsClient {
         capabilityAction: 'write'
       });
       // send request
-      const {httpsAgent: agent} = this;
+      const {agent} = this;
       await httpClient.post(url, {agent, headers, json: capabilityToRevoke});
     } catch(e) {
       if(e.status === 409) {
@@ -223,7 +223,7 @@ export class KmsClient {
         capabilityAction: 'wrapKey'
       });
       // send request
-      const {httpsAgent: agent} = this;
+      const {agent} = this;
       const result = await httpClient.post(url, {
         agent, headers, json: operation
       });
@@ -282,7 +282,7 @@ export class KmsClient {
         capabilityAction: 'unwrapKey'
       });
       // send request
-      const {httpsAgent: agent} = this;
+      const {agent} = this;
       const result = await httpClient.post(url, {
         agent, headers, json: operation
       });
@@ -345,7 +345,7 @@ export class KmsClient {
         capabilityAction: 'sign'
       });
       // send request
-      const {httpsAgent: agent} = this;
+      const {agent} = this;
       const result = await httpClient.post(url, {
         agent, headers, json: operation
       });
@@ -409,7 +409,7 @@ export class KmsClient {
         capabilityAction: 'verify'
       });
       // send request
-      const {httpsAgent: agent} = this;
+      const {agent} = this;
       const result = await httpClient.post(url, {
         agent, headers, json: operation
       });
@@ -471,7 +471,7 @@ export class KmsClient {
         capabilityAction: 'deriveSecret'
       });
       // send request
-      const {httpsAgent: agent} = this;
+      const {agent} = this;
       const result = await httpClient.post(url, {
         agent, headers, json: operation
       });
@@ -518,7 +518,7 @@ export class KmsClient {
         capabilityAction: 'write'
       });
       // send request
-      const {httpsAgent: agent} = this;
+      const {agent} = this;
       await httpClient.post(url, {
         agent, headers, json: capabilityToEnable
       });
@@ -569,7 +569,7 @@ export class KmsClient {
         capabilityAction: 'write'
       });
       // send request
-      const {httpsAgent: agent} = this;
+      const {agent} = this;
       await httpClient.delete(url, {agent, headers});
     } catch(e) {
       if(e.status === 404) {
@@ -578,6 +578,48 @@ export class KmsClient {
       throw e;
     }
     return true;
+  }
+
+  /**
+   * Update a keystore using the given configuration.
+   *
+   * @alias webkms.updateKeystore
+   *
+   * @param {object} options - The options to use.
+   * @param {string} [options.capability=undefined] - The ZCAP authorization
+   *   capability to use to authorize the invocation of this operation.
+   * @param {string} options.config - The keystore's configuration.
+   * @param {object} options.invocationSigner - An API with an
+   *   `id` property and a `sign` function for signing a capability invocation.
+   *
+   * @returns {Promise<object>} Resolves to the new keystore configuration.
+   */
+  async updateKeystore({capability, config, invocationSigner}) {
+    const {keystore, agent} = this;
+    if(!(keystore || capability)) {
+      throw new TypeError(
+        '"capability" is required if "keystore" was not provided ' +
+        'to the KmsClient constructor.');
+    }
+    let url;
+    if(capability) {
+      url = KmsClient._getInvocationTarget({capability});
+    } else {
+      url = keystore;
+      capability = 'urn:zcap:root:' + encodeURIComponent(url);
+    }
+    const headers = await signCapabilityInvocation({
+      url, method: 'post',
+      headers: DEFAULT_HEADERS,
+      json: config,
+      capability,
+      invocationSigner,
+      capabilityAction: 'write'
+    });
+    // send request
+    const result = await httpClient.post(url, {agent, headers, json: config});
+
+    return result.data;
   }
 
   /**
