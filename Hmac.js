@@ -42,7 +42,11 @@ export class Hmac {
     this.capability = capability;
     this.invocationSigner = invocationSigner;
     this.kmsClient = kmsClient;
-    this.cache = new LRU({max: MAX_CACHE_SIZE, maxAge: MAX_CACHE_AGE});
+    this.cache = new LRU({
+      max: MAX_CACHE_SIZE,
+      maxAge: MAX_CACHE_AGE,
+      updateAgeOnGet: true
+    });
     this._pruneCacheTimer = null;
   }
 
