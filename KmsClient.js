@@ -17,12 +17,12 @@ export class KmsClient {
    * Creates a new KmsClient.
    *
    * @param {object} options - The options to use.
-   * @param {string} [options.keystore=undefined] - The ID of the keystore
+   * @param {string} [options.keystore] - The ID of the keystore
    *   that must be a URL that refers to the keystore's root storage
    *   location; if not given,
    *   then a separate capability must be given to each method called on the
    *   client instance.
-   * @param {object} [options.httpsAgent=undefined] - An optional
+   * @param {object} [options.httpsAgent] - An optional
    *   node.js `https.Agent` instance to use when making requests.
    *
    * @returns {KmsClient} The new instance.
@@ -40,7 +40,7 @@ export class KmsClient {
    * @param {object} options - The options to use.
    * @param {string} options.kmsModule - The KMS module to use.
    * @param {string} options.type - The key type (e.g. 'AesKeyWrappingKey2019').
-   * @param {string} [options.capability=undefined] - The OCAP-LD authorization
+   * @param {string} [options.capability] - The OCAP-LD authorization
    *   capability to use to authorize the invocation of this operation.
    * @param {object} options.invocationSigner - An API with an
    *   `id` property and a `sign` function for signing a capability invocation.
@@ -98,7 +98,7 @@ export class KmsClient {
    *
    * @param {object} options - The options to use.
    * @param {string} [options.keyId] - The ID of the key.
-   * @param {string} [options.capability=undefined] - The OCAP-LD authorization
+   * @param {string} [options.capability] - The OCAP-LD authorization
    *   capability to use to authorize the invocation of this operation.
    * @param {object} options.invocationSigner - An API with an
    *   `id` property and a `sign` function for signing a capability invocation.
@@ -144,7 +144,7 @@ export class KmsClient {
    *
    * @param {object} options - The options to use.
    * @param {object} options.capabilityToRevoke - The capability to revoke.
-   * @param {string} [options.capability=undefined] - The zcap authorization
+   * @param {string} [options.capability] - The zcap authorization
    *   capability to use to authorize the invocation of this operation.
    * @param {object} options.invocationSigner - An API with an
    *   `id` property and a `sign` function for signing a capability invocation.
@@ -189,7 +189,7 @@ export class KmsClient {
    * @param {string} options.kekId - The ID of the wrapping key to use.
    * @param {Uint8Array} options.unwrappedKey - The unwrapped key material as
    *   a Uint8Array.
-   * @param {string} [options.capability=undefined] - The OCAP-LD authorization
+   * @param {string} [options.capability] - The OCAP-LD authorization
    *   capability to use to authorize the invocation of this operation.
    * @param {object} options.invocationSigner - An API with an
    *   `id` property and a `sign` function for signing a capability invocation.
@@ -247,7 +247,7 @@ export class KmsClient {
    * @param {string} options.kekId - The ID of the unwrapping key to use.
    * @param {string} options.wrappedKey - The wrapped key material as a
    *   base64url-encoded string.
-   * @param {string} [options.capability=undefined] - The OCAP-LD authorization
+   * @param {string} [options.capability] - The OCAP-LD authorization
    *   capability to use to authorize the invocation of this operation.
    * @param {object} options.invocationSigner - An API with an
    *   `id` property and a `sign` function for signing a capability invocation.
@@ -311,7 +311,7 @@ export class KmsClient {
    * @param {object} options - The options to use.
    * @param {string} options.keyId - The ID of the signing key to use.
    * @param {Uint8Array} options.data - The data to sign as a Uint8Array.
-   * @param {string} [options.capability=undefined] - The OCAP-LD authorization
+   * @param {string} [options.capability] - The OCAP-LD authorization
    *   capability to use to authorize the invocation of this operation.
    * @param {object} options.invocationSigner - An API with an
    *   `id` property and a `sign` function for signing a capability invocation.
@@ -373,7 +373,7 @@ export class KmsClient {
    * @param {Uint8Array} options.data - The data to verify as a Uint8Array.
    * @param {string} options.signature - The base64url-encoded signature to
    *   verify.
-   * @param {string} [options.capability=undefined] - The OCAP-LD authorization
+   * @param {string} [options.capability] - The OCAP-LD authorization
    *   capability to use to authorize the invocation of this operation.
    * @param {object} options.invocationSigner - An API with an
    *   `id` property and a `sign` function for signing a capability invocation.
@@ -437,7 +437,7 @@ export class KmsClient {
    * @param {object} options.publicKey - The public key to compute the shared
    *   secret against; the public key type must match the key agreement key's
    *   type.
-   * @param {string} [options.capability=undefined] - The OCAP-LD authorization
+   * @param {string} [options.capability] - The OCAP-LD authorization
    *   capability to use to authorize the invocation of this operation.
    * @param {object} options.invocationSigner - An API with an
    *   `id` property and a `sign` function for signing a capability invocation.
@@ -494,7 +494,7 @@ export class KmsClient {
    *
    * @param {object} options - The options to use.
    * @param {object} options.capabilityToEnable - The capability to enable.
-   * @param {string} [options.capability=undefined] - The OCAP-LD authorization
+   * @param {string} [options.capability] - The OCAP-LD authorization
    *   capability to use to authorize the invocation of this operation.
    * @param {object} options.invocationSigner - An API with an
    *   `id` property and a `sign` function for signing a capability invocation.
@@ -540,7 +540,7 @@ export class KmsClient {
    *
    * @param {object} options - The options to use.
    * @param {object} options.id - The ID of the capability to revoke.
-   * @param {string} [options.capability=undefined] - The OCAP-LD authorization
+   * @param {string} [options.capability] - The OCAP-LD authorization
    *   capability to use to authorize the invocation of this operation.
    * @param {object} options.invocationSigner - An API with an
    *   `id` property and a `sign` function for signing a capability invocation.
@@ -586,7 +586,7 @@ export class KmsClient {
    * @alias webkms.updateKeystore
    *
    * @param {object} options - The options to use.
-   * @param {string} [options.capability=undefined] - The ZCAP authorization
+   * @param {string} [options.capability] - The ZCAP authorization
    *   capability to use to authorize the invocation of this operation.
    * @param {string} options.config - The keystore's configuration.
    * @param {object} options.invocationSigner - An API with an
@@ -630,7 +630,7 @@ export class KmsClient {
    * @param {object} options - The options to use.
    * @param {string} options.url - The url to post the configuration to.
    * @param {string} options.config - The keystore's configuration.
-   * @param {object} [options.httpsAgent=undefined] - An optional
+   * @param {object} [options.httpsAgent] - An optional
    *   node.js `https.Agent` instance to use when making requests.
    *
    * @returns {Promise<object>} Resolves to the configuration for the newly
@@ -653,7 +653,7 @@ export class KmsClient {
    *
    * @param {object} options - The options to use.
    * @param {string} options.id - The keystore's ID.
-   * @param {object} [options.httpsAgent=undefined] - An optional
+   * @param {object} [options.httpsAgent] - An optional
    *   node.js `https.Agent` instance to use when making requests.
    *
    * @returns {Promise<object>} Resolves to the configuration for the keystore.
@@ -673,7 +673,7 @@ export class KmsClient {
    * @param {string} [options.url] - The url to query.
    * @param {string} options.controller - The keystore's controller.
    * @param {string} options.referenceId - The keystore's reference ID.
-   * @param {object} [options.httpsAgent=undefined] - An optional
+   * @param {object} [options.httpsAgent] - An optional
    *   node.js `https.Agent` instance to use when making requests.
    *
    * @returns {Promise<object>} Resolves to the configuration for the keystore.
