@@ -1,9 +1,9 @@
 # webkms-client ChangeLog
 
-## 2.3.1 - 2021-02-xx
+## 2.4.0 - 2021-03-01
 
-### Fixed
-- Ensure HMAC cache is updated on `get`.
+### Changed
+- HMAC cache expiration is extended on `get`.
 
 ## 2.3.2 - 2020-09-30
 
