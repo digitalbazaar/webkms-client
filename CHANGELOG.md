@@ -1,6 +1,6 @@
 # webkms-client ChangeLog
 
-## 2.5.0 - TBD
+## 2.5.0 - 2021-03-02
 
 ### Added
 - Implement KmsClient.updateKeystore API.
