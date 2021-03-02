@@ -1,5 +1,11 @@
 # webkms-client ChangeLog
 
+## 3.0.0 - 2021-03-02
+
+### Changed
+- Use `http-signature-zcap-invoke@3`. Numerous breaking changes here related
+  to dates in the http-signature header.
+
 ## 2.5.0 - 2021-03-02
 
 ### Added
