@@ -54,12 +54,12 @@ module.exports = function(config) {
           */
         ]
       },
-      node: {
-        Buffer: false,
-        process: false,
-        crypto: false,
-        setImmediate: false
-      }
+      node: false,
+      resolve: {
+        fallback: {
+          url: false,
+        }
+      },
     },
 
     // test results reporter to use
