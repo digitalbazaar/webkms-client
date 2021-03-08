@@ -1,5 +1,11 @@
 # webkms-client ChangeLog
 
+## 3.1.0 - TBD
+
+### Added
+- Add optional `headers` parameter to the KmsClient constructor. This allows
+  additional headers to be included with KMS requests.
+
 ## 3.0.0 - 2021-03-02
 
 ### Changed
