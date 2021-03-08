@@ -22,14 +22,17 @@ export class KmsClient {
    *   location; if not given,
    *   then a separate capability must be given to each method called on the
    *   client instance.
-   * @param {object} [options.httpsAgent] - An optional
-   *   node.js `https.Agent` instance to use when making requests.
+   * @param {object} [options.httpsAgent] - A Node.js `https.Agent` instance
+   *   to use when making requests.
+   * @param {object} [options.defaultHeaders] - The HTTP headers to include
+   *   with every request.
    *
    * @returns {KmsClient} The new instance.
    */
-  constructor({keystore, httpsAgent} = {}) {
+  constructor({keystore, httpsAgent, defaultHeaders} = {}) {
     this.keystore = keystore;
     this.agent = httpsAgent;
+    this.defaultHeaders = {...DEFAULT_HEADERS, ...defaultHeaders};
   }
 
   /**
@@ -71,7 +74,7 @@ export class KmsClient {
     try {
       // sign HTTP header
       const headers = await signCapabilityInvocation({
-        url, method: 'post', headers: DEFAULT_HEADERS,
+        url, method: 'post', headers: this.defaultHeaders,
         json: operation, capability, invocationSigner,
         capabilityAction: 'generateKey'
       });
@@ -119,7 +122,7 @@ export class KmsClient {
     try {
       // sign HTTP header
       const headers = await signCapabilityInvocation({
-        url, method: 'get', headers: DEFAULT_HEADERS,
+        url, method: 'get', headers: this.defaultHeaders,
         capability, invocationSigner,
         capabilityAction: 'read'
       });
@@ -163,7 +166,7 @@ export class KmsClient {
     try {
       // sign HTTP header
       const headers = await signCapabilityInvocation({
-        url, method: 'post', headers: DEFAULT_HEADERS,
+        url, method: 'post', headers: this.defaultHeaders,
         json: capabilityToRevoke, capability, invocationSigner,
         capabilityAction: 'write'
       });
@@ -218,7 +221,7 @@ export class KmsClient {
     try {
       // sign HTTP header
       const headers = await signCapabilityInvocation({
-        url, method: 'post', headers: DEFAULT_HEADERS,
+        url, method: 'post', headers: this.defaultHeaders,
         json: operation, capability, invocationSigner,
         capabilityAction: 'wrapKey'
       });
@@ -277,7 +280,7 @@ export class KmsClient {
     try {
       // sign HTTP header
       const headers = await signCapabilityInvocation({
-        url, method: 'post', headers: DEFAULT_HEADERS,
+        url, method: 'post', headers: this.defaultHeaders,
         json: operation, capability, invocationSigner,
         capabilityAction: 'unwrapKey'
       });
@@ -340,7 +343,7 @@ export class KmsClient {
     try {
       // sign HTTP header
       const headers = await signCapabilityInvocation({
-        url, method: 'post', headers: DEFAULT_HEADERS,
+        url, method: 'post', headers: this.defaultHeaders,
         json: operation, capability, invocationSigner,
         capabilityAction: 'sign'
       });
@@ -404,7 +407,7 @@ export class KmsClient {
     try {
       // sign HTTP header
       const headers = await signCapabilityInvocation({
-        url, method: 'post', headers: DEFAULT_HEADERS,
+        url, method: 'post', headers: this.defaultHeaders,
         json: operation, capability, invocationSigner,
         capabilityAction: 'verify'
       });
@@ -466,7 +469,7 @@ export class KmsClient {
     try {
       // sign HTTP header
       const headers = await signCapabilityInvocation({
-        url, method: 'post', headers: DEFAULT_HEADERS,
+        url, method: 'post', headers: this.defaultHeaders,
         json: operation, capability, invocationSigner,
         capabilityAction: 'deriveSecret'
       });
@@ -513,7 +516,7 @@ export class KmsClient {
     try {
       // sign HTTP header
       const headers = await signCapabilityInvocation({
-        url, method: 'post', headers: DEFAULT_HEADERS,
+        url, method: 'post', headers: this.defaultHeaders,
         json: capabilityToEnable, capability, invocationSigner,
         capabilityAction: 'write'
       });
@@ -563,7 +566,7 @@ export class KmsClient {
     try {
       // sign HTTP header
       const headers = await signCapabilityInvocation({
-        url, method: 'delete', headers: DEFAULT_HEADERS,
+        url, method: 'delete', headers: this.defaultHeaders,
         capability, invocationSigner,
         // TODO: should `delete` be used here as a separate action?
         capabilityAction: 'write'
@@ -610,7 +613,7 @@ export class KmsClient {
     }
     const headers = await signCapabilityInvocation({
       url, method: 'post',
-      headers: DEFAULT_HEADERS,
+      headers: this.defaultHeaders,
       json: config,
       capability,
       invocationSigner,
