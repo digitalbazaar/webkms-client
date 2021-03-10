@@ -1,8 +1,6 @@
 /*!
  * Copyright (c) 2019-2021 Digital Bazaar, Inc. All rights reserved.
  */
-'use strict';
-
 import {AsymmetricKey} from './AsymmetricKey.js';
 import {Kek} from './Kek.js';
 import {KeyAgreementKey} from './KeyAgreementKey.js';
@@ -69,6 +67,9 @@ export class KeystoreAgent {
       Class = Kek;
     } else if(type === 'Ed25519VerificationKey2018') {
       type = 'Ed25519VerificationKey2018';
+      Class = AsymmetricKey;
+    } else if(type === 'Ed25519VerificationKey2020') {
+      type = 'Ed25519VerificationKey2020';
       Class = AsymmetricKey;
     } else if(type === 'keyAgreement' || type === 'X25519KeyAgreementKey2019') {
       type = 'X25519KeyAgreementKey2019';
