@@ -4,9 +4,12 @@
 import base64url from 'base64url-universal';
 import {httpClient, DEFAULT_HEADERS} from '@digitalbazaar/http-client';
 import {signCapabilityInvocation} from 'http-signature-zcap-invoke';
+import context2018 from 'ed25519-signature-2018-context';
+import context2020 from 'ed25519-signature-2020-context';
+import {SECURITY_CONTEXT_V2_URL} from 'jsonld-signatures';
 
-const SECURITY_CONTEXT_V2_URL = 'https://w3id.org/security/v2';
-
+const {constants: {CONTEXT_URL: CONTEXT_URL_2018}} = context2018;
+const {constants: {CONTEXT_URL: CONTEXT_URL_2020}} = context2020;
 /**
  * @class
  * @classdesc A WebKMS Client used to interface with a KMS.
@@ -55,13 +58,19 @@ export class KmsClient {
     _assert(type, 'type', 'string');
     _assert(invocationSigner, 'invocationSigner', 'object');
 
+    let contextUrl;
+    if(type === 'Ed25519VerificationKey2018') {
+      contextUrl = SECURITY_CONTEXT_V2_URL || CONTEXT_URL_2018;
+    } else if(type === 'Ed25519VerificationKey2020') {
+      contextUrl = CONTEXT_URL_2020;
+    }
+
     const operation = {
-      '@context': SECURITY_CONTEXT_V2_URL,
+      '@context': contextUrl,
       type: 'GenerateKeyOperation',
       invocationTarget: {type},
       kmsModule
     };
-
     // determine url from capability or use defaults
     let url;
     if(capability) {
@@ -326,8 +335,14 @@ export class KmsClient {
     _assert(data, 'data', 'Uint8Array');
     _assert(invocationSigner, 'invocationSigner', 'object');
 
+    let contextUrl;
+    if(invocationSigner.type === 'Ed25519VerificationKey2018') {
+      contextUrl = SECURITY_CONTEXT_V2_URL || CONTEXT_URL_2018;
+    } else if(invocationSigner.type === 'Ed25519VerificationKey2020') {
+      contextUrl = CONTEXT_URL_2020;
+    }
     const operation = {
-      '@context': SECURITY_CONTEXT_V2_URL,
+      '@context': contextUrl,
       type: 'SignOperation',
       invocationTarget: keyId,
       verifyData: base64url.encode(data)
