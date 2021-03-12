@@ -30,9 +30,9 @@
     "util.js"
   ],
   "dependencies": {
+    "@digitalbazaar/ed25519-verification-key-2020": "^1.0.0",
     "@digitalbazaar/http-client": "^1.0.0",
     "base64url-universal": "^1.1.0",
-    "crypto-ld": "^3.5.1",
     "esm": "^3.2.25",
     "http-signature-zcap-invoke": "^3.0.0",
     "isomorphic-webcrypto": "^2.3.2",
@@ -48,9 +48,9 @@
     "chai": "^4.2.0",
     "chai-bytes": "^0.1.2",
     "cross-env": "^5.2.0",
-    "eslint": "^7.10.0",
+    "eslint": "^7.21.0",
     "eslint-config-digitalbazaar": "^2.6.1",
-    "eslint-plugin-jsdoc": "^30.6.2",
+    "eslint-plugin-jsdoc": "^32.2.0",
     "karma": "^6.1.1",
     "karma-babel-preprocessor": "^8.0.0",
     "karma-chai": "^0.1.0",

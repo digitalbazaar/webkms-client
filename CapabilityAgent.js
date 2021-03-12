@@ -4,8 +4,8 @@
 'use strict';
 
 import crypto from './crypto.js';
-import cryptoLd from 'crypto-ld';
-const {Ed25519KeyPair} = cryptoLd;
+import {Ed25519VerificationKey2020} from
+  '@digitalbazaar/ed25519-verification-key-2020';
 import {SeedCache} from './SeedCache.js';
 import {TextDecoder, TextEncoder} from './util.js';
 
@@ -199,7 +199,7 @@ async function _keyFromSeedAndName({seed, keyName}) {
     await crypto.subtle.sign(hmacKey.algorithm, hmacKey, nameBuffer));
 
   // generate Ed25519 key from HMAC signature
-  const keyPair = await Ed25519KeyPair.generate({seed: signature});
+  const keyPair = await Ed25519VerificationKey2020.generate({seed: signature});
 
   // create key and specify ID for key using fingerprint
   const signer = keyPair.signer();
