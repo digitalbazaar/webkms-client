@@ -36,7 +36,7 @@ export class CapabilityAgent {
    *   create the key.
    * @param {object} options.signer - An API with an `id` property, a
    *   `type` property, and a `sign` function.
-   * @param {object} options.keyPair - The underlying key pair.
+   * @param {Ed25519VerificationKey2020} options.keyPair - Underlying key pair.
    *
    * @returns {CapabilityAgent} The new instance.
    */
