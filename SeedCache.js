@@ -1,8 +1,6 @@
 /*!
  * Copyright (c) 2019-2021 Digital Bazaar, Inc. All rights reserved.
  */
-'use strict';
-
 import base64url from 'base64url-universal';
 
 const SEED_CACHE_KEY = 'webkms-seed-cache';
