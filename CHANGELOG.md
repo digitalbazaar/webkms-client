@@ -3,10 +3,12 @@
 ## 4.0.0 -
 
 ### Changed
-- **BREAKING**: Update to use `crypto-ld v4` and to use
-  `Ed25519VerificationKey2020` key type for invocation signing.
+- **BREAKING**: Switch from using `Ed25519VerificationKey2018` key types
+  to `Ed25519VerificationKey2020` for capability signing, as well as update to 
+  use `crypto-ld v4`.
   See [`crypto-ld v4`](https://github.com/digitalbazaar/crypto-ld/blob/master/CHANGELOG.md#400---2020-08-01)
   changelog.
+- **BREAKING**: Dropping support for Node 10 (it's moving out of LTS).
 
 ## 3.1.0 - 2021-03-08
 
