@@ -1,8 +1,6 @@
 /*!
  * Copyright (c) 2019-2021 Digital Bazaar, Inc. All rights reserved.
  */
-'use strict';
-
 import {AsymmetricKey} from './AsymmetricKey.js';
 import {Kek} from './Kek.js';
 import {KeyAgreementKey} from './KeyAgreementKey.js';
