@@ -4,11 +4,14 @@
 
 ### Changed
 - **BREAKING**: Switch from using `Ed25519VerificationKey2018` key types
-  to `Ed25519VerificationKey2020` for capability signing, as well as update to 
-  use `crypto-ld v4`.
+  to `Ed25519VerificationKey2020` for capability signing.
   See [`crypto-ld v4`](https://github.com/digitalbazaar/crypto-ld/blob/master/CHANGELOG.md#400---2020-08-01)
   changelog.
-- **BREAKING**: Dropping support for Node 10 (it's moving out of LTS).
+  See also instructions on 
+  [converting and upgrading from Ed25519VerificationKey2018](https://github.com/digitalbazaar/ed25519-verification-key-2020#converting-from-previous-ed25519verificationkey2018-key-type)
+- Remove `crypto-ld` as a dependency (it's still used by individual key suites).
+- **BREAKING**: Drop support for Node 10 (it's moving out of LTS).
+  
 
 ## 3.1.0 - 2021-03-08
 
