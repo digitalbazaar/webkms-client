@@ -30,7 +30,7 @@
     "util.js"
   ],
   "dependencies": {
-    "@digitalbazaar/ed25519-verification-key-2020": "^1.0.0",
+    "@digitalbazaar/ed25519-verification-key-2020": "^2.0.0",
     "@digitalbazaar/http-client": "^1.0.0",
     "base64url-universal": "^1.1.0",
     "esm": "^3.2.25",
@@ -47,7 +47,7 @@
     "babel-loader": "^8.0.5",
     "chai": "^4.2.0",
     "chai-bytes": "^0.1.2",
-    "cross-env": "^5.2.0",
+    "cross-env": "^7.0.3",
     "eslint": "^7.21.0",
     "eslint-config-digitalbazaar": "^2.6.1",
     "eslint-plugin-jsdoc": "^32.2.0",
