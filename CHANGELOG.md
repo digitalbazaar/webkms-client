@@ -1,6 +1,6 @@
 # webkms-client ChangeLog
 
-## 4.0.0 -
+## 4.0.0 - 2021-03-17
 
 ### Changed
 - **BREAKING**: Switch from using `Ed25519VerificationKey2018` key types
@@ -11,7 +11,6 @@
   [converting and upgrading from Ed25519VerificationKey2018](https://github.com/digitalbazaar/ed25519-verification-key-2020#converting-from-previous-ed25519verificationkey2018-key-type)
 - Remove `crypto-ld` as a dependency (it's still used by individual key suites).
 - **BREAKING**: Drop support for Node 10 (it's moving out of LTS).
-  
 
 ## 3.1.0 - 2021-03-08
 
