@@ -1,5 +1,14 @@
 # webkms-client ChangeLog
 
+## 5.0.0 -
+
+### Changed
+- **BREAKING**: Rename NPM package from `webkms-client` to 
+  `@digitalbazaar/webkms-client`.
+- Add support for multiple asymmetric key types (`Ed25519VerificationKey2018`,
+  `Ed25519VerificationKey2020`, `X25519KeyAgreementKey2019`, `X25519KeyAgreementKey2020`)
+  via `crypto-ld`.
+
 ## 4.0.0 - 2021-03-17
 
 ### Changed
