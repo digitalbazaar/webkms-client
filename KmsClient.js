@@ -4,9 +4,10 @@
 import base64url from 'base64url-universal';
 import {httpClient, DEFAULT_HEADERS} from '@digitalbazaar/http-client';
 import {signCapabilityInvocation} from 'http-signature-zcap-invoke';
-import {SECURITY_CONTEXT_V2_URL} from 'jsonld-signatures';
-
+import * as sec from 'security-context';
 import {cryptoLd} from './cryptoLd.js';
+const securityContext = sec.constants.SECURITY_CONTEXT_V2_URL;
+
 /**
  * @class
  * @classdesc A WebKMS Client used to interface with a KMS.
@@ -208,7 +209,7 @@ export class KmsClient {
     _assert(invocationSigner, 'invocationSigner', 'object');
 
     const operation = {
-      '@context': SECURITY_CONTEXT_V2_URL,
+      '@context': securityContext,
       type: 'WrapKeyOperation',
       invocationTarget: kekId,
       unwrappedKey: base64url.encode(unwrappedKey)
@@ -267,7 +268,7 @@ export class KmsClient {
     _assert(invocationSigner, 'invocationSigner', 'object');
 
     const operation = {
-      '@context': SECURITY_CONTEXT_V2_URL,
+      '@context': securityContext,
       type: 'UnwrapKeyOperation',
       invocationTarget: kekId,
       wrappedKey
@@ -396,7 +397,7 @@ export class KmsClient {
     _assert(invocationSigner, 'invocationSigner', 'object');
 
     const operation = {
-      '@context': SECURITY_CONTEXT_V2_URL,
+      '@context': securityContext,
       type: 'VerifyOperation',
       invocationTarget: keyId,
       verifyData: base64url.encode(data),
@@ -459,7 +460,7 @@ export class KmsClient {
     _assert(invocationSigner, 'invocationSigner', 'object');
 
     const operation = {
-      '@context': SECURITY_CONTEXT_V2_URL,
+      '@context': securityContext,
       type: 'DeriveSecretOperation',
       invocationTarget: keyId,
       publicKey
