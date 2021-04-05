@@ -32,18 +32,18 @@
   "dependencies": {
     "@digitalbazaar/ed25519-verification-key-2018": "^3.1.0",
     "@digitalbazaar/ed25519-verification-key-2020": "^2.1.0",
+    "@digitalbazaar/http-client": "^1.0.0",
     "@digitalbazaar/x25519-key-agreement-key-2019": "^5.1.0",
     "@digitalbazaar/x25519-key-agreement-key-2020": "^1.2.0",
-    "@digitalbazaar/http-client": "^1.0.0",
     "base64url-universal": "^1.1.0",
     "crypto-ld": "^5.1.0",
-    "esm": "^3.2.25",
     "ed25519-signature-2018-context": "^1.0.1",
     "ed25519-signature-2020-context": "^1.0.1",
+    "esm": "^3.2.25",
     "http-signature-zcap-invoke": "^3.0.0",
     "isomorphic-webcrypto": "^2.3.2",
-    "jsonld-signatures": "^8.0.2",
-    "lru-cache": "^6.0.0"
+    "lru-cache": "^6.0.0",
+    "security-context": "^4.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.13.8",
