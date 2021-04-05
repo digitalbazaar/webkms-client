@@ -15,7 +15,7 @@ export class AsymmetricKey {
    *   case pass `kmsId` as well.
    * @param {string} [options.kmsId=options.id] - The private key ID used to
    *   identify the key with the KMS.
-   * @param {object} [options.capability] - The OCAP-LD authorization
+   * @param {object} [options.capability] - The zCAP-LD authorization
    *   capability to use to authorize the invocation of KmsClient methods.
    * @param {object} options.invocationSigner - An API for signing
    *   a capability invocation.

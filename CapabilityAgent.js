@@ -2,22 +2,11 @@
  * Copyright (c) 2019-2021 Digital Bazaar, Inc. All rights reserved.
  */
 import crypto from './crypto.js';
-import {CryptoLD} from 'crypto-ld';
-import {Ed25519VerificationKey2020} from
-  '@digitalbazaar/ed25519-verification-key-2020';
 import {SeedCache} from './SeedCache.js';
 import {TextDecoder, TextEncoder} from './util.js';
-import {
-  Ed25519VerificationKey2018
-} from '@digitalbazaar/ed25519-verification-key-2018';
-import {
-  Ed25519VerificationKey2020
-} from '@digitalbazaar/ed25519-verification-key-2020';
-import {X25519KeyPair} from 'x25519-key-pair';
-const cryptoLd = new CryptoLD();
-cryptoLd.use(Ed25519VerificationKey2018);
-cryptoLd.use(Ed25519VerificationKey2020);
-cryptoLd.use(X25519KeyPair);
+
+import {cryptoLd} from './cryptoLd.js';
+
 const _seedCache = new SeedCache();
 
 export class CapabilityAgent {

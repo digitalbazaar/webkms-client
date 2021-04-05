@@ -43,6 +43,9 @@ export class KeystoreAgent {
    * generated using a FIPS-compliant algorithm or the latest recommended
    * algorithm.
    *
+   * @example
+   * await generateKey({type: 'keyAgreement'})
+   *
    * @param {object} options - The options to use.
    * @param {string} options.type - The type of key to create (`hmac` or `kek`).
    * @param {string} options.kmsModule - The name of the KMS module to use to
@@ -71,8 +74,9 @@ export class KeystoreAgent {
     } else if(type === 'Ed25519VerificationKey2020') {
       type = 'Ed25519VerificationKey2020';
       Class = AsymmetricKey;
-    } else if(type === 'keyAgreement' || type === 'X25519KeyAgreementKey2019') {
-      type = 'X25519KeyAgreementKey2019';
+    } else if(type === 'keyAgreement' || type === 'X25519KeyAgreementKey2019' ||
+              type === 'X25519KeyAgreementKey2020') {
+      type = 'X25519KeyAgreementKey2020';
       Class = KeyAgreementKey;
     } else {
       throw new Error(`Unknown key type "${type}".`);
@@ -155,7 +159,7 @@ export class KeystoreAgent {
    * @param {string} [options.kmsId=options.id] - The private ID of this key
    *   with the KMS.
    * @param {string} options.type - The type of key
-   *   (e.g. `Ed25519VerificationKey2018`).
+   *   (e.g. `Ed25519VerificationKey2020`).
    * @param {object} [options.capability] - The OCAP-LD authorization
    *   capability to use to authorize the invocation of the operations.
    *
@@ -185,7 +189,7 @@ export class KeystoreAgent {
    * @param {string} [options.kmsId=options.id] - The private ID of this key
    *   with the KMS.
    * @param {string} options.type - The type of key
-   *   (e.g. `X25519KeyAgreementKey2019`).
+   *   (e.g. `X25519KeyAgreementKey2020`).
    * @param {object} [options.capability] - The OCAP-LD authorization
    *   capability to use to authorize the invocation of the operations.
    *

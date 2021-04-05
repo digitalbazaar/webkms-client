@@ -4,12 +4,9 @@
 import base64url from 'base64url-universal';
 import {httpClient, DEFAULT_HEADERS} from '@digitalbazaar/http-client';
 import {signCapabilityInvocation} from 'http-signature-zcap-invoke';
-import context2018 from 'ed25519-signature-2018-context';
-import context2020 from 'ed25519-signature-2020-context';
 import {SECURITY_CONTEXT_V2_URL} from 'jsonld-signatures';
 
-const {constants: {CONTEXT_URL: CONTEXT_URL_2018}} = context2018;
-const {constants: {CONTEXT_URL: CONTEXT_URL_2020}} = context2020;
+import {cryptoLd} from './cryptoLd.js';
 /**
  * @class
  * @classdesc A WebKMS Client used to interface with a KMS.
@@ -45,8 +42,9 @@ export class KmsClient {
    *
    * @param {object} options - The options to use.
    * @param {string} options.kmsModule - The KMS module to use.
-   * @param {string} options.type - The key type (e.g. 'AesKeyWrappingKey2019').
-   * @param {string} [options.capability] - The OCAP-LD authorization
+   * @param {string} options.type - The key type (e.g. 'AesKeyWrappingKey2019',
+   *   or 'Ed25519VerificationKey2020').
+   * @param {string} [options.capability] - The zCAP-LD authorization
    *   capability to use to authorize the invocation of this operation.
    * @param {object} options.invocationSigner - An API with an
    *   `id` property and a `sign` function for signing a capability invocation.
@@ -58,12 +56,8 @@ export class KmsClient {
     _assert(type, 'type', 'string');
     _assert(invocationSigner, 'invocationSigner', 'object');
 
-    let contextUrl;
-    if(type === 'Ed25519VerificationKey2018') {
-      contextUrl = SECURITY_CONTEXT_V2_URL || CONTEXT_URL_2018;
-    } else if(type === 'Ed25519VerificationKey2020') {
-      contextUrl = CONTEXT_URL_2020;
-    }
+    const keySuite = cryptoLd.suites.get(type);
+    const contextUrl = keySuite.CONTEXT_URL;
 
     const operation = {
       '@context': contextUrl,
@@ -335,12 +329,9 @@ export class KmsClient {
     _assert(data, 'data', 'Uint8Array');
     _assert(invocationSigner, 'invocationSigner', 'object');
 
-    let contextUrl;
-    if(invocationSigner.type === 'Ed25519VerificationKey2018') {
-      contextUrl = SECURITY_CONTEXT_V2_URL || CONTEXT_URL_2018;
-    } else if(invocationSigner.type === 'Ed25519VerificationKey2020') {
-      contextUrl = CONTEXT_URL_2020;
-    }
+    const keySuite = cryptoLd.suites.get(invocationSigner.type);
+    const contextUrl = keySuite.CONTEXT_URL;
+
     const operation = {
       '@context': contextUrl,
       type: 'SignOperation',

@@ -1,12 +1,55 @@
-# webkms-client
-A JavaScript WebKMS client library
+# WebKMS Client _(@digitalbazaar/webkms-client)_
 
-# Spec Reference
+[![Build status](https://img.shields.io/github/workflow/status/digitalbazaar/webkms-client/Node.js%20CI)](https://github.com/digitalbazaar/webkms-client/actions?query=workflow%3A%22Node.js+CI%22)
+[![Coverage status](https://img.shields.io/codecov/c/github/digitalbazaar/webkms-client)](https://codecov.io/gh/digitalbazaar/webkms-client)
+[![NPM Version](https://img.shields.io/npm/v/@digitalbazaar/webkms-client.svg)](https://npm.im/@digitalbazaar/webkms-client)
 
-[W3C CCG Latest Draft](https://w3c-ccg.github.io/webkms/)
+> A JavaScript WebKMS client library.
 
-# API Reference
-## Modules
+## Table of Contents
+
+- [Background](#background)
+- [Security](#security)
+- [Install](#install)
+- [Usage](#usage)
+- [Contribute](#contribute)
+- [Commercial Support](#commercial-support)
+- [License](#license)
+
+## Background
+
+See also related specs:
+
+* [W3C CCG Latest Draft](https://w3c-ccg.github.io/webkms/)
+
+## Security
+
+TBD
+
+## Install
+
+- Node.js 12+ is required.
+
+### NPM
+
+To install via NPM:
+
+```
+npm install --save @digitalbazaar/webkms-client
+```
+
+### Development
+
+To install locally (for development):
+
+```
+git clone https://github.com/digitalbazaar/webkms-client.git
+cd webkms-client
+npm install
+```
+
+## Usage
+### Modules
 
 <dl>
 <dt><a href="#module_webkms">webkms</a></dt>
@@ -14,7 +57,7 @@ A JavaScript WebKMS client library
 </dd>
 </dl>
 
-## Functions
+### Functions
 
 <dl>
 <dt><a href="#webkms_generateKey">webkms:generateKey(options)</a> ⇒ <code>Promise.&lt;object&gt;</code></dt>
@@ -71,7 +114,7 @@ it from being invoked by its designated invoker.</p>
 
 <a name="module_webkms"></a>
 
-## webkms
+### webkms
 WebKMS client for Javascript.
 
 
@@ -100,7 +143,7 @@ Creates a new KmsClient.
 
 <a name="webkms_generateKey"></a>
 
-## webkms:generateKey(options) ⇒ <code>Promise.&lt;object&gt;</code>
+### webkms:generateKey(options) ⇒ <code>Promise.&lt;object&gt;</code>
 Generates a new cryptographic key in the keystore.
 
 **Kind**: global function  
@@ -116,7 +159,7 @@ Generates a new cryptographic key in the keystore.
 
 <a name="webkms_getKeyDescription"></a>
 
-## webkms:getKeyDescription(options) ⇒ <code>Promise.&lt;object&gt;</code>
+### webkms:getKeyDescription(options) ⇒ <code>Promise.&lt;object&gt;</code>
 Gets the key description for the given key ID.
 
 **Kind**: global function  
@@ -131,7 +174,7 @@ Gets the key description for the given key ID.
 
 <a name="webkms_revokeCapability"></a>
 
-## webkms:revokeCapability(options) ⇒ <code>Promise.&lt;object&gt;</code>
+### webkms:revokeCapability(options) ⇒ <code>Promise.&lt;object&gt;</code>
 Store a capability revocation.
 
 **Kind**: global function  
@@ -146,7 +189,7 @@ Store a capability revocation.
 
 <a name="webkms_wrapKey"></a>
 
-## webkms:wrapKey(options) ⇒ <code>Promise.&lt;string&gt;</code>
+### webkms:wrapKey(options) ⇒ <code>Promise.&lt;string&gt;</code>
 Wraps a cryptographic key using a key encryption key (KEK).
 
 **Kind**: global function  
@@ -162,7 +205,7 @@ Wraps a cryptographic key using a key encryption key (KEK).
 
 <a name="webkms_unwrapKey"></a>
 
-## webkms:unwrapKey(options) ⇒ <code>Promise.&lt;(Uint8Array\|null)&gt;</code>
+### webkms:unwrapKey(options) ⇒ <code>Promise.&lt;(Uint8Array\|null)&gt;</code>
 Unwraps a cryptographic key using a key encryption key (KEK).
 
 **Kind**: global function  
@@ -179,7 +222,7 @@ Unwraps a cryptographic key using a key encryption key (KEK).
 
 <a name="webkms_sign"></a>
 
-## webkms:sign(options) ⇒ <code>Promise.&lt;string&gt;</code>
+### webkms:sign(options) ⇒ <code>Promise.&lt;string&gt;</code>
 Signs some data. Note that the data will be sent to the server, so if
 this data is intended to be secret it should be hashed first. However,
 hashing the data first may present interoperability issues so choose
@@ -198,7 +241,7 @@ wisely.
 
 <a name="webkms_verify"></a>
 
-## webkms:verify(options) ⇒ <code>Promise.&lt;boolean&gt;</code>
+### webkms:verify(options) ⇒ <code>Promise.&lt;boolean&gt;</code>
 Verifies some data. Note that the data will be sent to the server, so if
 this data is intended to be secret it should be hashed first. However,
 hashing the data first may present interoperability issues so choose
@@ -218,7 +261,7 @@ wisely.
 
 <a name="webkms_deriveSecret"></a>
 
-## webkms:deriveSecret(options) ⇒ <code>Promise.&lt;Uint8Array&gt;</code>
+### webkms:deriveSecret(options) ⇒ <code>Promise.&lt;Uint8Array&gt;</code>
 Derives a shared secret via the given peer public key, typically for use
 as one parameter for computing a shared key. It should not be used as
 a shared key itself, but rather input into a key derivation function (KDF)
@@ -237,7 +280,7 @@ to produce a shared key.
 
 <a name="webkms_enableCapability"></a>
 
-## webkms:enableCapability(options) ⇒ <code>Promise.&lt;object&gt;</code>
+### webkms:enableCapability(options) ⇒ <code>Promise.&lt;object&gt;</code>
 Stores a delegated authorization capability, enabling it to be invoked by
 its designated invoker.
 
@@ -253,7 +296,7 @@ its designated invoker.
 
 <a name="webkms_disableCapability"></a>
 
-## webkms:disableCapability(options) ⇒ <code>Promise.&lt;boolean&gt;</code>
+### webkms:disableCapability(options) ⇒ <code>Promise.&lt;boolean&gt;</code>
 Removes a previously stored delegated authorization capability, preventing
 it from being invoked by its designated invoker.
 
@@ -270,7 +313,7 @@ it from being invoked by its designated invoker.
 
 <a name="webkms_createKeystore"></a>
 
-## webkms:createKeystore(options) ⇒ <code>Promise.&lt;object&gt;</code>
+### webkms:createKeystore(options) ⇒ <code>Promise.&lt;object&gt;</code>
 Creates a new keystore using the given configuration.
 
 **Kind**: global function  
@@ -286,7 +329,7 @@ Creates a new keystore using the given configuration.
 
 <a name="webkms_getKeystore"></a>
 
-## webkms:getKeystore(options) ⇒ <code>Promise.&lt;object&gt;</code>
+### webkms:getKeystore(options) ⇒ <code>Promise.&lt;object&gt;</code>
 Gets the configuration for a keystore by its ID.
 
 **Kind**: global function  
@@ -300,7 +343,7 @@ Gets the configuration for a keystore by its ID.
 
 <a name="webkms_findKeystore"></a>
 
-## webkms:findKeystore(options) ⇒ <code>Promise.&lt;object&gt;</code>
+### webkms:findKeystore(options) ⇒ <code>Promise.&lt;object&gt;</code>
 Finds the configuration for a keystore by its controller and reference ID.
 
 **Kind**: global function  
@@ -314,3 +357,20 @@ Finds the configuration for a keystore by its controller and reference ID.
 | options.referenceId | <code>string</code> | The keystore's reference ID. |
 | [options.httpsAgent] | <code>object</code> | An optional   node.js `https.Agent` instance to use when making requests. |
 
+## Contribute
+
+See [the contribute file](https://github.com/digitalbazaar/bedrock/blob/master/CONTRIBUTING.md)!
+
+PRs accepted.
+
+If editing the Readme, please conform to the
+[standard-readme](https://github.com/RichardLitt/standard-readme) specification.
+
+## Commercial Support
+
+Commercial support for this library is available upon request from
+Digital Bazaar: support@digitalbazaar.com
+
+## License
+
+[New BSD License (3-clause)](LICENSE) © Digital Bazaar
