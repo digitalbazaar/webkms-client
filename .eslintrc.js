@@ -5,14 +5,11 @@ module.exports = {
     'eslint-config-digitalbazaar/jsdoc'
   ],
   env: {
-    node: true
+    node: true,
+    browser: true
   },
-  globals: {
-    CryptoKey: true,
-    TextDecoder: true,
-    TextEncoder: true,
-    Uint8Array: true,
-    window: true
-  },
-  ignorePatterns: ['dist/']
+  ignorePatterns: ['dist/'],
+  rules: {
+    'jsdoc/check-examples': 'off'
+  }
 };
