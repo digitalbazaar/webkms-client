@@ -6,7 +6,7 @@ import {httpClient, DEFAULT_HEADERS} from '@digitalbazaar/http-client';
 import {signCapabilityInvocation} from 'http-signature-zcap-invoke';
 import * as sec from 'security-context';
 import {cryptoLd} from './cryptoLd.js';
-const securityContext = sec.constants.SECURITY_CONTEXT_V2_URL;
+const securityContextUrl = sec.constants.SECURITY_CONTEXT_V2_URL;
 
 /**
  * @class
@@ -209,7 +209,7 @@ export class KmsClient {
     _assert(invocationSigner, 'invocationSigner', 'object');
 
     const operation = {
-      '@context': securityContext,
+      '@context': securityContextUrl,
       type: 'WrapKeyOperation',
       invocationTarget: kekId,
       unwrappedKey: base64url.encode(unwrappedKey)
@@ -268,7 +268,7 @@ export class KmsClient {
     _assert(invocationSigner, 'invocationSigner', 'object');
 
     const operation = {
-      '@context': securityContext,
+      '@context': securityContextUrl,
       type: 'UnwrapKeyOperation',
       invocationTarget: kekId,
       wrappedKey
@@ -397,7 +397,7 @@ export class KmsClient {
     _assert(invocationSigner, 'invocationSigner', 'object');
 
     const operation = {
-      '@context': securityContext,
+      '@context': securityContextUrl,
       type: 'VerifyOperation',
       invocationTarget: keyId,
       verifyData: base64url.encode(data),
@@ -460,7 +460,7 @@ export class KmsClient {
     _assert(invocationSigner, 'invocationSigner', 'object');
 
     const operation = {
-      '@context': securityContext,
+      '@context': securityContextUrl,
       type: 'DeriveSecretOperation',
       invocationTarget: keyId,
       publicKey

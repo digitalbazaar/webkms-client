@@ -75,7 +75,7 @@ export class KeystoreAgent {
       type = 'Ed25519VerificationKey2020';
       Class = AsymmetricKey;
     } else if(type === 'keyAgreement' || type === 'X25519KeyAgreementKey2019' ||
-              type === 'X25519KeyAgreementKey2020') {
+      type === 'X25519KeyAgreementKey2020') {
       type = 'X25519KeyAgreementKey2020';
       Class = KeyAgreementKey;
     } else {
