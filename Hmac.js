@@ -18,7 +18,7 @@ export class Hmac {
    * @param {object} options - The options to use.
    * @param {string} options.id - The ID for the hmac key.
    * @param {string} options.type - The type for the hmac.
-   * @param {object} [options.capability] - The OCAP-LD authorization
+   * @param {object} [options.capability] - The zCAP-LD authorization
    *   capability to use to authorize the invocation of KmsClient methods.
    * @param {object} options.invocationSigner - An API for signing
    *   a capability invocation.
