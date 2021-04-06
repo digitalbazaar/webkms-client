@@ -106,7 +106,7 @@ export class KeystoreAgent {
    * @param {string} options.id - The ID of the key.
    * @param {string} options.type - The type of key
    *   (e.g. `AesKeyWrappingKey2019`).
-   * @param {object} [options.capability] - The OCAP-LD authorization
+   * @param {object} [options.capability] - The zCAP-LD authorization
    *   capability to use to authorize the invocation of the operations.
    *
    * @returns {Promise<object>} The new Kek instance.
@@ -131,7 +131,7 @@ export class KeystoreAgent {
    * @param {object} options - The options to use.
    * @param {string} options.id - The ID of the key.
    * @param {string} options.type - The type of key (e.g. `Sha256HmacKey2019`).
-   * @param {object} [options.capability] - The OCAP-LD authorization
+   * @param {object} [options.capability] - The zCAP-LD authorization
    *   capability to use to authorize the invocation of the operations.
    *
    * @returns {Promise<object>} The new Hmac instance.
@@ -160,7 +160,7 @@ export class KeystoreAgent {
    *   with the KMS.
    * @param {string} options.type - The type of key
    *   (e.g. `Ed25519VerificationKey2020`).
-   * @param {object} [options.capability] - The OCAP-LD authorization
+   * @param {object} [options.capability] - The zCAP-LD authorization
    *   capability to use to authorize the invocation of the operations.
    *
    * @returns {Promise<object>} The new Hmac instance.
@@ -190,7 +190,7 @@ export class KeystoreAgent {
    *   with the KMS.
    * @param {string} options.type - The type of key
    *   (e.g. `X25519KeyAgreementKey2020`).
-   * @param {object} [options.capability] - The OCAP-LD authorization
+   * @param {object} [options.capability] - The zCAP-LD authorization
    *   capability to use to authorize the invocation of the operations.
    *
    * @returns {Promise<object>} The new Hmac instance.

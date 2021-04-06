@@ -127,13 +127,13 @@ WebKMS client for Javascript.
 ### webkms.KmsClient
 A WebKMS Client used to interface with a KMS.
 
-**Kind**: instance class of [<code>webkms</code>](#module_webkms)  
+**Kind**: instance class of [<code>webkms</code>](#module_webkms)
 <a name="new_module_webkms.exports.KmsClient_new"></a>
 
 #### new exports.KmsClient(options)
 Creates a new KmsClient.
 
-**Returns**: <code>KmsClient</code> - The new instance.  
+**Returns**: <code>KmsClient</code> - The new instance.
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -146,15 +146,15 @@ Creates a new KmsClient.
 ### webkms:generateKey(options) ⇒ <code>Promise.&lt;object&gt;</code>
 Generates a new cryptographic key in the keystore.
 
-**Kind**: global function  
-**Returns**: <code>Promise.&lt;object&gt;</code> - The key description for the key.  
+**Kind**: global function
+**Returns**: <code>Promise.&lt;object&gt;</code> - The key description for the key.
 
 | Param | Type | Description |
 | --- | --- | --- |
 | options | <code>object</code> | The options to use. |
 | options.kmsModule | <code>string</code> | The KMS module to use. |
 | options.type | <code>string</code> | The key type (e.g. 'AesKeyWrappingKey2019'). |
-| [options.capability] | <code>string</code> | The OCAP-LD authorization   capability to use to authorize the invocation of this operation. |
+| [options.capability] | <code>string</code> | The zCAP-LD authorization   capability to use to authorize the invocation of this operation. |
 | options.invocationSigner | <code>object</code> | An API with an   `id` property and a `sign` function for signing a capability invocation. |
 
 <a name="webkms_getKeyDescription"></a>
@@ -162,14 +162,14 @@ Generates a new cryptographic key in the keystore.
 ### webkms:getKeyDescription(options) ⇒ <code>Promise.&lt;object&gt;</code>
 Gets the key description for the given key ID.
 
-**Kind**: global function  
-**Returns**: <code>Promise.&lt;object&gt;</code> - The key description.  
+**Kind**: global function
+**Returns**: <code>Promise.&lt;object&gt;</code> - The key description.
 
 | Param | Type | Description |
 | --- | --- | --- |
 | options | <code>object</code> | The options to use. |
 | [options.keyId] | <code>string</code> | The ID of the key. |
-| [options.capability] | <code>string</code> | The OCAP-LD authorization   capability to use to authorize the invocation of this operation. |
+| [options.capability] | <code>string</code> | The zCAP-LD authorization   capability to use to authorize the invocation of this operation. |
 | options.invocationSigner | <code>object</code> | An API with an   `id` property and a `sign` function for signing a capability invocation. |
 
 <a name="webkms_revokeCapability"></a>
@@ -177,8 +177,8 @@ Gets the key description for the given key ID.
 ### webkms:revokeCapability(options) ⇒ <code>Promise.&lt;object&gt;</code>
 Store a capability revocation.
 
-**Kind**: global function  
-**Returns**: <code>Promise.&lt;object&gt;</code> - Resolves once the operation completes.  
+**Kind**: global function
+**Returns**: <code>Promise.&lt;object&gt;</code> - Resolves once the operation completes.
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -192,15 +192,15 @@ Store a capability revocation.
 ### webkms:wrapKey(options) ⇒ <code>Promise.&lt;string&gt;</code>
 Wraps a cryptographic key using a key encryption key (KEK).
 
-**Kind**: global function  
-**Returns**: <code>Promise.&lt;string&gt;</code> - The base64url-encoded wrapped key bytes.  
+**Kind**: global function
+**Returns**: <code>Promise.&lt;string&gt;</code> - The base64url-encoded wrapped key bytes.
 
 | Param | Type | Description |
 | --- | --- | --- |
 | options | <code>object</code> | The options to use. |
 | options.kekId | <code>string</code> | The ID of the wrapping key to use. |
 | options.unwrappedKey | <code>Uint8Array</code> | The unwrapped key material as   a Uint8Array. |
-| [options.capability] | <code>string</code> | The OCAP-LD authorization   capability to use to authorize the invocation of this operation. |
+| [options.capability] | <code>string</code> | The zCAP-LD authorization   capability to use to authorize the invocation of this operation. |
 | options.invocationSigner | <code>object</code> | An API with an   `id` property and a `sign` function for signing a capability invocation. |
 
 <a name="webkms_unwrapKey"></a>
@@ -208,16 +208,16 @@ Wraps a cryptographic key using a key encryption key (KEK).
 ### webkms:unwrapKey(options) ⇒ <code>Promise.&lt;(Uint8Array\|null)&gt;</code>
 Unwraps a cryptographic key using a key encryption key (KEK).
 
-**Kind**: global function  
+**Kind**: global function
 **Returns**: <code>Promise.&lt;(Uint8Array\|null)&gt;</code> - Resolves to the unwrapped key material
-  or null if the unwrapping failed because the key did not match.  
+  or null if the unwrapping failed because the key did not match.
 
 | Param | Type | Description |
 | --- | --- | --- |
 | options | <code>object</code> | The options to use. |
 | options.kekId | <code>string</code> | The ID of the unwrapping key to use. |
 | options.wrappedKey | <code>string</code> | The wrapped key material as a   base64url-encoded string. |
-| [options.capability] | <code>string</code> | The OCAP-LD authorization   capability to use to authorize the invocation of this operation. |
+| [options.capability] | <code>string</code> | The zCAP-LD authorization   capability to use to authorize the invocation of this operation. |
 | options.invocationSigner | <code>object</code> | An API with an   `id` property and a `sign` function for signing a capability invocation. |
 
 <a name="webkms_sign"></a>
@@ -228,15 +228,15 @@ this data is intended to be secret it should be hashed first. However,
 hashing the data first may present interoperability issues so choose
 wisely.
 
-**Kind**: global function  
-**Returns**: <code>Promise.&lt;string&gt;</code> - The base64url-encoded signature.  
+**Kind**: global function
+**Returns**: <code>Promise.&lt;string&gt;</code> - The base64url-encoded signature.
 
 | Param | Type | Description |
 | --- | --- | --- |
 | options | <code>object</code> | The options to use. |
 | options.keyId | <code>string</code> | The ID of the signing key to use. |
 | options.data | <code>Uint8Array</code> | The data to sign as a Uint8Array. |
-| [options.capability] | <code>string</code> | The OCAP-LD authorization   capability to use to authorize the invocation of this operation. |
+| [options.capability] | <code>string</code> | The zCAP-LD authorization   capability to use to authorize the invocation of this operation. |
 | options.invocationSigner | <code>object</code> | An API with an   `id` property and a `sign` function for signing a capability invocation. |
 
 <a name="webkms_verify"></a>
@@ -247,8 +247,8 @@ this data is intended to be secret it should be hashed first. However,
 hashing the data first may present interoperability issues so choose
 wisely.
 
-**Kind**: global function  
-**Returns**: <code>Promise.&lt;boolean&gt;</code> - `true` if verified, `false` if not.  
+**Kind**: global function
+**Returns**: <code>Promise.&lt;boolean&gt;</code> - `true` if verified, `false` if not.
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -256,7 +256,7 @@ wisely.
 | options.keyId | <code>string</code> | The ID of the signing key to use. |
 | options.data | <code>Uint8Array</code> | The data to verify as a Uint8Array. |
 | options.signature | <code>string</code> | The base64url-encoded signature to   verify. |
-| [options.capability] | <code>string</code> | The OCAP-LD authorization   capability to use to authorize the invocation of this operation. |
+| [options.capability] | <code>string</code> | The zCAP-LD authorization   capability to use to authorize the invocation of this operation. |
 | options.invocationSigner | <code>object</code> | An API with an   `id` property and a `sign` function for signing a capability invocation. |
 
 <a name="webkms_deriveSecret"></a>
@@ -267,15 +267,15 @@ as one parameter for computing a shared key. It should not be used as
 a shared key itself, but rather input into a key derivation function (KDF)
 to produce a shared key.
 
-**Kind**: global function  
-**Returns**: <code>Promise.&lt;Uint8Array&gt;</code> - The shared secret bytes.  
+**Kind**: global function
+**Returns**: <code>Promise.&lt;Uint8Array&gt;</code> - The shared secret bytes.
 
 | Param | Type | Description |
 | --- | --- | --- |
 | options | <code>object</code> | The options to use. |
 | options.keyId | <code>string</code> | The ID of the key agreement key to use. |
 | options.publicKey | <code>object</code> | The public key to compute the shared   secret against; the public key type must match the key agreement key's   type. |
-| [options.capability] | <code>string</code> | The OCAP-LD authorization   capability to use to authorize the invocation of this operation. |
+| [options.capability] | <code>string</code> | The zCAP-LD authorization   capability to use to authorize the invocation of this operation. |
 | options.invocationSigner | <code>object</code> | An API with an   `id` property and a `sign` function for signing a capability invocation. |
 
 <a name="webkms_enableCapability"></a>
@@ -284,14 +284,14 @@ to produce a shared key.
 Stores a delegated authorization capability, enabling it to be invoked by
 its designated invoker.
 
-**Kind**: global function  
-**Returns**: <code>Promise.&lt;object&gt;</code> - Resolves once the operation completes.  
+**Kind**: global function
+**Returns**: <code>Promise.&lt;object&gt;</code> - Resolves once the operation completes.
 
 | Param | Type | Description |
 | --- | --- | --- |
 | options | <code>object</code> | The options to use. |
 | options.capabilityToEnable | <code>object</code> | The capability to enable. |
-| [options.capability] | <code>string</code> | The OCAP-LD authorization   capability to use to authorize the invocation of this operation. |
+| [options.capability] | <code>string</code> | The zCAP-LD authorization   capability to use to authorize the invocation of this operation. |
 | options.invocationSigner | <code>object</code> | An API with an   `id` property and a `sign` function for signing a capability invocation. |
 
 <a name="webkms_disableCapability"></a>
@@ -300,15 +300,15 @@ its designated invoker.
 Removes a previously stored delegated authorization capability, preventing
 it from being invoked by its designated invoker.
 
-**Kind**: global function  
+**Kind**: global function
 **Returns**: <code>Promise.&lt;boolean&gt;</code> - Resolves to `true` if the document was deleted
-  and `false` if it did not exist.  
+  and `false` if it did not exist.
 
 | Param | Type | Description |
 | --- | --- | --- |
 | options | <code>object</code> | The options to use. |
 | options.id | <code>object</code> | The ID of the capability to revoke. |
-| [options.capability] | <code>string</code> | The OCAP-LD authorization   capability to use to authorize the invocation of this operation. |
+| [options.capability] | <code>string</code> | The zCAP-LD authorization   capability to use to authorize the invocation of this operation. |
 | options.invocationSigner | <code>object</code> | An API with an   `id` property and a `sign` function for signing a capability invocation. |
 
 <a name="webkms_createKeystore"></a>
@@ -316,9 +316,9 @@ it from being invoked by its designated invoker.
 ### webkms:createKeystore(options) ⇒ <code>Promise.&lt;object&gt;</code>
 Creates a new keystore using the given configuration.
 
-**Kind**: global function  
+**Kind**: global function
 **Returns**: <code>Promise.&lt;object&gt;</code> - Resolves to the configuration for the newly
-  created keystore.  
+  created keystore.
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -332,8 +332,8 @@ Creates a new keystore using the given configuration.
 ### webkms:getKeystore(options) ⇒ <code>Promise.&lt;object&gt;</code>
 Gets the configuration for a keystore by its ID.
 
-**Kind**: global function  
-**Returns**: <code>Promise.&lt;object&gt;</code> - Resolves to the configuration for the keystore.  
+**Kind**: global function
+**Returns**: <code>Promise.&lt;object&gt;</code> - Resolves to the configuration for the keystore.
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -346,8 +346,8 @@ Gets the configuration for a keystore by its ID.
 ### webkms:findKeystore(options) ⇒ <code>Promise.&lt;object&gt;</code>
 Finds the configuration for a keystore by its controller and reference ID.
 
-**Kind**: global function  
-**Returns**: <code>Promise.&lt;object&gt;</code> - Resolves to the configuration for the keystore.  
+**Kind**: global function
+**Returns**: <code>Promise.&lt;object&gt;</code> - Resolves to the configuration for the keystore.
 
 | Param | Type | Description |
 | --- | --- | --- |
