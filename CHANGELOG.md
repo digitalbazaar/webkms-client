@@ -1,13 +1,13 @@
 # webkms-client ChangeLog
 
-## 5.0.0 -
+## 5.0.0 - 2021-04-08
 
 ### Changed
-- **BREAKING**: Rename NPM package from `webkms-client` to 
+- **BREAKING**: Rename NPM package from `webkms-client` to
   `@digitalbazaar/webkms-client`.
 - Add support for multiple asymmetric key types (`Ed25519VerificationKey2018`,
-  `Ed25519VerificationKey2020`, `X25519KeyAgreementKey2019`, `X25519KeyAgreementKey2020`)
-  via `crypto-ld`.
+  `Ed25519VerificationKey2020`, `X25519KeyAgreementKey2019`,
+  `X25519KeyAgreementKey2020`) via `crypto-ld`.
 
 ## 4.0.0 - 2021-03-17
 
@@ -16,7 +16,7 @@
   to `Ed25519VerificationKey2020` for capability signing.
   See [`crypto-ld v4`](https://github.com/digitalbazaar/crypto-ld/blob/master/CHANGELOG.md#400---2020-08-01)
   changelog.
-  See also instructions on 
+  See also instructions on
   [converting and upgrading from Ed25519VerificationKey2018](https://github.com/digitalbazaar/ed25519-verification-key-2020#converting-from-previous-ed25519verificationkey2018-key-type)
 - Remove `crypto-ld` as a dependency (it's still used by individual key suites).
 - **BREAKING**: Drop support for Node 10 (it's moving out of LTS).
