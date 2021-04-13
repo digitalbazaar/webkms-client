@@ -1,5 +1,10 @@
 # webkms-client ChangeLog
 
+## 5.0.1 - 2021-04-TBD
+
+### Fixed
+- Include `cryptoLd.js` file to files section in package.json.
+
 ## 5.0.0 - 2021-04-08
 
 ### Changed
