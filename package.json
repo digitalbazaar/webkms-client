@@ -24,6 +24,7 @@
     "SeedCache.js",
     "crypto-browser.js",
     "crypto.js",
+    "cryptoLd.js",
     "index.js",
     "main.js",
     "util-browser.js",
