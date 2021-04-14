@@ -1,5 +1,10 @@
 # webkms-client ChangeLog
 
+## 6.0.0 - 2021-04-TBD
+
+### Changed
+- **BREAKING**: Use [webkms-context@1.0](https://github.com/digitalbazaar/webkms-context/blob/main/CHANGELOG.md).
+
 ## 5.0.1 - 2021-04-13
 
 ### Fixed
