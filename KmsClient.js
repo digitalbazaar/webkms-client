@@ -5,6 +5,7 @@ import base64url from 'base64url-universal';
 import {httpClient, DEFAULT_HEADERS} from '@digitalbazaar/http-client';
 import {signCapabilityInvocation} from 'http-signature-zcap-invoke';
 import {CONTEXT_URL} from 'webkms-context';
+
 /**
  * @class
  * @classdesc A WebKMS Client used to interface with a KMS.
