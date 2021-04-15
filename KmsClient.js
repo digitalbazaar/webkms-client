@@ -2,9 +2,12 @@
  * Copyright (c) 2019-2021 Digital Bazaar, Inc. All rights reserved.
  */
 import base64url from 'base64url-universal';
+import {cryptoLd} from './cryptoLd.js';
 import {httpClient, DEFAULT_HEADERS} from '@digitalbazaar/http-client';
 import {signCapabilityInvocation} from 'http-signature-zcap-invoke';
-import {CONTEXT_URL} from 'webkms-context';
+import * as webkmsContext from 'webkms-context';
+
+const {CONTEXT_URL: WEBKMS_CONTEXT_URL} = webkmsContext;
 
 /**
  * @class
@@ -55,8 +58,10 @@ export class KmsClient {
     _assert(type, 'type', 'string');
     _assert(invocationSigner, 'invocationSigner', 'object');
 
+    const {CONTEXT_URL: suiteContextUrl} = cryptoLd.suites.get(type);
+
     const operation = {
-      '@context': CONTEXT_URL,
+      '@context': [WEBKMS_CONTEXT_URL, suiteContextUrl],
       type: 'GenerateKeyOperation',
       invocationTarget: {type},
       kmsModule
@@ -204,7 +209,7 @@ export class KmsClient {
     _assert(invocationSigner, 'invocationSigner', 'object');
 
     const operation = {
-      '@context': CONTEXT_URL,
+      '@context': WEBKMS_CONTEXT_URL,
       type: 'WrapKeyOperation',
       invocationTarget: kekId,
       unwrappedKey: base64url.encode(unwrappedKey)
@@ -263,7 +268,7 @@ export class KmsClient {
     _assert(invocationSigner, 'invocationSigner', 'object');
 
     const operation = {
-      '@context': CONTEXT_URL,
+      '@context': WEBKMS_CONTEXT_URL,
       type: 'UnwrapKeyOperation',
       invocationTarget: kekId,
       wrappedKey
@@ -326,7 +331,7 @@ export class KmsClient {
     _assert(invocationSigner, 'invocationSigner', 'object');
 
     const operation = {
-      '@context': CONTEXT_URL,
+      '@context': WEBKMS_CONTEXT_URL,
       type: 'SignOperation',
       invocationTarget: keyId,
       verifyData: base64url.encode(data)
@@ -389,7 +394,7 @@ export class KmsClient {
     _assert(invocationSigner, 'invocationSigner', 'object');
 
     const operation = {
-      '@context': CONTEXT_URL,
+      '@context': WEBKMS_CONTEXT_URL,
       type: 'VerifyOperation',
       invocationTarget: keyId,
       verifyData: base64url.encode(data),
@@ -452,7 +457,7 @@ export class KmsClient {
     _assert(invocationSigner, 'invocationSigner', 'object');
 
     const operation = {
-      '@context': CONTEXT_URL,
+      '@context': WEBKMS_CONTEXT_URL,
       type: 'DeriveSecretOperation',
       invocationTarget: keyId,
       publicKey
