@@ -42,7 +42,7 @@ export class AsymmetricKey {
     if(capability && typeof capability.invocationTarget === 'object') {
       const {invocationTarget} = capability;
       if(!this.id) {
-        this.id = invocationTarget.verificationMethod || invocationTarget.id;
+        this.id = invocationTarget.publicAlias || invocationTarget.id;
       }
       if(!this.kmsId) {
         this.kmsId = invocationTarget.id;
