@@ -58,7 +58,7 @@ export class KmsClient {
     _assert(type, 'type', 'string');
     _assert(invocationSigner, 'invocationSigner', 'object');
 
-    const {CONTEXT_URL: suiteContextUrl} = cryptoLd.suites.get(type);
+    const {SUITE_CONTEXT: suiteContextUrl} = cryptoLd.suites.get(type);
 
     const operation = {
       '@context': [WEBKMS_CONTEXT_URL, suiteContextUrl],
