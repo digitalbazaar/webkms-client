@@ -44,7 +44,7 @@
     "http-signature-zcap-invoke": "^3.0.0",
     "isomorphic-webcrypto": "^2.3.2",
     "lru-cache": "^6.0.0",
-    "webkms-context": "digitalbazaar/webkms-context#initial"
+    "webkms-context": "^1.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.13.8",
