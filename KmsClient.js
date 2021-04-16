@@ -8,6 +8,12 @@ import {signCapabilityInvocation} from 'http-signature-zcap-invoke';
 import * as webkmsContext from 'webkms-context';
 
 const {CONTEXT_URL: WEBKMS_CONTEXT_URL} = webkmsContext;
+const symmetric = new Map([
+  ['AesKeyWrappingKey2019',
+    'https://w3id.org/security/suites/aes-key-wrapping-2019/v1'],
+  ['Sha256HmacKey2019',
+    'https://w3id.org/security/suites/sha256-hmac-2019/v1']
+]);
 
 /**
  * @class
@@ -58,10 +64,17 @@ export class KmsClient {
     _assert(type, 'type', 'string');
     _assert(invocationSigner, 'invocationSigner', 'object');
 
-    const {SUITE_CONTEXT: suiteContextUrl} = cryptoLd.suites.get(type);
+    let SUITE_CONTEXT;
+
+    if(type === 'Sha256HmacKey2019' || type === 'AesKeyWrappingKey2019') {
+      SUITE_CONTEXT = symmetric.get(type);
+    } else {
+      const {SUITE_CONTEXT: suitContextUrl} = cryptoLd.suites.get(type);
+      SUITE_CONTEXT = suitContextUrl;
+    }
 
     const operation = {
-      '@context': [WEBKMS_CONTEXT_URL, suiteContextUrl],
+      '@context': [WEBKMS_CONTEXT_URL, SUITE_CONTEXT],
       type: 'GenerateKeyOperation',
       invocationTarget: {type},
       kmsModule
