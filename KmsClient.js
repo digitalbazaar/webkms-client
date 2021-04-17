@@ -64,13 +64,9 @@ export class KmsClient {
     _assert(type, 'type', 'string');
     _assert(invocationSigner, 'invocationSigner', 'object');
 
-    let SUITE_CONTEXT;
-
-    if(type === 'Sha256HmacKey2019' || type === 'AesKeyWrappingKey2019') {
-      SUITE_CONTEXT = symmetric.get(type);
-    } else {
-      const {SUITE_CONTEXT: suitContextUrl} = cryptoLd.suites.get(type);
-      SUITE_CONTEXT = suitContextUrl;
+    let SUITE_CONTEXT = symmetric.get(type);
+    if(!SUITE_CONTEXT) {
+      ({SUITE_CONTEXT} = cryptoLd.suites.get(type));
     }
 
     const operation = {
@@ -222,7 +218,7 @@ export class KmsClient {
     _assert(invocationSigner, 'invocationSigner', 'object');
 
     const operation = {
-      '@context': [WEBKMS_CONTEXT_URL],
+      '@context': WEBKMS_CONTEXT_URL,
       type: 'WrapKeyOperation',
       invocationTarget: kekId,
       unwrappedKey: base64url.encode(unwrappedKey)
@@ -281,7 +277,7 @@ export class KmsClient {
     _assert(invocationSigner, 'invocationSigner', 'object');
 
     const operation = {
-      '@context': [WEBKMS_CONTEXT_URL],
+      '@context': WEBKMS_CONTEXT_URL,
       type: 'UnwrapKeyOperation',
       invocationTarget: kekId,
       wrappedKey
@@ -344,7 +340,7 @@ export class KmsClient {
     _assert(invocationSigner, 'invocationSigner', 'object');
 
     const operation = {
-      '@context': [WEBKMS_CONTEXT_URL],
+      '@context': WEBKMS_CONTEXT_URL,
       type: 'SignOperation',
       invocationTarget: keyId,
       verifyData: base64url.encode(data)
@@ -407,7 +403,7 @@ export class KmsClient {
     _assert(invocationSigner, 'invocationSigner', 'object');
 
     const operation = {
-      '@context': [WEBKMS_CONTEXT_URL],
+      '@context': WEBKMS_CONTEXT_URL,
       type: 'VerifyOperation',
       invocationTarget: keyId,
       verifyData: base64url.encode(data),
@@ -470,7 +466,7 @@ export class KmsClient {
     _assert(invocationSigner, 'invocationSigner', 'object');
 
     const operation = {
-      '@context': [WEBKMS_CONTEXT_URL],
+      '@context': WEBKMS_CONTEXT_URL,
       type: 'DeriveSecretOperation',
       invocationTarget: keyId,
       publicKey
