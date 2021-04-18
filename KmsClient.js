@@ -10,9 +10,9 @@ import * as webkmsContext from 'webkms-context';
 const {CONTEXT_URL: WEBKMS_CONTEXT_URL} = webkmsContext;
 const symmetric = new Map([
   ['AesKeyWrappingKey2019',
-    'https://w3id.org/security/suites/aes-key-wrapping-2019/v1'],
+    'https://w3id.org/security/suites/aes-2019/v1'],
   ['Sha256HmacKey2019',
-    'https://w3id.org/security/suites/sha256-hmac-2019/v1']
+    'https://w3id.org/security/suites/hmac-2019/v1']
 ]);
 
 /**
