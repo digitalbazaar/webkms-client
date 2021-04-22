@@ -6,13 +6,16 @@ import {cryptoLd} from './cryptoLd.js';
 import {httpClient, DEFAULT_HEADERS} from '@digitalbazaar/http-client';
 import {signCapabilityInvocation} from 'http-signature-zcap-invoke';
 import * as webkmsContext from 'webkms-context';
+import aesContext from 'aes-key-wrapping-2019-context';
+import hmacContext from 'sha256-hmac-key-2019-context';
 
 const {CONTEXT_URL: WEBKMS_CONTEXT_URL} = webkmsContext;
+const {CONTEXT_URL: AES_2019_CONTEXT_URL} = aesContext;
+const {CONTEXT_URL: HMAC_2019_CONTEXT_URL} = hmacContext;
+
 const symmetric = new Map([
-  ['AesKeyWrappingKey2019',
-    'https://w3id.org/security/suites/aes-2019/v1'],
-  ['Sha256HmacKey2019',
-    'https://w3id.org/security/suites/hmac-2019/v1']
+  ['AesKeyWrappingKey2019', AES_2019_CONTEXT_URL],
+  ['Sha256HmacKey2019', HMAC_2019_CONTEXT_URL]
 ]);
 
 /**
