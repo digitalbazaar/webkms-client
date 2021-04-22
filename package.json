@@ -36,6 +36,7 @@
     "@digitalbazaar/http-client": "^1.0.0",
     "@digitalbazaar/x25519-key-agreement-key-2019": "^5.1.0",
     "@digitalbazaar/x25519-key-agreement-key-2020": "^1.2.0",
+    "aes-key-wrapping-2019-context": "^1.0.2",
     "base64url-universal": "^1.1.0",
     "crypto-ld": "^5.1.0",
     "ed25519-signature-2018-context": "^1.0.1",
@@ -44,6 +45,7 @@
     "http-signature-zcap-invoke": "^3.0.0",
     "isomorphic-webcrypto": "^2.3.2",
     "lru-cache": "^6.0.0",
+    "sha256-hmac-key-2019-context": "^1.0.2",
     "webkms-context": "^1.0.0"
   },
   "devDependencies": {
