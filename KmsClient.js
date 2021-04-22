@@ -5,7 +5,7 @@ import base64url from 'base64url-universal';
 import {cryptoLd} from './cryptoLd.js';
 import {httpClient, DEFAULT_HEADERS} from '@digitalbazaar/http-client';
 import {signCapabilityInvocation} from 'http-signature-zcap-invoke';
-import * as webkmsContext from 'webkms-context';
+import webkmsContext from 'webkms-context';
 import aesContext from 'aes-key-wrapping-2019-context';
 import hmacContext from 'sha256-hmac-key-2019-context';
 
@@ -70,6 +70,10 @@ export class KmsClient {
     let SUITE_CONTEXT = symmetric.get(type);
     if(!SUITE_CONTEXT) {
       ({SUITE_CONTEXT} = cryptoLd.suites.get(type));
+    } else {
+      const err = new Error('SUITE_CONTEXT not found.');
+      err.name = 'NotFoundError';
+      throw err;
     }
 
     const operation = {
