@@ -67,17 +67,16 @@ export class KmsClient {
     _assert(type, 'type', 'string');
     _assert(invocationSigner, 'invocationSigner', 'object');
 
-    let SUITE_CONTEXT = symmetric.get(type);
-    if(!SUITE_CONTEXT) {
-      ({SUITE_CONTEXT} = cryptoLd.suites.get(type));
-    } else {
-      const err = new Error('SUITE_CONTEXT not found.');
-      err.name = 'NotFoundError';
-      throw err;
+    let suiteContextUrl = symmetric.get(type);
+    if(!suiteContextUrl) {
+      ({SUITE_CONTEXT: suiteContextUrl} = cryptoLd.suites.get(type) || {});
+      if(!suiteContextUrl) {
+        throw new Error(`Unknown key type: "${type}".`);
+      }
     }
-
+    const webkmsContextUrl = WEBKMS_CONTEXT_URL;
     const operation = {
-      '@context': [WEBKMS_CONTEXT_URL, SUITE_CONTEXT],
+      '@context': [webkmsContextUrl, suiteContextUrl],
       type: 'GenerateKeyOperation',
       invocationTarget: {type},
       kmsModule
