@@ -74,9 +74,8 @@ export class KmsClient {
         throw new Error(`Unknown key type: "${type}".`);
       }
     }
-    const webkmsContextUrl = WEBKMS_CONTEXT_URL;
     const operation = {
-      '@context': [webkmsContextUrl, suiteContextUrl],
+      '@context': [WEBKMS_CONTEXT_URL, suiteContextUrl],
       type: 'GenerateKeyOperation',
       invocationTarget: {type},
       kmsModule
