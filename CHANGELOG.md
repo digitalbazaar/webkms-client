@@ -1,6 +1,6 @@
 # webkms-client ChangeLog
 
-## 6.0.0 - 2021-04-TBD
+## 6.0.0 - 2021-05-04
 
 ### Changed
 - Update dependencies.
