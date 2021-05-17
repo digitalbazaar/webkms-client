@@ -86,7 +86,7 @@ export class KmsClient {
       url = KmsClient._getInvocationTarget({capability});
     } else {
       url = `${this.keystore}/keys`;
-      capability = `${this.keystore}/zcaps/keys`;
+      capability = _getRootZcapId({keystoreId: this.keystore});
     }
 
     try {
@@ -134,7 +134,7 @@ export class KmsClient {
       url = KmsClient._getInvocationTarget({capability});
     } else {
       _assert(keyId, 'keyId', 'string');
-      url = capability = keyId;
+      capability = _getRootZcapId({keyId});
     }
 
     try {
@@ -179,7 +179,7 @@ export class KmsClient {
     const url = KmsClient._getInvocationTarget({capability}) ||
       `${this.keystore}/revocations`;
     if(!capability) {
-      capability = `${this.keystore}/zcaps/revocations`;
+      capability = _getRootZcapId({keystoreId: this.keystore});
     }
     try {
       // sign HTTP header
@@ -233,7 +233,8 @@ export class KmsClient {
     if(capability) {
       url = KmsClient._getInvocationTarget({capability});
     } else {
-      url = capability = kekId;
+      url = kekId;
+      capability = _getRootZcapId({keyId: kekId});
     }
 
     try {
@@ -292,7 +293,8 @@ export class KmsClient {
     if(capability) {
       url = KmsClient._getInvocationTarget({capability});
     } else {
-      url = capability = kekId;
+      url = kekId;
+      capability = _getRootZcapId({keyId: kekId});
     }
 
     try {
@@ -355,7 +357,8 @@ export class KmsClient {
     if(capability) {
       url = KmsClient._getInvocationTarget({capability});
     } else {
-      url = capability = keyId;
+      url = keyId;
+      capability = _getRootZcapId({kekId});
     }
 
     try {
@@ -419,7 +422,8 @@ export class KmsClient {
     if(capability) {
       url = KmsClient._getInvocationTarget({capability});
     } else {
-      url = capability = keyId;
+      url = keyId;
+      capability = _getRootZcapId({kekId});
     }
 
     try {
@@ -481,7 +485,8 @@ export class KmsClient {
     if(capability) {
       url = KmsClient._getInvocationTarget({capability});
     } else {
-      url = capability = keyId;
+      url = keyId;
+      capability = _getRootZcapId({kekId});
     }
 
     try {
@@ -529,7 +534,7 @@ export class KmsClient {
     const url = KmsClient._getInvocationTarget({capability}) ||
       `${this.keystore}/authorizations`;
     if(!capability) {
-      capability = `${this.keystore}/zcaps/authorizations`;
+      capability = _getRootZcapId({keystoreId: this.keystore});
     }
     try {
       // sign HTTP header
@@ -551,54 +556,6 @@ export class KmsClient {
       }
       throw e;
     }
-  }
-
-  /**
-   * Removes a previously stored delegated authorization capability, preventing
-   * it from being invoked by its designated invoker.
-   *
-   * @alias webkms.disableCapability
-   *
-   * @param {object} options - The options to use.
-   * @param {object} options.id - The ID of the capability to revoke.
-   * @param {string} [options.capability] - The zCAP-LD authorization
-   *   capability to use to authorize the invocation of this operation.
-   * @param {object} options.invocationSigner - An API with an
-   *   `id` property and a `sign` function for signing a capability invocation.
-   *
-   * @returns {Promise<boolean>} Resolves to `true` if the document was deleted
-   *   and `false` if it did not exist.
-   */
-  async disableCapability({id, capability, invocationSigner}) {
-    _assert(id, 'id', 'string');
-    _assert(invocationSigner, 'invocationSigner', 'object');
-
-    let url = KmsClient._getInvocationTarget({capability}) ||
-      `${this.keystore}/authorizations`;
-    if(url.endsWith('/authorizations')) {
-      url += `?id=${encodeURIComponent(id)}`;
-    }
-    if(!capability) {
-      capability = `${this.keystore}/zcaps/authorizations`;
-    }
-    try {
-      // sign HTTP header
-      const headers = await signCapabilityInvocation({
-        url, method: 'delete', headers: this.defaultHeaders,
-        capability, invocationSigner,
-        // TODO: should `delete` be used here as a separate action?
-        capabilityAction: 'write'
-      });
-      // send request
-      const {agent} = this;
-      await httpClient.delete(url, {agent, headers});
-    } catch(e) {
-      if(e.status === 404) {
-        return false;
-      }
-      throw e;
-    }
-    return true;
   }
 
   /**
@@ -627,7 +584,7 @@ export class KmsClient {
       url = KmsClient._getInvocationTarget({capability});
     } else {
       url = keystore;
-      capability = 'urn:zcap:root:' + encodeURIComponent(url);
+      capability = _getRootZcapId({keystoreId: keystore});
     }
     const headers = await signCapabilityInvocation({
       url, method: 'post',
@@ -739,4 +696,18 @@ async function _assert(variable, name, types) {
       `"${name}" must be ${types.length === 1 ? 'a' : 'one of'} ` +
       `${types.join(', ')}.`);
   }
+}
+
+function _getRootZcapId({keystoreId, keyId}) {
+  let suffix;
+  if(keyId) {
+    const idx = keyId.lastIndexOf('/keys/');
+    if(idx === -1) {
+      throw new Error(`Invalid WebKMS key ID (${keyId}).`);
+    }
+    suffix = keyId.substr(0, idx);
+  } else {
+    suffix = keystoreId;
+  }
+  return `urn:zcap:root:${encodeURIComponent(suffix)}`;
 }
