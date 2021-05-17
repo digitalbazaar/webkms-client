@@ -1,5 +1,13 @@
 # webkms-client ChangeLog
 
+## 7.0.0 - 2021-05-xx
+
+### Changed
+- **BREAKING**: All root zcaps use `urn:root:zcap:` prefix. Root zcaps
+  for keys are the keystore root zcap where the controller resides, not
+  the key. This new client version must be paired with a new WebKMS
+  server, it is not compatible with an old version.
+
 ## 6.0.0 - 2021-05-04
 
 ### Changed
