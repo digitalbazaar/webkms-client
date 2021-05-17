@@ -8,6 +8,10 @@
   the key. This new client version must be paired with a new WebKMS
   server, it is not compatible with an old version.
 
+### Removed
+- **BREAKING**: Remove `disableCapability` -- to disable a previously
+  authorized zcap, revoke it via `revokeCapability` instead.
+
 ## 6.0.0 - 2021-05-04
 
 ### Changed
