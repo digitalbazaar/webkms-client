@@ -358,7 +358,7 @@ export class KmsClient {
       url = KmsClient._getInvocationTarget({capability});
     } else {
       url = keyId;
-      capability = _getRootZcapId({kekId});
+      capability = _getRootZcapId({keyId});
     }
 
     try {
@@ -423,7 +423,7 @@ export class KmsClient {
       url = KmsClient._getInvocationTarget({capability});
     } else {
       url = keyId;
-      capability = _getRootZcapId({kekId});
+      capability = _getRootZcapId({keyId});
     }
 
     try {
@@ -486,7 +486,7 @@ export class KmsClient {
       url = KmsClient._getInvocationTarget({capability});
     } else {
       url = keyId;
-      capability = _getRootZcapId({kekId});
+      capability = _getRootZcapId({keyId});
     }
 
     try {
@@ -506,52 +506,6 @@ export class KmsClient {
       if(e.status === 404) {
         const err = new Error('Key agreement key not found.');
         err.name = 'NotFoundError';
-        throw err;
-      }
-      throw e;
-    }
-  }
-
-  /**
-   * Stores a delegated authorization capability, enabling it to be invoked by
-   * its designated invoker.
-   *
-   * @alias webkms.enableCapability
-   *
-   * @param {object} options - The options to use.
-   * @param {object} options.capabilityToEnable - The capability to enable.
-   * @param {string} [options.capability] - The zCAP-LD authorization
-   *   capability to use to authorize the invocation of this operation.
-   * @param {object} options.invocationSigner - An API with an
-   *   `id` property and a `sign` function for signing a capability invocation.
-   *
-   * @returns {Promise<object>} Resolves once the operation completes.
-   */
-  async enableCapability({capabilityToEnable, capability, invocationSigner}) {
-    _assert(capabilityToEnable, 'capabilityToEnable', 'object');
-    _assert(invocationSigner, 'invocationSigner', 'object');
-
-    const url = KmsClient._getInvocationTarget({capability}) ||
-      `${this.keystore}/authorizations`;
-    if(!capability) {
-      capability = _getRootZcapId({keystoreId: this.keystore});
-    }
-    try {
-      // sign HTTP header
-      const headers = await signCapabilityInvocation({
-        url, method: 'post', headers: this.defaultHeaders,
-        json: capabilityToEnable, capability, invocationSigner,
-        capabilityAction: 'write'
-      });
-      // send request
-      const {agent} = this;
-      await httpClient.post(url, {
-        agent, headers, json: capabilityToEnable
-      });
-    } catch(e) {
-      if(e.status === 409) {
-        const err = new Error('Duplicate error.');
-        err.name = 'DuplicateError';
         throw err;
       }
       throw e;

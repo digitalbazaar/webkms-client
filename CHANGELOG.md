@@ -9,8 +9,8 @@
   server, it is not compatible with an old version.
 
 ### Removed
-- **BREAKING**: Remove `disableCapability` -- to disable a previously
-  authorized zcap, revoke it via `revokeCapability` instead.
+- **BREAKING**: Remove `enableCapability` and `disableCapability`. To revoke a
+  delegated authorized zcap, revoke it via `revokeCapability` instead.
 
 ## 6.0.0 - 2021-05-04
 
