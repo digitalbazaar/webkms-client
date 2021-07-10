@@ -21,19 +21,18 @@ export class KeystoreAgent {
    * @param {object} options - The options to use.
    * @param {CapabilityAgent} options.capabilityAgent - The CapabilityAgent
    *   to use to interact with the keystore.
-   * @param {object} [options.keystore] - The configuration for the
-   *   keystore; only needed if interacting with the keystore as its
-   *   controller.
+   * @param {string} [options.keystoreId] - The ID for the keystore; only
+   *   needed if interacting with the keystore as its controller.
    * @param {KmsClient} [options.kmsClient] - An optional KmsClient to use.
    *
    * @returns {KeystoreAgent} The new instance.
    */
-  constructor({capabilityAgent, keystore, kmsClient = new KmsClient()}) {
+  constructor({capabilityAgent, keystoreId, kmsClient = new KmsClient()}) {
     this.capabilityAgent = capabilityAgent;
-    this.keystore = keystore;
+    this.keystoreId = keystoreId;
     this.kmsClient = kmsClient;
-    if(this.keystore) {
-      this.kmsClient.keystore = keystore.id;
+    if(this.keystoreId) {
+      this.kmsClient.keystoreId = keystoreId;
     }
   }
 
