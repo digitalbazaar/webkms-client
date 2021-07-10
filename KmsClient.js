@@ -51,7 +51,6 @@ export class KmsClient {
    * @alias webkms.generateKey
    *
    * @param {object} options - The options to use.
-   * @param {string} options.kmsModule - The KMS module to use.
    * @param {string} options.type - The key type (e.g. 'AesKeyWrappingKey2019',
    *   or 'Ed25519VerificationKey2020').
    * @param {string} [options.capability] - The zCAP-LD authorization
@@ -61,8 +60,7 @@ export class KmsClient {
    *
    * @returns {Promise<object>} The key description for the key.
    */
-  async generateKey({kmsModule, type, capability, invocationSigner}) {
-    _assert(kmsModule, 'kmsModule', 'string');
+  async generateKey({type, capability, invocationSigner}) {
     _assert(type, 'type', 'string');
     _assert(invocationSigner, 'invocationSigner', 'object');
 
@@ -76,8 +74,7 @@ export class KmsClient {
     const operation = {
       '@context': [WEBKMS_CONTEXT_URL, suiteContextUrl],
       type: 'GenerateKeyOperation',
-      invocationTarget: {type},
-      kmsModule
+      invocationTarget: {type}
     };
     // determine url from capability or use defaults
     let url;
