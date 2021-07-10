@@ -28,11 +28,10 @@ export class KmsClient {
    * Creates a new KmsClient.
    *
    * @param {object} options - The options to use.
-   * @param {string} [options.keystore] - The ID of the keystore
+   * @param {string} [options.keystoreId] - The ID of the keystore
    *   that must be a URL that refers to the keystore's root storage
-   *   location; if not given,
-   *   then a separate capability must be given to each method called on the
-   *   client instance.
+   *   location; if not given, then a separate capability must be given to
+   *   each method called on the client instance.
    * @param {object} [options.httpsAgent] - A Node.js `https.Agent` instance
    *   to use when making requests.
    * @param {object} [options.defaultHeaders] - The HTTP headers to include
@@ -40,8 +39,8 @@ export class KmsClient {
    *
    * @returns {KmsClient} The new instance.
    */
-  constructor({keystore, httpsAgent, defaultHeaders} = {}) {
-    this.keystore = keystore;
+  constructor({keystoreId, httpsAgent, defaultHeaders} = {}) {
+    this.keystoreId = keystoreId;
     this.agent = httpsAgent;
     this.defaultHeaders = {...DEFAULT_HEADERS, ...defaultHeaders};
   }
@@ -85,8 +84,9 @@ export class KmsClient {
     if(capability) {
       url = KmsClient._getInvocationTarget({capability});
     } else {
-      url = `${this.keystore}/keys`;
-      capability = _getRootZcapId({keystoreId: this.keystore});
+      const {keystoreId} = this;
+      url = `${keystoreId}/keys`;
+      capability = _getRootZcapId({keystoreId});
     }
 
     try {
@@ -176,10 +176,11 @@ export class KmsClient {
     _assert(capabilityToRevoke, 'capabilityToRevoke', 'object');
     _assert(invocationSigner, 'invocationSigner', 'object');
 
+    const {keystoreId} = this;
     const url = KmsClient._getInvocationTarget({capability}) ||
-      `${this.keystore}/revocations`;
+      `${keystoreId}/revocations`;
     if(!capability) {
-      capability = _getRootZcapId({keystoreId: this.keystore});
+      capability = _getRootZcapId({keystoreId});
     }
     try {
       // sign HTTP header
@@ -527,18 +528,18 @@ export class KmsClient {
    * @returns {Promise<object>} Resolves to the new keystore configuration.
    */
   async updateKeystore({capability, config, invocationSigner}) {
-    const {keystore, agent} = this;
-    if(!(keystore || capability)) {
+    const {keystoreId, agent} = this;
+    if(!(keystoreId || capability)) {
       throw new TypeError(
-        '"capability" is required if "keystore" was not provided ' +
+        '"capability" is required if "keystoreId" was not provided ' +
         'to the KmsClient constructor.');
     }
     let url;
     if(capability) {
       url = KmsClient._getInvocationTarget({capability});
     } else {
-      url = keystore;
-      capability = _getRootZcapId({keystoreId: keystore});
+      url = keystoreId;
+      capability = _getRootZcapId({keystoreId});
     }
     const headers = await signCapabilityInvocation({
       url, method: 'post',
@@ -551,6 +552,48 @@ export class KmsClient {
     // send request
     const result = await httpClient.post(url, {agent, headers, json: config});
 
+    return result.data;
+  }
+
+  /**
+   * Gets the configuration for a keystore by its ID.
+   *
+   * @alias webkms.getKeystore
+   *
+   * @param {object} options - The options to use.
+   * @param {string} [options.capability] - The ZCAP authorization
+   *   capability to use to authorize the invocation of this operation.
+   * @param {object} options.invocationSigner - An API with an
+   *   `id` property and a `sign` function for signing a capability invocation.
+   *
+   * @returns {Promise<object>} Resolves to the configuration for the keystore.
+   */
+  async getKeystore({capability, invocationSigner}) {
+    _assert(invocationSigner, 'invocationSigner', 'object');
+
+    const {keystoreId, agent} = this;
+    if(!(keystoreId || capability)) {
+      throw new TypeError(
+        '"capability" is required if "keystoreId" was not provided ' +
+        'to the KmsClient constructor.');
+    }
+
+    let url;
+    if(capability) {
+      url = KmsClient._getInvocationTarget({capability});
+    } else {
+      url = keystoreId;
+      capability = _getRootZcapId({keystoreId});
+    }
+    const headers = await signCapabilityInvocation({
+      url, method: 'post',
+      headers: this.defaultHeaders,
+      capability,
+      invocationSigner,
+      capabilityAction: 'read'
+    });
+    // send request
+    const result = await httpClient.get(url, {agent, headers});
     return result.data;
   }
 
@@ -579,24 +622,6 @@ export class KmsClient {
   }
 
   /**
-   * Gets the configuration for a keystore by its ID.
-   *
-   * @alias webkms.getKeystore
-   *
-   * @param {object} options - The options to use.
-   * @param {string} options.id - The keystore's ID.
-   * @param {object} [options.httpsAgent] - An optional
-   *   node.js `https.Agent` instance to use when making requests.
-   *
-   * @returns {Promise<object>} Resolves to the configuration for the keystore.
-   */
-  static async getKeystore({id, httpsAgent}) {
-    _assert(id, 'id', 'string');
-    const result = await httpClient.get(id, {agent: httpsAgent});
-    return result.data;
-  }
-
-  /**
    * Finds the configuration for a keystore by its controller and reference ID.
    *
    * @alias webkms.findKeystore
@@ -610,7 +635,9 @@ export class KmsClient {
    *
    * @returns {Promise<object>} Resolves to the configuration for the keystore.
    */
-  static async findKeystore(
+  // FIXME: consider removal; if not removed, add `capability` and
+  // `invocationSigner` and invoke zcap to perform query
+  /*static async findKeystore(
     {url = '/kms/keystores', controller, referenceId, httpsAgent}) {
     _assert(controller, 'controller', 'string');
     _assert(referenceId, 'referenceId', 'string');
@@ -619,7 +646,7 @@ export class KmsClient {
       searchParams: {controller, referenceId},
     });
     return result.data[0] || null;
-  }
+  }*/
 
   static _getInvocationTarget({capability}) {
     if(!(capability && typeof capability === 'object')) {

@@ -1,12 +1,19 @@
 # webkms-client ChangeLog
 
-## 7.0.0 - 2021-05-xx
+## 7.0.0 - 2021-xx-xx
 
 ### Changed
 - **BREAKING**: All root zcaps use `urn:root:zcap:` prefix. Root zcaps
   for keys are the keystore root zcap where the controller resides, not
   the key. This new client version must be paired with a new WebKMS
   server, it is not compatible with an old version.
+- **BREAKING**: `getKeystore` is now an instance member function instead
+  of a static class member function. It requires that a capability be
+  invoked to fetch the keystore config.
+- **BREAKING**: The `keystore` parameter passed to `KmsClient` and
+  `KeystoreAgent` constructors has been renamed to `keystoreId` to
+  help avoid confusion (it is a string that contains the ID of a
+  keystore, not the keystore config).
 
 ### Removed
 - **BREAKING**: Remove `enableCapability` and `disableCapability`. To revoke a
