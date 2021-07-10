@@ -586,7 +586,7 @@ export class KmsClient {
       capability = _getRootZcapId({keystoreId});
     }
     const headers = await signCapabilityInvocation({
-      url, method: 'post',
+      url, method: 'get',
       headers: this.defaultHeaders,
       capability,
       invocationSigner,
