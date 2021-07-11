@@ -28,7 +28,7 @@ export class KeystoreAgent {
    * @returns {KeystoreAgent} The new instance.
    */
   constructor({capabilityAgent, keystoreId, kmsClient = new KmsClient()}) {
-    if(!(keystoreId && typeof keystoreId === 'string')) {
+    if(keystoreId && typeof keystoreId !== 'string') {
       throw new TypeError('"keystoreId" must be a string.');
     }
 
