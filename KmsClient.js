@@ -40,6 +40,9 @@ export class KmsClient {
    * @returns {KmsClient} The new instance.
    */
   constructor({keystoreId, httpsAgent, defaultHeaders} = {}) {
+    if(keystoreId) {
+      _assert(keystoreId, 'keystoreId', 'string');
+    }
     this.keystoreId = keystoreId;
     this.agent = httpsAgent;
     this.defaultHeaders = {...DEFAULT_HEADERS, ...defaultHeaders};
