@@ -14,6 +14,13 @@
   `KeystoreAgent` constructors has been renamed to `keystoreId` to
   help avoid confusion (it is a string that contains the ID of a
   keystore, not the keystore config).
+- **BREAKING**: Use simplified zcap revocation model via `revokeCapability`.
+  Now any party that has delegated a zcap may revoke it by calling
+  `revokeCapability` with the revoked zcap without passing an additional
+  capability that targets a revocatio endpoint. If no capability is passed,
+  then the client will a root zcap at the `<keystoreId>/revocations/<zcap ID>`
+  endpoint. The controller for this target is expected to be the delegator
+  of the zcap.
 
 ### Removed
 - **BREAKING**: Remove `enableCapability` and `disableCapability`. To revoke a
