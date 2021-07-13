@@ -159,7 +159,7 @@ export class KmsClient {
   }
 
   /**
-   * Store a capability revocation.
+   * Revoke a delegated capability.
    *
    * @alias webkms.revokeCapability
    *
@@ -176,11 +176,27 @@ export class KmsClient {
     _assert(capabilityToRevoke, 'capabilityToRevoke', 'object');
     _assert(invocationSigner, 'invocationSigner', 'object');
 
-    const {keystoreId} = this;
+    let {keystoreId} = this;
+    if(!keystoreId && !(capability && typeof capability === 'object')) {
+      // since no `keystoreId` was set and no `capability` with an invocation
+      // target that can be parsed was given, get the keystore ID from the
+      // capability that is to be revoked -- presuming it is a WebKMS key (if
+      // revoking any other capability, the `keystoreId` must be set or a
+      // `capability` passed to invoke)
+      const invocationTarget = KmsClient._getInvocationTarget(
+        {capability: capabilityToRevoke});
+      const idx = invocationTarget.lastIndexOf('/keys/');
+      if(idx === -1) {
+        throw new Error(
+          `Invalid WebKMS key invocation target (${invocationTarget}).`);
+      }
+      keystoreId = invocationTarget.substr(0, idx);
+    }
+
     const url = KmsClient._getInvocationTarget({capability}) ||
-      `${keystoreId}/revocations`;
+      `${keystoreId}/revocations/${encodeURIComponent(capabilityToRevoke.id)}`;
     if(!capability) {
-      capability = _getRootZcapId({keystoreId});
+      capability = `urn:zcap:root:${encodeURIComponent(url)}`;
     }
     try {
       // sign HTTP header
