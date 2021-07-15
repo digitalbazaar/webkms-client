@@ -1,7 +1,6 @@
 /*!
  * Copyright (c) 2019-2021 Digital Bazaar, Inc. All rights reserved.
  */
-import base64url from 'base64url-universal';
 import {KmsClient} from './KmsClient.js';
 
 export class AsymmetricKey {
@@ -68,7 +67,7 @@ export class AsymmetricKey {
     const {kmsId: keyId, kmsClient, capability, invocationSigner} = this;
     const signatureValue = await kmsClient.sign(
       {keyId, data, capability, invocationSigner});
-    return base64url.decode(signatureValue);
+    return signatureValue;
   }
 
   /**
