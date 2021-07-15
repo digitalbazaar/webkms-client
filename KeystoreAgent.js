@@ -7,6 +7,7 @@ import {KeyAgreementKey} from './KeyAgreementKey.js';
 import {Hmac} from './Hmac.js';
 import {KmsClient} from './KmsClient.js';
 import {CapabilityAgent} from './CapabilityAgent.js';
+import {RECOMMENDED_KEYS} from './recommendedKeys.js';
 
 const VERSIONS = ['recommended', 'fips'];
 
@@ -42,56 +43,45 @@ export class KeystoreAgent {
 
   /**
    * Generates a key in the keystore associated with the internal KmsClient.
-   * The key can be a key encryption key (KEK) or an HMAC key. It can be
-   * generated using a FIPS-compliant algorithm or the latest recommended
-   * algorithm.
+   * To use the latest recommended key algorithms, specify the key type as
+   * `hmac`, `kek`, `keyAgreement`, or `asymmetric`. A key can be generated
+   * using a FIPS-compliant algorithm or the latest recommended algorithm
+   * (default).
+   *
+   * To generate a key using a custom algorithm of your choice, you'll need to
+   * use the `KmsClient` class directly and instantiate the key interface that
+   * is appropriate for the type of key being generated.
    *
    * @example
    * await generateKey({type: 'keyAgreement'})
    *
    * @param {object} options - The options to use.
-   * @param {string} options.type - The type of key to create (`hmac` or `kek`).
-   * @param {string} options.kmsModule - The name of the KMS module to use to
-   *   generate the key.
+   * @param {string} options.type - The type of key to create (e.g., `hmac`).
    * @param {string} [options.version=recommended] - `fips` to
    *   use FIPS-compliant ciphers, `recommended` to use the latest recommended
    *   ciphers.
    *
-   * @returns {Promise<object>} A Kek or Hmac instance.
+   * @returns {Promise<object>} An Hmac, Kek, AsymmetricKey, or KeyAgreementKey
+   *   instance.
    */
-  async generateKey({type, kmsModule, version = 'recommended'}) {
+  async generateKey({type, version = 'recommended'}) {
     _assertVersion(version);
 
     // for the time being, fips and recommended are the same; there is no
     // other standardized key wrapping algorithm
-    let Class;
-    if(type === 'hmac' || type === 'Sha256HmacKey2019') {
-      type = 'Sha256HmacKey2019';
-      Class = Hmac;
-    } else if(type === 'kek' || type === 'AesKeyWrappingKey2019') {
-      type = 'AesKeyWrappingKey2019';
-      Class = Kek;
-    } else if(type === 'Ed25519VerificationKey2018') {
-      type = 'Ed25519VerificationKey2018';
-      Class = AsymmetricKey;
-    } else if(type === 'Ed25519VerificationKey2020') {
-      type = 'Ed25519VerificationKey2020';
-      Class = AsymmetricKey;
-    } else if(type === 'keyAgreement' || type === 'X25519KeyAgreementKey2019' ||
-      type === 'X25519KeyAgreementKey2020') {
-      type = 'X25519KeyAgreementKey2020';
-      Class = KeyAgreementKey;
-    } else {
+    const keyDetails = RECOMMENDED_KEYS.get(type);
+    if(!keyDetails) {
       throw new Error(`Unknown key type "${type}".`);
     }
+    const {type: fullType, suiteContextUrl, Class} = keyDetails;
 
     const {capabilityAgent, kmsClient} = this;
     const invocationSigner = capabilityAgent.getSigner();
     const keyDescription = await kmsClient.generateKey(
-      {kmsModule, type, invocationSigner});
-    const {id: newId} = keyDescription;
-    return new Class(
-      {id: newId, type, invocationSigner, kmsClient, keyDescription});
+      {type: fullType, suiteContextUrl, invocationSigner});
+    const {id} = keyDescription;
+    ({type} = keyDescription);
+    return new Class({id, type, invocationSigner, kmsClient, keyDescription});
   }
 
   /**

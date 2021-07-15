@@ -2,21 +2,11 @@
  * Copyright (c) 2019-2021 Digital Bazaar, Inc. All rights reserved.
  */
 import base64url from 'base64url-universal';
-import {cryptoLd} from './cryptoLd.js';
 import {httpClient, DEFAULT_HEADERS} from '@digitalbazaar/http-client';
 import {signCapabilityInvocation} from 'http-signature-zcap-invoke';
 import webkmsContext from 'webkms-context';
-import aesContext from 'aes-key-wrapping-2019-context';
-import hmacContext from 'sha256-hmac-key-2019-context';
 
 const {CONTEXT_URL: WEBKMS_CONTEXT_URL} = webkmsContext;
-const {CONTEXT_URL: AES_2019_CONTEXT_URL} = aesContext;
-const {CONTEXT_URL: HMAC_2019_CONTEXT_URL} = hmacContext;
-
-const symmetric = new Map([
-  ['AesKeyWrappingKey2019', AES_2019_CONTEXT_URL],
-  ['Sha256HmacKey2019', HMAC_2019_CONTEXT_URL]
-]);
 
 /**
  * @class
@@ -56,6 +46,8 @@ export class KmsClient {
    * @param {object} options - The options to use.
    * @param {string} options.type - The key type (e.g. 'AesKeyWrappingKey2019',
    *   or 'Ed25519VerificationKey2020').
+   * @param {string} options.suiteContextUrl - The LD suite context for the key
+   *   type (e.g. 'https://w3id.org/security/suites/ed25519-2020/v1').
    * @param {string} [options.capability] - The zCAP-LD authorization
    *   capability to use to authorize the invocation of this operation.
    * @param {object} options.invocationSigner - An API with an
@@ -63,17 +55,10 @@ export class KmsClient {
    *
    * @returns {Promise<object>} The key description for the key.
    */
-  async generateKey({type, capability, invocationSigner}) {
+  async generateKey({type, suiteContextUrl, capability, invocationSigner}) {
     _assert(type, 'type', 'string');
     _assert(invocationSigner, 'invocationSigner', 'object');
 
-    let suiteContextUrl = symmetric.get(type);
-    if(!suiteContextUrl) {
-      ({SUITE_CONTEXT: suiteContextUrl} = cryptoLd.suites.get(type) || {});
-      if(!suiteContextUrl) {
-        throw new Error(`Unknown key type: "${type}".`);
-      }
-    }
     const operation = {
       '@context': [WEBKMS_CONTEXT_URL, suiteContextUrl],
       type: 'GenerateKeyOperation',

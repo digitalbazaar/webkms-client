@@ -29,10 +29,20 @@
   will now return a `Uint8Array`. This change moves all encoding decisions that
   are related to the WebKMS HTTP API only inside of the `KmsClient` for
   consistency.
+- **BREAKING**: Require `suiteContextUrl` be passed to `KmsClient` along with
+  the key type. This allows decoupling of this library from `crypto-ld`,
+  enabling them to evolve independently. This library still supports a single
+  recommended key algorithm per type of key when using `KeystoreAgent`, e.g.,
+  `keyAgreement`, `kek`, `hmac`, `asymmetric`.
 
 ### Removed
 - **BREAKING**: Remove `enableCapability` and `disableCapability`. To revoke a
   delegated authorized zcap, revoke it via `revokeCapability` instead.
+- **BREAKING**: Remove built-in support for older keys
+  (e.g., `Ed25519Signature2018`). These can still be generated if the WebKMS
+  server supports them, but their `suiteContextUrl` must be passed to
+  `KmsClient.generateKey()`, they are not supported via `KeystoreAgent`.
+- **BREAKING**: Remove `keyType` option from `CapabilityAgent`.
 
 ## 6.0.0 - 2021-05-04
 

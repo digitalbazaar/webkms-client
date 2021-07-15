@@ -24,26 +24,20 @@
     "SeedCache.js",
     "crypto-browser.js",
     "crypto.js",
-    "cryptoLd.js",
     "index.js",
     "main.js",
+    "recommendedKeys.js",
     "util-browser.js",
     "util.js"
   ],
   "dependencies": {
-    "@digitalbazaar/ed25519-verification-key-2018": "^3.1.0",
     "@digitalbazaar/ed25519-verification-key-2020": "^3.1.0",
     "@digitalbazaar/http-client": "^1.0.0",
-    "@digitalbazaar/x25519-key-agreement-key-2019": "^5.1.1",
-    "@digitalbazaar/x25519-key-agreement-key-2020": "^2.0.0",
-    "aes-key-wrapping-2019-context": "^1.0.3",
     "base64url-universal": "^1.1.0",
-    "crypto-ld": "^6.0.0",
     "esm": "^3.2.25",
     "http-signature-zcap-invoke": "^3.0.0",
     "isomorphic-webcrypto": "^2.3.2",
     "lru-cache": "^6.0.0",
-    "sha256-hmac-key-2019-context": "^1.0.3",
     "webkms-context": "^1.0.0"
   },
   "devDependencies": {
