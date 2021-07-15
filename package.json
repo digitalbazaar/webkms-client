@@ -26,9 +26,7 @@
     "crypto.js",
     "index.js",
     "main.js",
-    "recommendedKeys.js",
-    "util-browser.js",
-    "util.js"
+    "recommendedKeys.js"
   ],
   "dependencies": {
     "@digitalbazaar/ed25519-verification-key-2020": "^3.1.0",
@@ -87,8 +85,7 @@
   "homepage": "https://github.com/digitalbazaar/webkms-client",
   "module": "main.js",
   "browser": {
-    "./crypto.js": "./crypto-browser.js",
-    "./util.js": "./util-browser.js"
+    "./crypto.js": "./crypto-browser.js"
   },
   "engines": {
     "node": ">=12.0.0"
