@@ -5,7 +5,6 @@ import crypto from './crypto.js';
 import {Ed25519VerificationKey2020} from
   '@digitalbazaar/ed25519-verification-key-2020';
 import {SeedCache} from './SeedCache.js';
-import {TextDecoder, TextEncoder} from './util.js';
 
 const _seedCache = new SeedCache();
 
