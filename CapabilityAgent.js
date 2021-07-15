@@ -2,10 +2,10 @@
  * Copyright (c) 2019-2021 Digital Bazaar, Inc. All rights reserved.
  */
 import crypto from './crypto.js';
+import {Ed25519VerificationKey2020} from
+  '@digitalbazaar/ed25519-verification-key-2020';
 import {SeedCache} from './SeedCache.js';
 import {TextDecoder, TextEncoder} from './util.js';
-
-import {cryptoLd} from './cryptoLd.js';
 
 const _seedCache = new SeedCache();
 
@@ -76,19 +76,14 @@ export class CapabilityAgent {
    * @param {boolean} [options.cache=true] - Use `true` to cache the seed for
    *   the key, `false` not to; a cached seed must be cleared via `clearCache`
    *   or it will persist until the user clears their local website storage.
-   * @param {string} options.keyType - A signature key type, for example:
-   *   Ed25519VerificationKey2018 or Ed25519VerificationKey2020.
    *
    * @returns {Promise<CapabilityAgent>} The new CapabilityAgent instance.
    */
   static async fromSecret({
-    secret, handle, keyName = 'default', cache = true, keyType
+    secret, handle, keyName = 'default', cache = true
   }) {
     if(typeof handle !== 'string') {
       throw new TypeError('"handle" must be a string.');
-    }
-    if(typeof keyType !== 'string') {
-      throw new TypeError('"keyType" must be a string.');
     }
     if(typeof secret === 'string') {
       secret = _stringToUint8Array(secret);
@@ -98,9 +93,7 @@ export class CapabilityAgent {
 
     // compute salted SHA-256 hash as the seed for the key
     const seed = await _computeSaltedHash({secret, salt: handle});
-    const {signer, keyPair} = await _keyFromSeedAndName({
-      seed, keyName, keyType
-    });
+    const {signer, keyPair} = await _keyFromSeedAndName({seed, keyName});
     // cache seed if requested
     if(cache) {
       await _seedCache.set(handle, seed);
@@ -194,7 +187,7 @@ async function _computeSaltedHash({secret, salt}) {
   return new Uint8Array(await crypto.subtle.digest(algorithm, toHash));
 }
 
-async function _keyFromSeedAndName({seed, keyName, keyType}) {
+async function _keyFromSeedAndName({seed, keyName}) {
   const extractable = false;
   const hmacKey = await crypto.subtle.importKey(
     'raw', seed, {name: 'HMAC', hash: {name: 'SHA-256'}}, extractable,
@@ -203,7 +196,7 @@ async function _keyFromSeedAndName({seed, keyName, keyType}) {
   const signature = new Uint8Array(
     await crypto.subtle.sign(hmacKey.algorithm, hmacKey, nameBuffer));
   // generate Ed25519 key from HMAC signature
-  const keyPair = await cryptoLd.generate({seed: signature, type: keyType});
+  const keyPair = await Ed25519VerificationKey2020.generate({seed: signature});
 
   // create key and specify ID for key using fingerprint
   const signer = keyPair.signer();
