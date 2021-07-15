@@ -58,7 +58,7 @@ export class Hmac {
    * @param {Uint8Array} options.data - The data to sign as a Uint8Array.
    * @param {boolean} [options.useCache=true] - Enable the use of a cache.
    *
-   * @returns {Promise<string>} The base64url-encoded signature.
+   * @returns {Promise<Uint8Array>} The signature.
    */
   async sign({data, useCache = true}) {
     const cacheKey = `sign-${base64url.encode(data)}`;
@@ -102,8 +102,8 @@ export class Hmac {
    *
    * @param {object} options - The options to use.
    * @param {Uint8Array} options.data - The data to sign as a Uint8Array.
-   * @param {string} options.signature - The base64url-encoded signature
-   *   to verify.
+   * @param {Uint8Array|string} options.signature - The Uint8Array or
+   *   base64url-encoded signature to verify.
    * @param {boolean} [options.useCache=true] - Enable the use of a cache.
    *
    * @returns {Promise<boolean>} `true` if verified, `false` if not.

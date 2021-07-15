@@ -21,6 +21,14 @@
   then the client will a root zcap at the `<keystoreId>/revocations/<zcap ID>`
   endpoint. The controller for this target is expected to be the delegator
   of the zcap.
+- **BREAKING**: `KmsClient` functions that previously returned
+  base64url-encoded results will now base64url-decode and return a
+  `Uint8Array` instead. The APIs for `AsymmetricKey` and `KeyAgreementKey` will
+  not be changed as they already returned a `Uint8Array` (instead, the decoding
+  will just be moved to KmsClient). However, `Hmac.sign()` and `Kek.wrapKey()`
+  will now return a `Uint8Array`. This change moves all encoding decisions that
+  are related to the WebKMS HTTP API only inside of the `KmsClient` for
+  consistency.
 
 ### Removed
 - **BREAKING**: Remove `enableCapability` and `disableCapability`. To revoke a

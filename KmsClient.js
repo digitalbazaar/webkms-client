@@ -232,7 +232,7 @@ export class KmsClient {
    * @param {object} options.invocationSigner - An API with an
    *   `id` property and a `sign` function for signing a capability invocation.
    *
-   * @returns {Promise<string>} The base64url-encoded wrapped key bytes.
+   * @returns {Promise<Uint8Array>} The wrapped key bytes.
    */
   async wrapKey({kekId, unwrappedKey, capability, invocationSigner}) {
     _assert(kekId, 'kekId', 'string');
@@ -266,7 +266,7 @@ export class KmsClient {
       const result = await httpClient.post(url, {
         agent, headers, json: operation
       });
-      return result.data.wrappedKey;
+      return base64url.decode(result.data.wrappedKey);
     } catch(e) {
       if(e.status === 404) {
         const err = new Error('Key encryption key not found.');
@@ -284,8 +284,8 @@ export class KmsClient {
    *
    * @param {object} options - The options to use.
    * @param {string} options.kekId - The ID of the unwrapping key to use.
-   * @param {string} options.wrappedKey - The wrapped key material as a
-   *   base64url-encoded string.
+   * @param {Uint8Array|string} options.wrappedKey - The wrapped key material
+   *   as a Uint8Array or base64url-encoded string.
    * @param {string} [options.capability] - The zCAP-LD authorization
    *   capability to use to authorize the invocation of this operation.
    * @param {object} options.invocationSigner - An API with an
@@ -296,8 +296,13 @@ export class KmsClient {
    */
   async unwrapKey({kekId, wrappedKey, capability, invocationSigner}) {
     _assert(kekId, 'kekId', 'string');
-    _assert(wrappedKey, 'wrappedKey', 'string');
+    _assert(wrappedKey, 'wrappedKey', ['string', 'Uint8Array']);
     _assert(invocationSigner, 'invocationSigner', 'object');
+
+    if(wrappedKey instanceof Uint8Array) {
+      // base64url-encode wrappedKey for transport
+      wrappedKey = base64url.encode(wrappedKey);
+    }
 
     const operation = {
       '@context': WEBKMS_CONTEXT_URL,
@@ -356,7 +361,7 @@ export class KmsClient {
    * @param {object} options.invocationSigner - An API with an
    *   `id` property and a `sign` function for signing a capability invocation.
    *
-   * @returns {Promise<string>} The base64url-encoded signature.
+   * @returns {Promise<Uint8Array>} The signature.
    */
   async sign({keyId, data, capability, invocationSigner}) {
     _assert(keyId, 'keyId', 'string');
@@ -390,7 +395,7 @@ export class KmsClient {
       const result = await httpClient.post(url, {
         agent, headers, json: operation
       });
-      return result.data.signatureValue;
+      return base64url.decode(result.data.signatureValue);
     } catch(e) {
       if(e.status === 404) {
         const err = new Error('Key not found.');
@@ -412,8 +417,8 @@ export class KmsClient {
    * @param {object} options - The options to use.
    * @param {string} options.keyId - The ID of the signing key to use.
    * @param {Uint8Array} options.data - The data to verify as a Uint8Array.
-   * @param {string} options.signature - The base64url-encoded signature to
-   *   verify.
+   * @param {Uint8Array|string} options.signature - The signature to verify;
+   *   it may be passed either a base64url-encoded string or a Uint8Array.
    * @param {string} [options.capability] - The zCAP-LD authorization
    *   capability to use to authorize the invocation of this operation.
    * @param {object} options.invocationSigner - An API with an
@@ -424,8 +429,13 @@ export class KmsClient {
   async verify({keyId, data, signature, capability, invocationSigner}) {
     _assert(keyId, 'keyId', 'string');
     _assert(data, 'data', 'Uint8Array');
-    _assert(signature, 'signature', 'string');
+    _assert(signature, 'signature', ['string', 'Uint8Array']);
     _assert(invocationSigner, 'invocationSigner', 'object');
+
+    if(signature instanceof Uint8Array) {
+      // base64url-encode signature for transport
+      signature = base64url.encode(signature);
+    }
 
     const operation = {
       '@context': WEBKMS_CONTEXT_URL,

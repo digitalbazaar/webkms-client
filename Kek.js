@@ -45,7 +45,7 @@ export class Kek {
    * @param {Uint8Array} options.unwrappedKey - The key material
    *   as a Uint8Array.
    *
-   * @returns {Promise<string>} The base64url-encoded wrapped key bytes.
+   * @returns {Promise<Uint8Array>} The wrapped key bytes.
    */
   async wrapKey({unwrappedKey}) {
     const {id: kekId, kmsClient, capability, invocationSigner} = this;

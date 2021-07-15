@@ -69,13 +69,13 @@ npm install
 <dt><a href="#webkms_revokeCapability">webkms:revokeCapability(options)</a> ⇒ <code>Promise.&lt;object&gt;</code></dt>
 <dd><p>Store a capability revocation.</p>
 </dd>
-<dt><a href="#webkms_wrapKey">webkms:wrapKey(options)</a> ⇒ <code>Promise.&lt;string&gt;</code></dt>
+<dt><a href="#webkms_wrapKey">webkms:wrapKey(options)</a> ⇒ <code>Promise.&lt;Uint8Array&gt;</code></dt>
 <dd><p>Wraps a cryptographic key using a key encryption key (KEK).</p>
 </dd>
 <dt><a href="#webkms_unwrapKey">webkms:unwrapKey(options)</a> ⇒ <code>Promise.&lt;(Uint8Array|null)&gt;</code></dt>
 <dd><p>Unwraps a cryptographic key using a key encryption key (KEK).</p>
 </dd>
-<dt><a href="#webkms_sign">webkms:sign(options)</a> ⇒ <code>Promise.&lt;string&gt;</code></dt>
+<dt><a href="#webkms_sign">webkms:sign(options)</a> ⇒ <code>Promise.&lt;Uint8Array&gt;</code></dt>
 <dd><p>Signs some data. Note that the data will be sent to the server, so if
 this data is intended to be secret it should be hashed first. However,
 hashing the data first may present interoperability issues so choose
@@ -189,11 +189,11 @@ Store a capability revocation.
 
 <a name="webkms_wrapKey"></a>
 
-### webkms:wrapKey(options) ⇒ <code>Promise.&lt;string&gt;</code>
+### webkms:wrapKey(options) ⇒ <code>Promise.&lt;Uint8Array&gt;</code>
 Wraps a cryptographic key using a key encryption key (KEK).
 
 **Kind**: global function
-**Returns**: <code>Promise.&lt;string&gt;</code> - The base64url-encoded wrapped key bytes.
+**Returns**: <code>Promise.&lt;Uint8Array&gt;</code> - The wrapped key bytes.
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -222,14 +222,14 @@ Unwraps a cryptographic key using a key encryption key (KEK).
 
 <a name="webkms_sign"></a>
 
-### webkms:sign(options) ⇒ <code>Promise.&lt;string&gt;</code>
+### webkms:sign(options) ⇒ <code>Promise.&lt;Uint8Array&gt;</code>
 Signs some data. Note that the data will be sent to the server, so if
 this data is intended to be secret it should be hashed first. However,
 hashing the data first may present interoperability issues so choose
 wisely.
 
 **Kind**: global function
-**Returns**: <code>Promise.&lt;string&gt;</code> - The base64url-encoded signature.
+**Returns**: <code>Promise.&lt;Uint8Array&gt;</code> - The signature.
 
 | Param | Type | Description |
 | --- | --- | --- |
