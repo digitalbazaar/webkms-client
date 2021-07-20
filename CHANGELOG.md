@@ -34,6 +34,9 @@
   enabling them to evolve independently. This library still supports a single
   recommended key algorithm per type of key when using `KeystoreAgent`, e.g.,
   `keyAgreement`, `kek`, `hmac`, `asymmetric`.
+- **BREAKING**: Creating a keystore now requires an `invocationSigner` as
+  the request signs a zcap for the keystore creation endpoint as its
+  invocation target.
 
 ### Removed
 - **BREAKING**: Remove `enableCapability` and `disableCapability`. To revoke a
