@@ -8,6 +8,8 @@ import webkmsContext from 'webkms-context';
 
 const {CONTEXT_URL: WEBKMS_CONTEXT_URL} = webkmsContext;
 
+const ZCAP_ROOT_PREFIX = 'urn:zcap:root:';
+
 /**
  * @class
  * @classdesc A WebKMS Client used to interface with a KMS.
@@ -181,7 +183,7 @@ export class KmsClient {
     const url = KmsClient._getInvocationTarget({capability}) ||
       `${keystoreId}/revocations/${encodeURIComponent(capabilityToRevoke.id)}`;
     if(!capability) {
-      capability = `urn:zcap:root:${encodeURIComponent(url)}`;
+      capability = `${ZCAP_ROOT_PREFIX}${encodeURIComponent(url)}`;
     }
     try {
       // sign HTTP header
@@ -616,18 +618,41 @@ export class KmsClient {
    * @param {object} options - The options to use.
    * @param {string} options.url - The url to post the configuration to.
    * @param {string} options.config - The keystore's configuration.
+   * @param {string} [options.capability] - The zcap authorization
+   *   capability to use to authorize the invocation of this operation.
+   * @param {object} options.invocationSigner - An API with an
+   *   `id` property and a `sign` function for signing a capability invocation.
    * @param {object} [options.httpsAgent] - An optional
    *   node.js `https.Agent` instance to use when making requests.
    *
    * @returns {Promise<object>} Resolves to the configuration for the newly
    *   created keystore.
    */
-  static async createKeystore({url = '/kms/keystores', config, httpsAgent}) {
+  static async createKeystore({
+    url, config, capability, invocationSigner, httpsAgent,
+  } = {}) {
     _assert(url, 'url', 'string');
     _assert(config, 'config', 'object');
     _assert(config.controller, 'config.controller', 'string');
+    _assert(invocationSigner, 'invocationSigner', 'object');
+
+    if(capability) {
+      if(!url) {
+        url = KmsClient._getInvocationTarget({capability});
+      }
+    } else {
+      capability = `${ZCAP_ROOT_PREFIX}${encodeURIComponent(url)}`;
+    }
+
+    // sign HTTP header
+    const headers = await signCapabilityInvocation({
+      url, method: 'post', headers: DEFAULT_HEADERS,
+      json: config, capability, invocationSigner,
+      capabilityAction: 'write'
+    });
+    // send request
     const result = await httpClient.post(url, {
-      agent: httpsAgent, json: config
+      agent: httpsAgent, headers, json: config
     });
     return result.data;
   }
@@ -701,5 +726,5 @@ function _getRootZcapId({keystoreId, keyId}) {
   } else {
     suffix = keystoreId;
   }
-  return `urn:zcap:root:${encodeURIComponent(suffix)}`;
+  return `${ZCAP_ROOT_PREFIX}${encodeURIComponent(suffix)}`;
 }
