@@ -657,33 +657,6 @@ export class KmsClient {
     return result.data;
   }
 
-  /**
-   * Finds the configuration for a keystore by its controller and reference ID.
-   *
-   * @alias webkms.findKeystore
-   *
-   * @param {object} options - The options to use.
-   * @param {string} [options.url] - The url to query.
-   * @param {string} options.controller - The keystore's controller.
-   * @param {string} options.referenceId - The keystore's reference ID.
-   * @param {object} [options.httpsAgent] - An optional
-   *   node.js `https.Agent` instance to use when making requests.
-   *
-   * @returns {Promise<object>} Resolves to the configuration for the keystore.
-   */
-  // FIXME: consider removal; if not removed, add `capability` and
-  // `invocationSigner` and invoke zcap to perform query
-  /*static async findKeystore(
-    {url = '/kms/keystores', controller, referenceId, httpsAgent}) {
-    _assert(controller, 'controller', 'string');
-    _assert(referenceId, 'referenceId', 'string');
-    const result = await httpClient.get(url, {
-      agent: httpsAgent,
-      searchParams: {controller, referenceId},
-    });
-    return result.data[0] || null;
-  }*/
-
   static _getInvocationTarget({capability}) {
     if(!(capability && typeof capability === 'object')) {
       // no capability provided
