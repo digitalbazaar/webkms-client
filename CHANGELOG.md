@@ -1,6 +1,6 @@
 # webkms-client ChangeLog
 
-## 7.0.0 - 2021-xx-xx
+## 7.0.0 - 2021-07-22
 
 ### Changed
 - **BREAKING**: All root zcaps use `urn:root:zcap:` prefix. Root zcaps
