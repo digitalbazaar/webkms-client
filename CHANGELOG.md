@@ -46,6 +46,10 @@
   server supports them, but their `suiteContextUrl` must be passed to
   `KmsClient.generateKey()`, they are not supported via `KeystoreAgent`.
 - **BREAKING**: Remove `keyType` option from `CapabilityAgent`.
+- **BREAKING**: Remove `findKeystores` API. It was unused, would require
+  changes to work with the other changes in this new version, and its unclear
+  how much of a benefit it is at this time. A redesign of this API may come
+  back in a future version if it makes sense to do so.
 
 ## 6.0.0 - 2021-05-04
 
