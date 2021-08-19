@@ -1,6 +1,6 @@
 # webkms-client ChangeLog
 
-## 6.0.1 - 2021-08-xx
+## 6.0.1 - 2021-08-19
 
 ### Fixed
 - Update dependencies to use fixed ed25519* modules.
