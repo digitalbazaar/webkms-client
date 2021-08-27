@@ -23,7 +23,7 @@
 - **BREAKING**: Use simplified zcap revocation model via `revokeCapability`.
   Now any party that has delegated a zcap may revoke it by calling
   `revokeCapability` with the revoked zcap without passing an additional
-  capability that targets a revocatio endpoint. If no capability is passed,
+  capability that targets a revocation endpoint. If no capability is passed,
   then the client will a root zcap at the `<keystoreId>/revocations/<zcap ID>`
   endpoint. The controller for this target is expected to be the delegator
   of the zcap.
