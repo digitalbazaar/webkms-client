@@ -618,7 +618,7 @@ export class KmsClient {
    * @param {object} options - The options to use.
    * @param {string} options.url - The url to post the configuration to.
    * @param {string} options.config - The keystore's configuration.
-   * @param {string} [options.capability] - The zcap authorization
+   * @param {string|object} [options.capability] - The zcap authorization
    *   capability to use to authorize the invocation of this operation.
    * @param {object} options.invocationSigner - An API with an
    *   `id` property and a `sign` function for signing a capability invocation.
