@@ -676,7 +676,7 @@ export class KmsClient {
   }
 }
 
-async function _assert(variable, name, types) {
+function _assert(variable, name, types) {
   if(!Array.isArray(types)) {
     types = [types];
   }

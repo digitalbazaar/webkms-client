@@ -1,5 +1,11 @@
 # webkms-client ChangeLog
 
+## 7.0.1 - 2021-08-xx
+
+### Fixed
+- Fix internal `_assert` helper; it should have been synchronous
+  but was marked async.
+
 ## 7.0.0 - 2021-07-22
 
 ### Changed
