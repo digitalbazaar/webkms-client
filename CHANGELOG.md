@@ -1,5 +1,12 @@
 # webkms-client ChangeLog
 
+## 8.0.0 -
+
+### Changed
+- **BREAKING**: Update error messages, make them more specific.
+  Add `cause` property to the thrown errors, and include `requestHost` for
+  timeout and network errors.
+
 ## 7.0.1 - 2021-08-27
 
 ### Fixed
