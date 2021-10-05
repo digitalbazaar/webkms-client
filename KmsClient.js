@@ -76,13 +76,22 @@ export class KmsClient {
       capability = _getRootZcapId({keystoreId});
     }
 
+    let headers;
     try {
       // sign HTTP header
-      const headers = await signCapabilityInvocation({
+      headers = await signCapabilityInvocation({
         url, method: 'post', headers: this.defaultHeaders,
         json: operation, capability, invocationSigner,
         capabilityAction: 'generateKey'
       });
+    } catch(e) {
+      _handleClientError({
+        message: 'Error signing capability invocation while generating key',
+        cause: e
+      });
+    }
+
+    try {
       // send request
       const {agent} = this;
       const result = await httpClient.post(url, {
@@ -90,12 +99,10 @@ export class KmsClient {
       });
       return result.data;
     } catch(e) {
-      if(e.status === 409) {
-        const err = new Error('Duplicate error.');
-        err.name = 'DuplicateError';
-        throw err;
-      }
-      throw e;
+      _handleClientError({
+        message: 'Error generating key',
+        cause: e
+      });
     }
   }
 
@@ -124,24 +131,32 @@ export class KmsClient {
       capability = _getRootZcapId({keyId});
     }
 
+    let headers;
     try {
       // sign HTTP header
-      const headers = await signCapabilityInvocation({
+      headers = await signCapabilityInvocation({
         url, method: 'get', headers: this.defaultHeaders,
         capability, invocationSigner,
         capabilityAction: 'read'
       });
+    } catch(e) {
+      _handleClientError({
+        message: 'Error signing capability invocation while fetching key ' +
+          'description.',
+        cause: e
+      });
+    }
+
+    try {
       // send request
       const {agent} = this;
       const result = await httpClient.get(url, {agent, headers});
       return result.data;
     } catch(e) {
-      if(e.status === 404) {
-        const err = new Error('Key description not found.');
-        err.name = 'NotFoundError';
-        throw err;
-      }
-      throw e;
+      _handleClientError({
+        message: 'Error fetching key description.',
+        notFoundMessage: 'Key description not found'
+      });
     }
   }
 
@@ -185,23 +200,32 @@ export class KmsClient {
     if(!capability) {
       capability = `${ZCAP_ROOT_PREFIX}${encodeURIComponent(url)}`;
     }
+
+    let headers;
     try {
       // sign HTTP header
-      const headers = await signCapabilityInvocation({
+      headers = await signCapabilityInvocation({
         url, method: 'post', headers: this.defaultHeaders,
         json: capabilityToRevoke, capability, invocationSigner,
         capabilityAction: 'write'
       });
+    } catch(e) {
+      _handleClientError({
+        message: 'Error signing capability invocation while revoking zCap',
+        cause: e
+      });
+    }
+
+    try {
       // send request
       const {agent} = this;
       await httpClient.post(url, {agent, headers, json: capabilityToRevoke});
     } catch(e) {
-      if(e.status === 409) {
-        const err = new Error('Duplicate error.');
-        err.name = 'DuplicateError';
-        throw err;
-      }
-      throw e;
+      _handleClientError({
+        message: 'Error revoking zCap',
+        notFoundMessage: 'zCap not found',
+        cause: e
+      });
     }
   }
 
@@ -241,13 +265,22 @@ export class KmsClient {
       capability = _getRootZcapId({keyId: kekId});
     }
 
+    let headers;
     try {
       // sign HTTP header
-      const headers = await signCapabilityInvocation({
+      headers = await signCapabilityInvocation({
         url, method: 'post', headers: this.defaultHeaders,
         json: operation, capability, invocationSigner,
         capabilityAction: 'wrapKey'
       });
+    } catch(e) {
+      _handleClientError({
+        message: 'Error signing capability invocation while wrapping key',
+        cause: e
+      });
+    }
+
+    try {
       // send request
       const {agent} = this;
       const result = await httpClient.post(url, {
@@ -255,12 +288,11 @@ export class KmsClient {
       });
       return base64url.decode(result.data.wrappedKey);
     } catch(e) {
-      if(e.status === 404) {
-        const err = new Error('Key encryption key not found.');
-        err.name = 'NotFoundError';
-        throw err;
-      }
-      throw e;
+      _handleClientError({
+        message: 'Error wrapping key',
+        notFoundMessage: 'Key encryption key not found',
+        cause: e
+      });
     }
   }
 
@@ -306,13 +338,22 @@ export class KmsClient {
       capability = _getRootZcapId({keyId: kekId});
     }
 
+    let headers;
     try {
       // sign HTTP header
-      const headers = await signCapabilityInvocation({
+      headers = await signCapabilityInvocation({
         url, method: 'post', headers: this.defaultHeaders,
         json: operation, capability, invocationSigner,
         capabilityAction: 'unwrapKey'
       });
+    } catch(e) {
+      _handleClientError({
+        message: 'Error signing capability invocation while unwrapping key',
+        cause: e
+      });
+    }
+
+    try {
       // send request
       const {agent} = this;
       const result = await httpClient.post(url, {
@@ -323,12 +364,11 @@ export class KmsClient {
       }
       return base64url.decode(result.data.unwrappedKey);
     } catch(e) {
-      if(e.status === 404) {
-        const err = new Error('Key encryption key not found.');
-        err.name = 'NotFoundError';
-        throw err;
-      }
-      throw e;
+      _handleClientError({
+        message: 'Error unwrapping key',
+        notFoundMessage: 'Key encryption key not found',
+        cause: e
+      });
     }
   }
 
@@ -370,13 +410,22 @@ export class KmsClient {
       capability = _getRootZcapId({keyId});
     }
 
+    let headers;
     try {
       // sign HTTP header
-      const headers = await signCapabilityInvocation({
+      headers = await signCapabilityInvocation({
         url, method: 'post', headers: this.defaultHeaders,
         json: operation, capability, invocationSigner,
         capabilityAction: 'sign'
       });
+    } catch(e) {
+      _handleClientError({
+        message: 'Error signing zCap invocation during "sign" operation',
+        cause: e
+      });
+    }
+
+    try {
       // send request
       const {agent} = this;
       const result = await httpClient.post(url, {
@@ -384,12 +433,10 @@ export class KmsClient {
       });
       return base64url.decode(result.data.signatureValue);
     } catch(e) {
-      if(e.status === 404) {
-        const err = new Error('Key not found.');
-        err.name = 'NotFoundError';
-        throw err;
-      }
-      throw e;
+      _handleClientError({
+        message: 'Error during "sign" operation',
+        cause: e
+      });
     }
   }
 
@@ -440,13 +487,23 @@ export class KmsClient {
       capability = _getRootZcapId({keyId});
     }
 
+    let headers;
     try {
       // sign HTTP header
-      const headers = await signCapabilityInvocation({
+      headers = await signCapabilityInvocation({
         url, method: 'post', headers: this.defaultHeaders,
         json: operation, capability, invocationSigner,
         capabilityAction: 'verify'
       });
+    } catch(e) {
+      _handleClientError({
+        message:
+          'Error signing zCap invocation during "verify" operation',
+        cause: e
+      });
+    }
+
+    try {
       // send request
       const {agent} = this;
       const result = await httpClient.post(url, {
@@ -454,12 +511,10 @@ export class KmsClient {
       });
       return result.data.verified;
     } catch(e) {
-      if(e.status === 404) {
-        const err = new Error('Key not found.');
-        err.name = 'NotFoundError';
-        throw err;
-      }
-      throw e;
+      _handleClientError({
+        message: 'Error during "verify" operation',
+        cause: e
+      });
     }
   }
 
@@ -503,13 +558,23 @@ export class KmsClient {
       capability = _getRootZcapId({keyId});
     }
 
+    let headers;
     try {
       // sign HTTP header
-      const headers = await signCapabilityInvocation({
+      headers = await signCapabilityInvocation({
         url, method: 'post', headers: this.defaultHeaders,
         json: operation, capability, invocationSigner,
         capabilityAction: 'deriveSecret'
       });
+    } catch(e) {
+      _handleClientError({
+        message:
+          'Error signing zCap invocation during "deriveSecret" operation',
+        cause: e
+      });
+    }
+
+    try {
       // send request
       const {agent} = this;
       const result = await httpClient.post(url, {
@@ -517,12 +582,11 @@ export class KmsClient {
       });
       return base64url.decode(result.data.secret);
     } catch(e) {
-      if(e.status === 404) {
-        const err = new Error('Key agreement key not found.');
-        err.name = 'NotFoundError';
-        throw err;
-      }
-      throw e;
+      _handleClientError({
+        message: 'Error during "deriveSecret" operation',
+        notFoundMessage: 'Key agreement key not found',
+        cause: e
+      });
     }
   }
 
@@ -554,18 +618,35 @@ export class KmsClient {
       url = keystoreId;
       capability = _getRootZcapId({keystoreId});
     }
-    const headers = await signCapabilityInvocation({
-      url, method: 'post',
-      headers: this.defaultHeaders,
-      json: config,
-      capability,
-      invocationSigner,
-      capabilityAction: 'write'
-    });
-    // send request
-    const result = await httpClient.post(url, {agent, headers, json: config});
-
-    return result.data;
+    let headers;
+    try {
+      headers = await signCapabilityInvocation({
+        url, method: 'post',
+        headers: this.defaultHeaders,
+        json: config,
+        capability,
+        invocationSigner,
+        capabilityAction: 'write'
+      });
+    } catch(e) {
+      _handleClientError({
+        message:
+          'Error signing zCap invocation during "update keystore" operation',
+        cause: e
+      });
+    }
+    try {
+      // send request
+      const result = await httpClient.post(url, {
+        agent, headers, json: config
+      });
+      return result.data;
+    } catch(e) {
+      _handleClientError({
+        message: 'Error during "update keystore" operation',
+        cause: e
+      });
+    }
   }
 
   /**
@@ -598,16 +679,33 @@ export class KmsClient {
       url = keystoreId;
       capability = _getRootZcapId({keystoreId});
     }
-    const headers = await signCapabilityInvocation({
-      url, method: 'get',
-      headers: this.defaultHeaders,
-      capability,
-      invocationSigner,
-      capabilityAction: 'read'
-    });
-    // send request
-    const result = await httpClient.get(url, {agent, headers});
-    return result.data;
+
+    let headers;
+    try {
+      headers = await signCapabilityInvocation({
+        url, method: 'get',
+        headers: this.defaultHeaders,
+        capability,
+        invocationSigner,
+        capabilityAction: 'read'
+      });
+    } catch(e) {
+      _handleClientError({
+        message:
+          'Error signing zCap invocation during "get keystore" operation',
+        cause: e
+      });
+    }
+    try {
+      // send request
+      const result = await httpClient.get(url, {agent, headers});
+      return result.data;
+    } catch(e) {
+      _handleClientError({
+        message: 'Error during "get keystore" operation',
+        cause: e
+      });
+    }
   }
 
   /**
@@ -644,17 +742,34 @@ export class KmsClient {
       capability = `${ZCAP_ROOT_PREFIX}${encodeURIComponent(url)}`;
     }
 
-    // sign HTTP header
-    const headers = await signCapabilityInvocation({
-      url, method: 'post', headers: DEFAULT_HEADERS,
-      json: config, capability, invocationSigner,
-      capabilityAction: 'write'
-    });
-    // send request
-    const result = await httpClient.post(url, {
-      agent: httpsAgent, headers, json: config
-    });
-    return result.data;
+    let headers;
+    try {
+      // sign HTTP header
+      headers = await signCapabilityInvocation({
+        url, method: 'post', headers: DEFAULT_HEADERS,
+        json: config, capability, invocationSigner,
+        capabilityAction: 'write'
+      });
+    } catch(e) {
+      _handleClientError({
+        message:
+          'Error signing zCap invocation during "create keystore" operation',
+        cause: e
+      });
+    }
+    try {
+      const agent = httpsAgent || this.agent;
+      // send request
+      const result = await httpClient.post(url, {
+        agent, headers, json: config
+      });
+      return result.data;
+    } catch(e) {
+      _handleClientError({
+        message: 'Error during "create keystore" operation',
+        cause: e
+      });
+    }
   }
 
   static _getInvocationTarget({capability}) {
@@ -674,6 +789,36 @@ export class KmsClient {
     }
     return result;
   }
+}
+
+/**
+ * @param {object} options - Options hashmap.
+ * @param {string} options.message - Error message.
+ * @param {Error} options.cause - Source error for wrapping.
+ * @param {string} [options.notFoundMessage] - Optional 'not found' message.
+ */
+function _handleClientError({
+  message, cause, notFoundMessage = 'Key not found'
+}) {
+  let error;
+  if(cause.status === 409) {
+    error = new Error(
+      `Duplicate error during WebKMS client operation: ${message}`);
+    error.name = 'DuplicateError';
+  } else if(cause.status === 404) {
+    // e.g. 'Error getting key description: Key description not found'
+    error = new Error(`${message}: ${notFoundMessage}`);
+  } else {
+    error = cause;
+    error.message = `WebKMS client error: ${cause.message}`;
+  }
+
+  if(!error.message.endsWith('.')) {
+    error.message = error.message + '.';
+  }
+
+  error.cause = cause;
+  throw error;
 }
 
 function _assert(variable, name, types) {
