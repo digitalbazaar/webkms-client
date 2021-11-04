@@ -99,8 +99,14 @@ export class KmsClient {
       });
       return result.data;
     } catch(e) {
+      let errorMessage = 'Error generating key.';
+      if(e.status === 409) {
+        e.name = 'DuplicateError';
+        errorMessage = 'Duplicate error while generating key.';
+      }
+
       _handleClientError({
-        message: 'Error generating key.',
+        message: errorMessage,
         cause: e
       });
     }
@@ -221,8 +227,13 @@ export class KmsClient {
       const {agent} = this;
       await httpClient.post(url, {agent, headers, json: capabilityToRevoke});
     } catch(e) {
+      let errorMessage = 'Error revoking zCap.';
+      if(e.status === 409) {
+        e.name = 'DuplicateError';
+        errorMessage = 'Duplicate error while revoking zCap.';
+      }
       _handleClientError({
-        message: 'Error revoking zCap.',
+        message: errorMessage,
         notFoundMessage: 'zCap not found.',
         cause: e
       });
@@ -802,13 +813,10 @@ function _handleClientError({
 }) {
   let error;
   const errorMessage = message.slice(0, -1);
-  if(cause.status === 409) {
-    error = new Error(
-      `Duplicate error during WebKMS client operation: ${errorMessage}`);
-    error.name = 'DuplicateError';
-  } else if(cause.status === 404) {
+  if(cause.status === 404) {
     // e.g. 'Error getting key description: Key description not found'
     error = new Error(`${errorMessage}: ${notFoundMessage}`);
+    error.status = 404;
   } else {
     error = cause;
     error.message = `WebKMS client error: ${cause.message}`;
