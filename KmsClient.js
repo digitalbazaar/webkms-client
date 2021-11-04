@@ -86,7 +86,7 @@ export class KmsClient {
       });
     } catch(e) {
       _handleClientError({
-        message: 'Error signing capability invocation while generating key',
+        message: 'Error signing capability invocation while generating key.',
         cause: e
       });
     }
@@ -100,7 +100,7 @@ export class KmsClient {
       return result.data;
     } catch(e) {
       _handleClientError({
-        message: 'Error generating key',
+        message: 'Error generating key.',
         cause: e
       });
     }
@@ -155,7 +155,7 @@ export class KmsClient {
     } catch(e) {
       _handleClientError({
         message: 'Error fetching key description.',
-        notFoundMessage: 'Key description not found'
+        notFoundMessage: 'Key description not found.'
       });
     }
   }
@@ -211,7 +211,7 @@ export class KmsClient {
       });
     } catch(e) {
       _handleClientError({
-        message: 'Error signing capability invocation while revoking zCap',
+        message: 'Error signing capability invocation while revoking zCap.',
         cause: e
       });
     }
@@ -222,8 +222,8 @@ export class KmsClient {
       await httpClient.post(url, {agent, headers, json: capabilityToRevoke});
     } catch(e) {
       _handleClientError({
-        message: 'Error revoking zCap',
-        notFoundMessage: 'zCap not found',
+        message: 'Error revoking zCap.',
+        notFoundMessage: 'zCap not found.',
         cause: e
       });
     }
@@ -275,7 +275,7 @@ export class KmsClient {
       });
     } catch(e) {
       _handleClientError({
-        message: 'Error signing capability invocation while wrapping key',
+        message: 'Error signing capability invocation while wrapping key.',
         cause: e
       });
     }
@@ -289,8 +289,8 @@ export class KmsClient {
       return base64url.decode(result.data.wrappedKey);
     } catch(e) {
       _handleClientError({
-        message: 'Error wrapping key',
-        notFoundMessage: 'Key encryption key not found',
+        message: 'Error wrapping key.',
+        notFoundMessage: 'Key encryption key not found.',
         cause: e
       });
     }
@@ -348,7 +348,7 @@ export class KmsClient {
       });
     } catch(e) {
       _handleClientError({
-        message: 'Error signing capability invocation while unwrapping key',
+        message: 'Error signing capability invocation while unwrapping key.',
         cause: e
       });
     }
@@ -365,8 +365,8 @@ export class KmsClient {
       return base64url.decode(result.data.unwrappedKey);
     } catch(e) {
       _handleClientError({
-        message: 'Error unwrapping key',
-        notFoundMessage: 'Key encryption key not found',
+        message: 'Error unwrapping key.',
+        notFoundMessage: 'Key encryption key not found.',
         cause: e
       });
     }
@@ -420,7 +420,7 @@ export class KmsClient {
       });
     } catch(e) {
       _handleClientError({
-        message: 'Error signing zCap invocation during "sign" operation',
+        message: 'Error signing zCap invocation during "sign" operation.',
         cause: e
       });
     }
@@ -434,7 +434,7 @@ export class KmsClient {
       return base64url.decode(result.data.signatureValue);
     } catch(e) {
       _handleClientError({
-        message: 'Error during "sign" operation',
+        message: 'Error during "sign" operation.',
         cause: e
       });
     }
@@ -498,7 +498,7 @@ export class KmsClient {
     } catch(e) {
       _handleClientError({
         message:
-          'Error signing zCap invocation during "verify" operation',
+          'Error signing zCap invocation during "verify" operation.',
         cause: e
       });
     }
@@ -512,7 +512,7 @@ export class KmsClient {
       return result.data.verified;
     } catch(e) {
       _handleClientError({
-        message: 'Error during "verify" operation',
+        message: 'Error during "verify" operation.',
         cause: e
       });
     }
@@ -569,7 +569,7 @@ export class KmsClient {
     } catch(e) {
       _handleClientError({
         message:
-          'Error signing zCap invocation during "deriveSecret" operation',
+          'Error signing zCap invocation during "deriveSecret" operation.',
         cause: e
       });
     }
@@ -583,8 +583,8 @@ export class KmsClient {
       return base64url.decode(result.data.secret);
     } catch(e) {
       _handleClientError({
-        message: 'Error during "deriveSecret" operation',
-        notFoundMessage: 'Key agreement key not found',
+        message: 'Error during "deriveSecret" operation.',
+        notFoundMessage: 'Key agreement key not found.',
         cause: e
       });
     }
@@ -631,7 +631,7 @@ export class KmsClient {
     } catch(e) {
       _handleClientError({
         message:
-          'Error signing zCap invocation during "update keystore" operation',
+          'Error signing zCap invocation during "update keystore" operation.',
         cause: e
       });
     }
@@ -643,7 +643,7 @@ export class KmsClient {
       return result.data;
     } catch(e) {
       _handleClientError({
-        message: 'Error during "update keystore" operation',
+        message: 'Error during "update keystore" operation.',
         cause: e
       });
     }
@@ -692,7 +692,7 @@ export class KmsClient {
     } catch(e) {
       _handleClientError({
         message:
-          'Error signing zCap invocation during "get keystore" operation',
+          'Error signing zCap invocation during "get keystore" operation.',
         cause: e
       });
     }
@@ -702,7 +702,7 @@ export class KmsClient {
       return result.data;
     } catch(e) {
       _handleClientError({
-        message: 'Error during "get keystore" operation',
+        message: 'Error during "get keystore" operation.',
         cause: e
       });
     }
@@ -753,7 +753,7 @@ export class KmsClient {
     } catch(e) {
       _handleClientError({
         message:
-          'Error signing zCap invocation during "create keystore" operation',
+          'Error signing zCap invocation during "create keystore" operation.',
         cause: e
       });
     }
@@ -766,7 +766,7 @@ export class KmsClient {
       return result.data;
     } catch(e) {
       _handleClientError({
-        message: 'Error during "create keystore" operation',
+        message: 'Error during "create keystore" operation.',
         cause: e
       });
     }
@@ -801,13 +801,14 @@ function _handleClientError({
   message, cause, notFoundMessage = 'Key not found'
 }) {
   let error;
+  const errorMessage = message.slice(0, -1);
   if(cause.status === 409) {
     error = new Error(
-      `Duplicate error during WebKMS client operation: ${message}`);
+      `Duplicate error during WebKMS client operation: ${errorMessage}`);
     error.name = 'DuplicateError';
   } else if(cause.status === 404) {
     // e.g. 'Error getting key description: Key description not found'
-    error = new Error(`${message}: ${notFoundMessage}`);
+    error = new Error(`${errorMessage}: ${notFoundMessage}`);
   } else {
     error = cause;
     error.message = `WebKMS client error: ${cause.message}`;
