@@ -4,7 +4,7 @@
 
 ### Changed
 - **BREAKING**: Update error messages, make them more specific.
-  Add `cause` property to the thrown errors, and include `requestHost` for
+  Add `cause` property to the thrown errors, and include `requestUrl` for
   timeout and network errors.
 
 ## 7.0.1 - 2021-08-27
