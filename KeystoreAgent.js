@@ -6,10 +6,13 @@ import {Kek} from './Kek.js';
 import {KeyAgreementKey} from './KeyAgreementKey.js';
 import {Hmac} from './Hmac.js';
 import {KmsClient} from './KmsClient.js';
-import {CapabilityAgent} from './CapabilityAgent.js';
 import {RECOMMENDED_KEYS} from './recommendedKeys.js';
 
 const VERSIONS = ['recommended', 'fips'];
+
+/**
+ * @class CapabilityAgent
+ */
 
 export class KeystoreAgent {
   /**
