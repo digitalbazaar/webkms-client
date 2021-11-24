@@ -89,14 +89,18 @@ export class KmsClient {
       });
       return result.data;
     } catch(e) {
-      let errorMessage = 'Error generating key.';
       if(e.status === 409) {
-        e.name = 'DuplicateError';
-        errorMessage = 'Duplicate error while generating key.';
+        const err = new Error('Duplicate error.');
+        err.name = 'DuplicateError';
+        err.cause = e;
+        _handleClientError({
+          message: 'Duplicate error while generating key.',
+          cause: e
+        });
       }
 
       _handleClientError({
-        message: errorMessage,
+        message: 'Error generating key.',
         cause: e
       });
     }
