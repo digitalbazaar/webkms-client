@@ -76,20 +76,10 @@ export class KmsClient {
       capability = _getRootZcapId({keystoreId});
     }
 
-    let headers;
-    try {
-      // sign HTTP header
-      headers = await signCapabilityInvocation({
-        url, method: 'post', headers: this.defaultHeaders,
-        json: operation, capability, invocationSigner,
-        capabilityAction: 'generateKey'
-      });
-    } catch(e) {
-      _handleClientError({
-        message: 'Error signing capability invocation while generating key.',
-        cause: e
-      });
-    }
+    const headers = await _signCapabilityInvocation({
+      url, method: 'post', operation, capability, invocationSigner,
+      capabilityAction: 'generateKey'
+    });
 
     try {
       // send request
@@ -137,21 +127,9 @@ export class KmsClient {
       capability = _getRootZcapId({keyId});
     }
 
-    let headers;
-    try {
-      // sign HTTP header
-      headers = await signCapabilityInvocation({
-        url, method: 'get', headers: this.defaultHeaders,
-        capability, invocationSigner,
-        capabilityAction: 'read'
-      });
-    } catch(e) {
-      _handleClientError({
-        message: 'Error signing capability invocation while fetching key ' +
-          'description.',
-        cause: e
-      });
-    }
+    const headers = await _signCapabilityInvocation({
+      url, method: 'get', capability, invocationSigner, capabilityAction: 'read'
+    });
 
     try {
       // send request
@@ -207,20 +185,10 @@ export class KmsClient {
       capability = `${ZCAP_ROOT_PREFIX}${encodeURIComponent(url)}`;
     }
 
-    let headers;
-    try {
-      // sign HTTP header
-      headers = await signCapabilityInvocation({
-        url, method: 'post', headers: this.defaultHeaders,
-        json: capabilityToRevoke, capability, invocationSigner,
-        capabilityAction: 'write'
-      });
-    } catch(e) {
-      _handleClientError({
-        message: 'Error signing capability invocation while revoking zCap.',
-        cause: e
-      });
-    }
+    const headers = await _signCapabilityInvocation({
+      url, method: 'post', operation: capabilityToRevoke,
+      capability, invocationSigner, capabilityAction: 'write'
+    });
 
     try {
       // send request
@@ -276,20 +244,10 @@ export class KmsClient {
       capability = _getRootZcapId({keyId: kekId});
     }
 
-    let headers;
-    try {
-      // sign HTTP header
-      headers = await signCapabilityInvocation({
-        url, method: 'post', headers: this.defaultHeaders,
-        json: operation, capability, invocationSigner,
-        capabilityAction: 'wrapKey'
-      });
-    } catch(e) {
-      _handleClientError({
-        message: 'Error signing capability invocation while wrapping key.',
-        cause: e
-      });
-    }
+    const headers = await _signCapabilityInvocation({
+      url, method: 'post', operation, capability, invocationSigner,
+      capabilityAction: 'wrapKey'
+    });
 
     try {
       // send request
@@ -349,20 +307,10 @@ export class KmsClient {
       capability = _getRootZcapId({keyId: kekId});
     }
 
-    let headers;
-    try {
-      // sign HTTP header
-      headers = await signCapabilityInvocation({
-        url, method: 'post', headers: this.defaultHeaders,
-        json: operation, capability, invocationSigner,
-        capabilityAction: 'unwrapKey'
-      });
-    } catch(e) {
-      _handleClientError({
-        message: 'Error signing capability invocation while unwrapping key.',
-        cause: e
-      });
-    }
+    const headers = await _signCapabilityInvocation({
+      url, method: 'post', operation, capability, invocationSigner,
+      capabilityAction: 'unwrapKey'
+    });
 
     try {
       // send request
@@ -421,20 +369,10 @@ export class KmsClient {
       capability = _getRootZcapId({keyId});
     }
 
-    let headers;
-    try {
-      // sign HTTP header
-      headers = await signCapabilityInvocation({
-        url, method: 'post', headers: this.defaultHeaders,
-        json: operation, capability, invocationSigner,
-        capabilityAction: 'sign'
-      });
-    } catch(e) {
-      _handleClientError({
-        message: 'Error signing zCap invocation during "sign" operation.',
-        cause: e
-      });
-    }
+    const headers = await _signCapabilityInvocation({
+      url, method: 'post', operation, capability, invocationSigner,
+      capabilityAction: 'sign'
+    });
 
     try {
       // send request
@@ -498,21 +436,10 @@ export class KmsClient {
       capability = _getRootZcapId({keyId});
     }
 
-    let headers;
-    try {
-      // sign HTTP header
-      headers = await signCapabilityInvocation({
-        url, method: 'post', headers: this.defaultHeaders,
-        json: operation, capability, invocationSigner,
-        capabilityAction: 'verify'
-      });
-    } catch(e) {
-      _handleClientError({
-        message:
-          'Error signing zCap invocation during "verify" operation.',
-        cause: e
-      });
-    }
+    const headers = await _signCapabilityInvocation({
+      url, method: 'post', operation, capability, invocationSigner,
+      capabilityAction: 'verify'
+    });
 
     try {
       // send request
@@ -569,21 +496,10 @@ export class KmsClient {
       capability = _getRootZcapId({keyId});
     }
 
-    let headers;
-    try {
-      // sign HTTP header
-      headers = await signCapabilityInvocation({
-        url, method: 'post', headers: this.defaultHeaders,
-        json: operation, capability, invocationSigner,
-        capabilityAction: 'deriveSecret'
-      });
-    } catch(e) {
-      _handleClientError({
-        message:
-          'Error signing zCap invocation during "deriveSecret" operation.',
-        cause: e
-      });
-    }
+    const headers = await _signCapabilityInvocation({
+      url, method: 'post', operation, capability, invocationSigner,
+      capabilityAction: 'deriveSecret'
+    });
 
     try {
       // send request
@@ -629,23 +545,12 @@ export class KmsClient {
       url = keystoreId;
       capability = _getRootZcapId({keystoreId});
     }
-    let headers;
-    try {
-      headers = await signCapabilityInvocation({
-        url, method: 'post',
-        headers: this.defaultHeaders,
-        json: config,
-        capability,
-        invocationSigner,
-        capabilityAction: 'write'
-      });
-    } catch(e) {
-      _handleClientError({
-        message:
-          'Error signing zCap invocation during "update keystore" operation.',
-        cause: e
-      });
-    }
+
+    const headers = await _signCapabilityInvocation({
+      url, method: 'post', operation: config, capability, invocationSigner,
+      capabilityAction: 'write'
+    });
+
     try {
       // send request
       const result = await httpClient.post(url, {
@@ -691,22 +596,11 @@ export class KmsClient {
       capability = _getRootZcapId({keystoreId});
     }
 
-    let headers;
-    try {
-      headers = await signCapabilityInvocation({
-        url, method: 'get',
-        headers: this.defaultHeaders,
-        capability,
-        invocationSigner,
-        capabilityAction: 'read'
-      });
-    } catch(e) {
-      _handleClientError({
-        message:
-          'Error signing zCap invocation during "get keystore" operation.',
-        cause: e
-      });
-    }
+    const headers = await _signCapabilityInvocation({
+      url, method: 'get', capability, invocationSigner,
+      capabilityAction: 'read'
+    });
+
     try {
       // send request
       const result = await httpClient.get(url, {agent, headers});
@@ -753,21 +647,11 @@ export class KmsClient {
       capability = `${ZCAP_ROOT_PREFIX}${encodeURIComponent(url)}`;
     }
 
-    let headers;
-    try {
-      // sign HTTP header
-      headers = await signCapabilityInvocation({
-        url, method: 'post', headers: DEFAULT_HEADERS,
-        json: config, capability, invocationSigner,
-        capabilityAction: 'write'
-      });
-    } catch(e) {
-      _handleClientError({
-        message:
-          'Error signing zCap invocation during "create keystore" operation.',
-        cause: e
-      });
-    }
+    const headers = await _signCapabilityInvocation({
+      url, method: 'post', operation: config, capability, invocationSigner,
+      capabilityAction: 'write'
+    });
+
     try {
       const agent = httpsAgent || this.agent;
       // send request
@@ -854,4 +738,37 @@ function _getRootZcapId({keystoreId, keyId}) {
     suffix = keystoreId;
   }
   return `${ZCAP_ROOT_PREFIX}${encodeURIComponent(suffix)}`;
+}
+
+/**
+ * Creates and signs the http headers for zCap invocation.
+ *
+ * @param {object} options - Options hashmap.
+ * @param {string} options.url - zCap target url.
+ * @param {string} options.method - HTTP method ('get', 'post').
+ * @param {object} [options.headers] - HTTP headers.
+ * @param {object} [options.operation] - Optional JSON payload (for POSTs).
+ * @param {object} [options.capability] - Optional existing capability.
+ * @param {{sign: Function}} options.invocationSigner - Key Signer object.
+ * @param {string} options.capabilityAction - zCap action to perform.
+ *
+ * @returns {Promise<object>} Results with the signed zcap headers object.
+ */
+async function _signCapabilityInvocation({
+  url, method = 'post', headers = this.defaultHeaders, operation, capability,
+  invocationSigner, capabilityAction
+}) {
+  try {
+    // sign HTTP header
+    return signCapabilityInvocation({
+      url, method: 'post', headers, json: operation, capability,
+      invocationSigner, capabilityAction
+    });
+  } catch(e) {
+    _handleClientError({
+      message: `Error invoking zCap for ${method.toUpperCase()} "${url}", ` +
+       `action: "${capabilityAction}".`,
+      cause: e
+    });
+  }
 }
