@@ -764,7 +764,7 @@ async function _signCapabilityInvocation({
 }) {
   try {
     // sign HTTP header
-    return signCapabilityInvocation({
+    return await signCapabilityInvocation({
       url, method: 'post', headers, json: operation, capability,
       invocationSigner, capabilityAction
     });
