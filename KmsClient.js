@@ -748,13 +748,13 @@ function _getRootZcapId({keystoreId, keyId}) {
  * Creates and signs the http headers for zCap invocation.
  *
  * @param {object} options - Options hashmap.
- * @param {string} options.url - zCap target url.
+ * @param {string} options.url - ZCap target url.
  * @param {string} options.method - HTTP method ('get', 'post').
  * @param {object} [options.headers] - HTTP headers.
  * @param {object} [options.operation] - Optional JSON payload (for POSTs).
  * @param {object} [options.capability] - Optional existing capability.
  * @param {{sign: Function}} options.invocationSigner - Key Signer object.
- * @param {string} options.capabilityAction - zCap action to perform.
+ * @param {string} options.capabilityAction - ZCap action to perform.
  *
  * @returns {Promise<object>} Results with the signed zcap headers object.
  */
