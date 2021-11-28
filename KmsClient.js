@@ -76,12 +76,12 @@ export class KmsClient {
       capability = _getRootZcapId({keystoreId});
     }
 
-    const headers = await signCapabilityInvocation({
-      url, method: 'post', headers: this.defaultHeaders, json: operation,
-      capability, invocationSigner, capabilityAction: 'generateKey'
-    });
-
     try {
+      const headers = await signCapabilityInvocation({
+        url, method: 'post', headers: this.defaultHeaders, json: operation,
+        capability, invocationSigner, capabilityAction: 'generateKey'
+      });
+
       // send request
       const {agent} = this;
       const result = await httpClient.post(url, {
@@ -131,12 +131,12 @@ export class KmsClient {
       capability = _getRootZcapId({keyId});
     }
 
-    const headers = await signCapabilityInvocation({
-      url, method: 'get', headers: this.defaultHeaders,
-      capability, invocationSigner, capabilityAction: 'read'
-    });
-
     try {
+      const headers = await signCapabilityInvocation({
+        url, method: 'get', headers: this.defaultHeaders,
+        capability, invocationSigner, capabilityAction: 'read'
+      });
+
       // send request
       const {agent} = this;
       const result = await httpClient.get(url, {agent, headers});
@@ -190,13 +190,13 @@ export class KmsClient {
       capability = `${ZCAP_ROOT_PREFIX}${encodeURIComponent(url)}`;
     }
 
-    const headers = await signCapabilityInvocation({
-      url, method: 'post', headers: this.defaultHeaders,
-      json: capabilityToRevoke, capability, invocationSigner,
-      capabilityAction: 'write'
-    });
-
     try {
+      const headers = await signCapabilityInvocation({
+        url, method: 'post', headers: this.defaultHeaders,
+        json: capabilityToRevoke, capability, invocationSigner,
+        capabilityAction: 'write'
+      });
+
       // send request
       const {agent} = this;
       await httpClient.post(url, {agent, headers, json: capabilityToRevoke});
@@ -250,12 +250,12 @@ export class KmsClient {
       capability = _getRootZcapId({keyId: kekId});
     }
 
-    const headers = await signCapabilityInvocation({
-      url, method: 'post', headers: this.defaultHeaders, json: operation,
-      capability, invocationSigner, capabilityAction: 'wrapKey'
-    });
-
     try {
+      const headers = await signCapabilityInvocation({
+        url, method: 'post', headers: this.defaultHeaders, json: operation,
+        capability, invocationSigner, capabilityAction: 'wrapKey'
+      });
+
       // send request
       const {agent} = this;
       const result = await httpClient.post(url, {
@@ -313,12 +313,12 @@ export class KmsClient {
       capability = _getRootZcapId({keyId: kekId});
     }
 
-    const headers = await signCapabilityInvocation({
-      url, method: 'post', headers: this.defaultHeaders, json: operation,
-      capability, invocationSigner, capabilityAction: 'unwrapKey'
-    });
-
     try {
+      const headers = await signCapabilityInvocation({
+        url, method: 'post', headers: this.defaultHeaders, json: operation,
+        capability, invocationSigner, capabilityAction: 'unwrapKey'
+      });
+
       // send request
       const {agent} = this;
       const result = await httpClient.post(url, {
@@ -375,12 +375,12 @@ export class KmsClient {
       capability = _getRootZcapId({keyId});
     }
 
-    const headers = await signCapabilityInvocation({
-      url, method: 'post', headers: this.defaultHeaders, json: operation,
-      capability, invocationSigner, capabilityAction: 'sign'
-    });
-
     try {
+      const headers = await signCapabilityInvocation({
+        url, method: 'post', headers: this.defaultHeaders, json: operation,
+        capability, invocationSigner, capabilityAction: 'sign'
+      });
+
       // send request
       const {agent} = this;
       const result = await httpClient.post(url, {
@@ -442,12 +442,12 @@ export class KmsClient {
       capability = _getRootZcapId({keyId});
     }
 
-    const headers = await signCapabilityInvocation({
-      url, method: 'post', headers: this.defaultHeaders, json: operation,
-      capability, invocationSigner, capabilityAction: 'verify'
-    });
-
     try {
+      const headers = await signCapabilityInvocation({
+        url, method: 'post', headers: this.defaultHeaders, json: operation,
+        capability, invocationSigner, capabilityAction: 'verify'
+      });
+
       // send request
       const {agent} = this;
       const result = await httpClient.post(url, {
@@ -502,12 +502,12 @@ export class KmsClient {
       capability = _getRootZcapId({keyId});
     }
 
-    const headers = await signCapabilityInvocation({
-      url, method: 'post', headers: this.defaultHeaders, json: operation,
-      capability, invocationSigner, capabilityAction: 'deriveSecret'
-    });
-
     try {
+      const headers = await signCapabilityInvocation({
+        url, method: 'post', headers: this.defaultHeaders, json: operation,
+        capability, invocationSigner, capabilityAction: 'deriveSecret'
+      });
+
       // send request
       const {agent} = this;
       const result = await httpClient.post(url, {
@@ -552,12 +552,12 @@ export class KmsClient {
       capability = _getRootZcapId({keystoreId});
     }
 
-    const headers = await signCapabilityInvocation({
-      url, method: 'post', headers: this.defaultHeaders, json: config,
-      capability, invocationSigner, capabilityAction: 'write'
-    });
-
     try {
+      const headers = await signCapabilityInvocation({
+        url, method: 'post', headers: this.defaultHeaders, json: config,
+        capability, invocationSigner, capabilityAction: 'write'
+      });
+
       // send request
       const result = await httpClient.post(url, {
         agent, headers, json: config
@@ -602,12 +602,12 @@ export class KmsClient {
       capability = _getRootZcapId({keystoreId});
     }
 
-    const headers = await signCapabilityInvocation({
-      url, method: 'read', headers: this.defaultHeaders,
-      capability, invocationSigner, capabilityAction: 'read'
-    });
-
     try {
+      const headers = await signCapabilityInvocation({
+        url, method: 'read', headers: this.defaultHeaders,
+        capability, invocationSigner, capabilityAction: 'read'
+      });
+
       // send request
       const result = await httpClient.get(url, {agent, headers});
       return result.data;
@@ -653,12 +653,12 @@ export class KmsClient {
       capability = `${ZCAP_ROOT_PREFIX}${encodeURIComponent(url)}`;
     }
 
-    const headers = await signCapabilityInvocation({
-      url, method: 'post', headers: this.defaultHeaders, json: config,
-      capability, invocationSigner, capabilityAction: 'write'
-    });
-
     try {
+      const headers = await signCapabilityInvocation({
+        url, method: 'post', headers: this.defaultHeaders, json: config,
+        capability, invocationSigner, capabilityAction: 'write'
+      });
+
       const agent = httpsAgent || this.agent;
       // send request
       const result = await httpClient.post(url, {
