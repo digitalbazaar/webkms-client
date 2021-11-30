@@ -89,19 +89,18 @@ export class KmsClient {
       });
       return result.data;
     } catch(e) {
+      let cause;
       if(e.status === 409) {
-        const err = new Error('Duplicate error.');
-        err.name = 'DuplicateError';
-        err.cause = e;
-        _handleClientError({
-          message: 'Duplicate error while generating key.',
-          cause: e
-        });
+        cause = new Error('Duplicate error.');
+        cause.name = 'DuplicateError';
+        cause.cause = e;
+      } else {
+        cause = e;
       }
 
       _handleClientError({
         message: 'Error generating key.',
-        cause: e
+        cause
       });
     }
   }
@@ -201,15 +200,19 @@ export class KmsClient {
       const {agent} = this;
       await httpClient.post(url, {agent, headers, json: capabilityToRevoke});
     } catch(e) {
-      let errorMessage = 'Error revoking zCap.';
+      let cause;
       if(e.status === 409) {
-        e.name = 'DuplicateError';
-        errorMessage = 'Duplicate error while revoking zCap.';
+        cause = new Error('Duplicate error.');
+        cause.name = 'DuplicateError';
+        cause.cause = e;
+      } else {
+        cause = e;
       }
+
       _handleClientError({
-        message: errorMessage,
+        message: 'Error revoking zCap.',
         notFoundMessage: 'zCap not found.',
-        cause: e
+        cause
       });
     }
   }
