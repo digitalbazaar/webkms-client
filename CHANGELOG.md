@@ -1,6 +1,6 @@
 # webkms-client ChangeLog
 
-## 8.0.0 -
+## 8.0.0 - 2021-12-01
 
 ### Changed
 - **BREAKING**: Update error messages, make them more specific.
