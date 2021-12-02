@@ -641,7 +641,7 @@ export class KmsClient {
    *   created keystore.
    */
   static async createKeystore({
-    url, config, capability, invocationSigner, httpsAgent,
+    url, config, capability, invocationSigner, httpsAgent
   } = {}) {
     _assert(url, 'url', 'string');
     _assert(config, 'config', 'object');
@@ -658,11 +658,11 @@ export class KmsClient {
 
     try {
       const headers = await signCapabilityInvocation({
-        url, method: 'post', headers: this.defaultHeaders, json: config,
+        url, method: 'post', headers: DEFAULT_HEADERS, json: config,
         capability, invocationSigner, capabilityAction: 'write'
       });
 
-      const agent = httpsAgent || this.agent;
+      const agent = httpsAgent;
       // send request
       const result = await httpClient.post(url, {
         agent, headers, json: config
@@ -710,6 +710,7 @@ function _handleClientError({
     // e.g. 'Error getting key description: Key description not found'
     error = new Error(`${errorMessage}: ${notFoundMessage}`);
     error.status = 404;
+    error.cause = cause;
   } else {
     error = cause;
     error.message = `WebKMS client error: ${cause.message}`;
@@ -719,7 +720,6 @@ function _handleClientError({
     error.message = error.message + '.';
   }
 
-  error.cause = cause;
   throw error;
 }
 
