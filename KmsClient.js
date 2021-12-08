@@ -607,7 +607,7 @@ export class KmsClient {
 
     try {
       const headers = await signCapabilityInvocation({
-        url, method: 'read', headers: this.defaultHeaders,
+        url, method: 'get', headers: this.defaultHeaders,
         capability, invocationSigner, capabilityAction: 'read'
       });
 

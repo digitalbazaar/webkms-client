@@ -11,7 +11,7 @@ import {RECOMMENDED_KEYS} from './recommendedKeys.js';
 const VERSIONS = ['recommended', 'fips'];
 
 /**
- * @class KeystoreAgent
+ * @class CapabilityAgent
  */
 
 export class KeystoreAgent {
