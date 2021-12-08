@@ -658,7 +658,7 @@ export class KmsClient {
 
     try {
       const headers = await signCapabilityInvocation({
-        url, method: 'post', headers: this.defaultHeaders, json: config,
+        url, method: 'post', headers: DEFAULT_HEADERS, json: config,
         capability, invocationSigner, capabilityAction: 'write'
       });
 
