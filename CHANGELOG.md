@@ -1,5 +1,11 @@
 # webkms-client ChangeLog
 
+## 8.0.1 - 2021-TBD
+
+### Fixed
+- Fix `headers` and `method` passed into `signCapabilityInvocation()`
+  in `createKeystore()` and `getKeystore()`.
+
 ## 8.0.0 - 2021-12-01
 
 ### Changed
