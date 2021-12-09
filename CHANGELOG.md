@@ -1,6 +1,6 @@
 # webkms-client ChangeLog
 
-## 8.0.1 - 2021-TBD
+## 8.0.1 - 2021-12-09
 
 ### Fixed
 - Fix `headers` and `method` passed into `signCapabilityInvocation()`
