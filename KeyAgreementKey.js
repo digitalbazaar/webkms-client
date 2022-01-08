@@ -1,5 +1,5 @@
 /*!
- * Copyright (c) 2019-2021 Digital Bazaar, Inc. All rights reserved.
+ * Copyright (c) 2019-2022 Digital Bazaar, Inc. All rights reserved.
  */
 import {KmsClient} from './KmsClient.js';
 
@@ -13,8 +13,8 @@ export class KeyAgreementKey {
    *   identify the key with the KMS, which case pass `kmsId` as well.
    * @param {string} [options.kmsId=options.id] - The private key ID used to
    *   identify the key with the KMS.
-   * @param {object} [options.capability] - The zCAP-LD authorization
-   *   capability to use to authorize the invocation of KmsClient methods.
+   * @param {object} [options.capability] - Do not pass "capability" here;
+   *   use `.fromCapability` instead.
    * @param {object} options.invocationSigner - An API for signing
    *   a capability invocation.
    * @param {KmsClient} [options.kmsClient] - An optional KmsClient to use.
@@ -63,5 +63,33 @@ export class KeyAgreementKey {
     const {kmsId: keyId, kmsClient, capability, invocationSigner} = this;
     return kmsClient.deriveSecret(
       {keyId, publicKey, capability, invocationSigner});
+  }
+
+  /**
+   * Creates a new instance of an key agreement key from an authorization
+   * capability.
+   *
+   * @param {object} options - The options to use.
+   * @param {object} [options.capability] - The ZCAP-LD authorization
+   *   capability to use to authorize the invocation of KmsClient methods.
+   * @param {object} options.invocationSigner - An API for signing
+   *   a capability invocation.
+   * @param {KmsClient} [options.kmsClient] - An optional KmsClient to use.
+   *
+   * @returns {KeyAgreementKey} The new KeyAgreementKey instance.
+   */
+  static async fromCapability({capability, invocationSigner, kmsClient}) {
+    // get key description via capability
+    const keyDescription = await kmsClient.getKeyDescription(
+      {capability, invocationSigner});
+
+    // build asymmetric key from description
+    const kmsId = KmsClient._getInvocationTarget({capability});
+    const {id, type} = keyDescription;
+    const key = new KeyAgreementKey({
+      id, kmsId, type, kmsClient, invocationSigner
+    });
+    key.capability = capability;
+    return key;
   }
 }

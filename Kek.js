@@ -1,5 +1,5 @@
 /*!
- * Copyright (c) 2019-2021 Digital Bazaar, Inc. All rights reserved.
+ * Copyright (c) 2019-2022 Digital Bazaar, Inc. All rights reserved.
  */
 import {KmsClient} from './KmsClient.js';
 
@@ -15,8 +15,8 @@ export class Kek {
    * @param {object} options - The options to use.
    * @param {string} options.id - The ID for this key.
    * @param {string} options.type - The type for this key.
-   * @param {object} [options.capability] - The zCAP-LD authorization
-   *   capability to use to authorize the invocation of KmsClient methods.
+   * @param {object} [options.capability] - Do not pass "capability" here;
+   *   use `.fromCapability` instead.
    * @param {object} options.invocationSigner - An API for signing
    *   a capability invocation.
    * @param {KmsClient} [options.kmsClient] - An optional KmsClient to use.
@@ -38,7 +38,6 @@ export class Kek {
     if(!this.algorithm) {
       throw new Error(`Unknown key type "${this.type}".`);
     }
-    this.capability = capability;
     this.invocationSigner = invocationSigner;
     this.kmsClient = kmsClient;
   }
@@ -73,4 +72,31 @@ export class Kek {
     return kmsClient.unwrapKey(
       {kekId, wrappedKey, capability, invocationSigner});
   }
+
+  /**
+   * Creates a new instance of a key encryption key from an authorization
+   * capability.
+   *
+   * @param {object} options - The options to use.
+   * @param {object} [options.capability] - The ZCAP-LD authorization
+   *   capability to use to authorize the invocation of KmsClient methods.
+   * @param {object} options.invocationSigner - An API for signing
+   *   a capability invocation.
+   * @param {KmsClient} [options.kmsClient] - An optional KmsClient to use.
+   *
+   * @returns {Kek} The new Kek instance.
+   */
+  static async fromCapability({capability, invocationSigner, kmsClient}) {
+    // get key description via capability
+    const keyDescription = await kmsClient.getKeyDescription(
+      {capability, invocationSigner});
+
+    // build asymmetric key from description
+    const id = KmsClient._getInvocationTarget({capability});
+    const {type} = keyDescription;
+    const key = new Kek({id, type, kmsClient, invocationSigner});
+    key.capability = capability;
+    return key;
+  }
+
 }
