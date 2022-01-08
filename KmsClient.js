@@ -54,18 +54,41 @@ export class KmsClient {
    *   capability to use to authorize the invocation of this operation.
    * @param {object} options.invocationSigner - An API with an
    *   `id` property and a `sign` function for signing a capability invocation.
+   * @param {string} [options.publicAlias] - The public alias to use for the
+   *   key, if it is an asymmetric key.
+   * @param {string} [options.publicAliasTemplate] - The public alias template
+   *   to use for the key, if it is an asymmetric key.
    *
-   * @returns {Promise<object>} The key description for the key.
+   * @returns {Promise<object>} The new key ID and key description for the key.
    */
-  async generateKey({type, suiteContextUrl, capability, invocationSigner}) {
+  async generateKey({
+    type, suiteContextUrl, capability, invocationSigner,
+    publicAlias, publicAliasTemplate
+  }) {
     _assert(type, 'type', 'string');
     _assert(invocationSigner, 'invocationSigner', 'object');
+    if(publicAlias !== undefined) {
+      _assert(publicAlias, 'publicAlias', 'string');
+    }
+    if(publicAliasTemplate !== undefined) {
+      _assert(publicAliasTemplate, 'publicAliasTemplate', 'string');
+    }
+    if(publicAlias && publicAliasTemplate) {
+      throw new Error(
+        'Only one of "publicAlias" and "publicAliasTemplate" may be given.');
+    }
 
     const operation = {
       '@context': [WEBKMS_CONTEXT_URL, suiteContextUrl],
       type: 'GenerateKeyOperation',
       invocationTarget: {type}
     };
+    if(publicAlias) {
+      operation.invocationTarget.publicAlias = publicAlias;
+    } else if(publicAliasTemplate) {
+      operation.invocationTarget.publicAliasTemplate = publicAliasTemplate;
+    }
+
     // determine url from capability or use defaults
     let url;
     if(capability) {

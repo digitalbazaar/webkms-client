@@ -8,6 +8,10 @@
   This change allows key instances to be created asynchronously, which is
   necessary to obtain public key description information prior to using an
   asymmetric key to sign.
+- **BREAKING**: `generateKey` now returns `{keyId, keyDescription}`. This
+  provides the KMS ID for the key along with whatever `id` is set in the
+  key description, which is the `id` for the public key (which may be
+  different) from the KMS key ID.
 
 ## 8.0.1 - 2021-12-09
 

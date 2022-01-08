@@ -75,6 +75,10 @@ export class KeystoreAgent {
     type, publicAlias, publicAliasTemplate, version = 'recommended'
   } = {}) {
     _assertVersion(version);
+    if(publicAlias && publicAliasTemplate) {
+      throw new Error(
+        'Only one of "publicAlias" and "publicAliasTemplate" may be given.');
+    }
 
     // for the time being, fips and recommended are the same; there is no
     // other standardized key wrapping algorithm
@@ -86,13 +90,15 @@ export class KeystoreAgent {
 
     const {capabilityAgent, kmsClient} = this;
     const invocationSigner = capabilityAgent.getSigner();
-    const keyDescription = await kmsClient.generateKey({
+    const {keyId, keyDescription} = await kmsClient.generateKey({
       type: fullType, suiteContextUrl, invocationSigner,
       publicAlias, publicAliasTemplate
     });
     const {id} = keyDescription;
     ({type} = keyDescription);
-    return new Class({id, type, invocationSigner, kmsClient, keyDescription});
+    return new Class({
+      id, kmsId: keyId, type, invocationSigner, kmsClient, keyDescription
+    });
   }
 
   /**
