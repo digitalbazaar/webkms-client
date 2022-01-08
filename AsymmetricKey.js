@@ -3,8 +3,6 @@
  */
 import {KmsClient} from './KmsClient.js';
 
-const ZCAP_ROOT_PREFIX = 'urn:zcap:root:';
-
 export class AsymmetricKey {
   /**
    * Creates a new instance of an asymmetric key.
@@ -16,8 +14,8 @@ export class AsymmetricKey {
    *   case pass `kmsId` as well.
    * @param {string} [options.kmsId=options.id] - The private key ID used to
    *   identify the key with the KMS.
-   * @param {object} [options.capability] - The zCAP-LD authorization
-   *   capability to use to authorize the invocation of KmsClient methods.
+   * @param {object} [options.capability] - Do not pass "capability" here;
+   *   use `.fromCapability` instead.
    * @param {object} options.invocationSigner - An API for signing
    *   a capability invocation.
    * @param {KmsClient} [options.kmsClient] - An optional KmsClient to use.
@@ -39,33 +37,15 @@ export class AsymmetricKey {
     this.id = id;
     this.kmsId = kmsId;
     this.type = type;
-    this.capability = capability;
     this.invocationSigner = invocationSigner;
     this.kmsClient = kmsClient;
     this._keyDescription = keyDescription;
-
-    // set key information from capability as needed
-    if(capability) {
-      let invocationTarget;
-      if(typeof capability === 'string') {
-        if(!capability.startsWith(ZCAP_ROOT_PREFIX)) {
-          throw new Error(
-            'If "capability" is a string, it must be a root capability.');
-        }
-        invocationTarget = decodeURIComponent(
-          capability.substring(ZCAP_ROOT_PREFIX.length));
-      } else {
-        ({invocationTarget} = capability);
+    if(keyDescription) {
+      if(id === undefined) {
+        this.id = keyDescription.id;
       }
-      if(!this.id) {
-        this.id = invocationTarget.publicAlias || invocationTarget.id ||
-          invocationTarget;
-      }
-      if(!this.kmsId) {
-        this.kmsId = invocationTarget.id || invocationTarget;
-      }
-      if(!this.type) {
-        this.type = invocationTarget.type;
+      if(type === undefined) {
+        this.type = keyDescription.type;
       }
     }
   }
@@ -124,6 +104,30 @@ export class AsymmetricKey {
     return JSON.parse(JSON.stringify(this._keyDescription));
   }
 
-  // FIXME: add `fromCapability()`
-  // ... use capability to getKeyDescription() and return instance from that
+  /**
+   * Creates a new instance of an asymmetric key from an authorization
+   * capability.
+   *
+   * @param {object} options - The options to use.
+   * @param {object} [options.capability] - The ZCAP-LD authorization
+   *   capability to use to authorize the invocation of KmsClient methods.
+   * @param {object} options.invocationSigner - An API for signing
+   *   a capability invocation.
+   * @param {KmsClient} [options.kmsClient] - An optional KmsClient to use.
+   *
+   * @returns {AsymmetricKey} The new AsymmetricKey instance.
+   */
+  static async fromCapability({capability, invocationSigner, kmsClient}) {
+    // get key description via capability
+    const keyDescription = await kmsClient.getKeyDescription(
+      {capability, invocationSigner});
+
+    // build asymmetric key from description
+    const kmsId = KmsClient._getInvocationTarget({capability});
+    const key = new AsymmetricKey({
+      kmsId, keyDescription, kmsClient, invocationSigner
+    });
+    key.capability = capability;
+    return key;
+  }
 }

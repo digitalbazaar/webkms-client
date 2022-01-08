@@ -1,5 +1,5 @@
 /*!
- * Copyright (c) 2019-2021 Digital Bazaar, Inc. All rights reserved.
+ * Copyright (c) 2019-2022 Digital Bazaar, Inc. All rights reserved.
  */
 import base64url from 'base64url-universal';
 import {httpClient, DEFAULT_HEADERS} from '@digitalbazaar/http-client';
@@ -167,7 +167,7 @@ export class KmsClient {
     _assert(invocationSigner, 'invocationSigner', 'object');
 
     let {keystoreId} = this;
-    if(!keystoreId && !(capability && typeof capability === 'object')) {
+    if(!keystoreId && !capability) {
       // since no `keystoreId` was set and no `capability` with an invocation
       // target that can be parsed was given, get the keystore ID from the
       // capability that is to be revoked -- presuming it is a WebKMS key (if
@@ -677,21 +677,30 @@ export class KmsClient {
   }
 
   static _getInvocationTarget({capability}) {
-    if(!(capability && typeof capability === 'object')) {
-      // no capability provided
+    // no capability, so no invocation target
+    if(capability === undefined || capability === null) {
       return null;
     }
-    let result;
-    const {invocationTarget} = capability;
-    if(invocationTarget && typeof invocationTarget === 'object') {
-      result = invocationTarget.id;
-    } else {
-      result = invocationTarget;
+
+    let invocationTarget;
+    if(typeof capability === 'string') {
+      if(!capability.startsWith(ZCAP_ROOT_PREFIX)) {
+        throw new Error(
+          'If "capability" is a string, it must be a root capability.');
+      }
+      invocationTarget = decodeURIComponent(
+        capability.substring(ZCAP_ROOT_PREFIX));
+    } else if(typeof capability === 'object') {
+      ({invocationTarget} = capability);
     }
-    if(typeof result !== 'string') {
-      throw new TypeError('"capability.invocationTarget" is invalid.');
+
+    if(!(typeof invocationTarget === 'string' &&
+      invocationTarget.startsWith('https://'))) {
+      throw new TypeError(
+        '"invocationTarget" from capability must be an "https" URL.');
     }
-    return result;
+
+    return invocationTarget;
   }
 }
 

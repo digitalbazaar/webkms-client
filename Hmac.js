@@ -1,5 +1,5 @@
 /*!
- * Copyright (c) 2019-2021 Digital Bazaar, Inc. All rights reserved.
+ * Copyright (c) 2019-2022 Digital Bazaar, Inc. All rights reserved.
  */
 import base64url from 'base64url-universal';
 import LRU from 'lru-cache';
@@ -18,8 +18,8 @@ export class Hmac {
    * @param {object} options - The options to use.
    * @param {string} options.id - The ID for the hmac key.
    * @param {string} options.type - The type for the hmac.
-   * @param {object} [options.capability] - The zCAP-LD authorization
-   *   capability to use to authorize the invocation of KmsClient methods.
+   * @param {object} [options.capability] - Do not pass "capability" here;
+   *   use `.fromCapability` instead.
    * @param {object} options.invocationSigner - An API for signing
    *   a capability invocation.
    * @param {KmsClient} [options.kmsClient] - An optional KmsClient to use.
@@ -42,7 +42,6 @@ export class Hmac {
     if(!this.algorithm) {
       throw new Error(`Unknown key type "${this.type}".`);
     }
-    this.capability = capability;
     this.invocationSigner = invocationSigner;
     this.kmsClient = kmsClient;
     this.cache = new LRU({
@@ -146,6 +145,31 @@ export class Hmac {
       }
       throw e;
     }
+  }
+
+  /**
+   * Creates a new instance of an hmac key from an authorization capability.
+   *
+   * @param {object} options - The options to use.
+   * @param {object} [options.capability] - The ZCAP-LD authorization
+   *   capability to use to authorize the invocation of KmsClient methods.
+   * @param {object} options.invocationSigner - An API for signing
+   *   a capability invocation.
+   * @param {KmsClient} [options.kmsClient] - An optional KmsClient to use.
+   *
+   * @returns {Hmac} The new Hmac instance.
+   */
+  static async fromCapability({capability, invocationSigner, kmsClient}) {
+    // get key description via capability
+    const keyDescription = await kmsClient.getKeyDescription(
+      {capability, invocationSigner});
+
+    // build asymmetric key from description
+    const id = KmsClient._getInvocationTarget({capability});
+    const {type} = keyDescription;
+    const key = new Hmac({id, type, kmsClient, invocationSigner});
+    key.capability = capability;
+    return key;
   }
 
   _pruneCache() {
