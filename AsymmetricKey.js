@@ -39,6 +39,7 @@ export class AsymmetricKey {
     this.type = type;
     this.invocationSigner = invocationSigner;
     this.kmsClient = kmsClient;
+    this.capability = undefined;
     this._keyDescription = keyDescription;
     if(keyDescription) {
       if(id === undefined) {

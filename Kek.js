@@ -40,6 +40,7 @@ export class Kek {
     }
     this.invocationSigner = invocationSigner;
     this.kmsClient = kmsClient;
+    this.capability = undefined;
   }
 
   /**
