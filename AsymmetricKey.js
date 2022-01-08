@@ -31,6 +31,11 @@ export class AsymmetricKey {
     id, kmsId = id, type, capability, invocationSigner,
     kmsClient = new KmsClient(), keyDescription
   }) {
+    if(capability) {
+      throw new Error(
+        '"capability" parameter not allowed in constructor; ' +
+        'use ".fromCapability" instead.');
+    }
     this.id = id;
     this.kmsId = kmsId;
     this.type = type;
@@ -118,4 +123,7 @@ export class AsymmetricKey {
     // return clone of cached description
     return JSON.parse(JSON.stringify(this._keyDescription));
   }
+
+  // FIXME: add `fromCapability()`
+  // ... use capability to getKeyDescription() and return instance from that
 }

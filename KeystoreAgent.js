@@ -1,5 +1,5 @@
 /*!
- * Copyright (c) 2019-2021 Digital Bazaar, Inc. All rights reserved.
+ * Copyright (c) 2019-2022 Digital Bazaar, Inc. All rights reserved.
  */
 import {AsymmetricKey} from './AsymmetricKey.js';
 import {Kek} from './Kek.js';
@@ -60,6 +60,10 @@ export class KeystoreAgent {
    *
    * @param {object} options - The options to use.
    * @param {string} options.type - The type of key to create (e.g., `hmac`).
+   * @param {string} [options.publicAlias] - The public alias to use for the
+   *   key, if it is an asymmetric key.
+   * @param {string} [options.publicAliasTemplate] - The public alias template
+   *   to use for the key, if it is an asymmetric key.
    * @param {string} [options.version=recommended] - `fips` to
    *   use FIPS-compliant ciphers, `recommended` to use the latest recommended
    *   ciphers.
@@ -67,7 +71,9 @@ export class KeystoreAgent {
    * @returns {Promise<object>} An Hmac, Kek, AsymmetricKey, or KeyAgreementKey
    *   instance.
    */
-  async generateKey({type, version = 'recommended'}) {
+  async generateKey({
+    type, publicAlias, publicAliasTemplate, version = 'recommended'
+  } = {}) {
     _assertVersion(version);
 
     // for the time being, fips and recommended are the same; there is no
@@ -80,8 +86,10 @@ export class KeystoreAgent {
 
     const {capabilityAgent, kmsClient} = this;
     const invocationSigner = capabilityAgent.getSigner();
-    const keyDescription = await kmsClient.generateKey(
-      {type: fullType, suiteContextUrl, invocationSigner});
+    const keyDescription = await kmsClient.generateKey({
+      type: fullType, suiteContextUrl, invocationSigner,
+      publicAlias, publicAliasTemplate
+    });
     const {id} = keyDescription;
     ({type} = keyDescription);
     return new Class({id, type, invocationSigner, kmsClient, keyDescription});
@@ -110,6 +118,9 @@ export class KeystoreAgent {
   async getKek({id, type, capability}) {
     const {capabilityAgent, kmsClient} = this;
     const invocationSigner = capabilityAgent.getSigner();
+    if(capability) {
+      return Kek.fromCapability({capability, invocationSigner});
+    }
     return new Kek({id, type, capability, invocationSigner, kmsClient});
   }
 
@@ -135,6 +146,9 @@ export class KeystoreAgent {
   async getHmac({id, type, capability}) {
     const {capabilityAgent, kmsClient} = this;
     const invocationSigner = capabilityAgent.getSigner();
+    if(capability) {
+      return Hmac.fromCapability({capability, invocationSigner});
+    }
     return new Hmac({id, type, capability, invocationSigner, kmsClient});
   }
 
@@ -164,6 +178,9 @@ export class KeystoreAgent {
   async getAsymmetricKey({id, kmsId, type, capability}) {
     const {capabilityAgent, kmsClient} = this;
     const invocationSigner = capabilityAgent.getSigner();
+    if(capability) {
+      return AsymmetricKey.fromCapability({capability, invocationSigner});
+    }
     return new AsymmetricKey(
       {id, kmsId, type, capability, invocationSigner, kmsClient});
   }
@@ -194,6 +211,9 @@ export class KeystoreAgent {
   async getKeyAgreementKey({id, kmsId, type, capability}) {
     const {capabilityAgent, kmsClient} = this;
     const invocationSigner = capabilityAgent.getSigner();
+    if(capability) {
+      return KeyAgreementKey.fromCapability({capability, invocationSigner});
+    }
     return new KeyAgreementKey(
       {id, kmsId, type, capability, invocationSigner, kmsClient});
   }
