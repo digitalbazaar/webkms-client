@@ -1,7 +1,9 @@
 /*!
- * Copyright (c) 2019-2021 Digital Bazaar, Inc. All rights reserved.
+ * Copyright (c) 2019-2022 Digital Bazaar, Inc. All rights reserved.
  */
 import {KmsClient} from './KmsClient.js';
+
+const ZCAP_ROOT_PREFIX = 'urn:zcap:root:';
 
 export class AsymmetricKey {
   /**
@@ -38,13 +40,24 @@ export class AsymmetricKey {
     this._keyDescription = keyDescription;
 
     // set key information from capability as needed
-    if(capability && typeof capability.invocationTarget === 'object') {
-      const {invocationTarget} = capability;
+    if(capability) {
+      let invocationTarget;
+      if(typeof capability === 'string') {
+        if(!capability.startsWith(ZCAP_ROOT_PREFIX)) {
+          throw new Error(
+            'If "capability" is a string, it must be a root capability.');
+        }
+        invocationTarget = decodeURIComponent(
+          capability.substring(ZCAP_ROOT_PREFIX.length));
+      } else {
+        ({invocationTarget} = capability);
+      }
       if(!this.id) {
-        this.id = invocationTarget.publicAlias || invocationTarget.id;
+        this.id = invocationTarget.publicAlias || invocationTarget.id ||
+          invocationTarget;
       }
       if(!this.kmsId) {
-        this.kmsId = invocationTarget.id;
+        this.kmsId = invocationTarget.id || invocationTarget;
       }
       if(!this.type) {
         this.type = invocationTarget.type;
