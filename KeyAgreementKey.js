@@ -36,6 +36,7 @@ export class KeyAgreementKey {
     this.type = type;
     this.invocationSigner = invocationSigner;
     this.kmsClient = kmsClient;
+    this.capability = undefined;
   }
 
   /**

@@ -49,6 +49,7 @@ export class Hmac {
       maxAge: MAX_CACHE_AGE,
       updateAgeOnGet: true
     });
+    this.capability = undefined;
     this._pruneCacheTimer = null;
   }
 
