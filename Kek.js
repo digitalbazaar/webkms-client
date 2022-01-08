@@ -27,6 +27,11 @@ export class Kek {
     id, type, capability, invocationSigner,
     kmsClient = new KmsClient()
   }) {
+    if(capability) {
+      throw new Error(
+        '"capability" parameter not allowed in constructor; ' +
+        'use ".fromCapability" instead.');
+    }
     this.id = id;
     this.type = type;
     this.algorithm = JOSE_ALGORITHM_MAP[type];

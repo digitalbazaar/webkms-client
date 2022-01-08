@@ -26,10 +26,14 @@ export class KeyAgreementKey {
     id, kmsId = id, type, capability, invocationSigner,
     kmsClient = new KmsClient()
   }) {
+    if(capability) {
+      throw new Error(
+        '"capability" parameter not allowed in constructor; ' +
+        'use ".fromCapability" instead.');
+    }
     this.id = id;
     this.kmsId = kmsId;
     this.type = type;
-    this.capability = capability;
     this.invocationSigner = invocationSigner;
     this.kmsClient = kmsClient;
   }

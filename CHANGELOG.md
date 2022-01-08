@@ -1,5 +1,14 @@
 # webkms-client ChangeLog
 
+## 9.0.0 - 2022-01-xx
+
+### Changed
+- **BREAKING**: Key constructors cannot be called directly when using a
+  `capability`. Instead, call `.fromCapability` on the appropriate key class.
+  This change allows key instances to be created asynchronously, which is
+  necessary to obtain public key description information prior to using an
+  asymmetric key to sign.
+
 ## 8.0.1 - 2021-12-09
 
 ### Fixed
