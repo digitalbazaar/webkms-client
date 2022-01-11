@@ -110,7 +110,7 @@ export class AsymmetricKey {
    * capability.
    *
    * @param {object} options - The options to use.
-   * @param {object} [options.capability] - The ZCAP-LD authorization
+   * @param {object} [options.capability] - The authorization
    *   capability to use to authorize the invocation of KmsClient methods.
    * @param {object} options.invocationSigner - An API for signing
    *   a capability invocation.

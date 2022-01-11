@@ -154,7 +154,7 @@ Generates a new cryptographic key in the keystore.
 | options | <code>object</code> | The options to use. |
 | options.kmsModule | <code>string</code> | The KMS module to use. |
 | options.type | <code>string</code> | The key type (e.g. 'AesKeyWrappingKey2019'). |
-| [options.capability] | <code>string</code> | The zCAP-LD authorization   capability to use to authorize the invocation of this operation. |
+| [options.capability] | <code>string</code> | The authorization   capability to use to authorize the invocation of this operation. |
 | options.invocationSigner | <code>object</code> | An API with an   `id` property and a `sign` function for signing a capability invocation. |
 
 <a name="webkms_getKeyDescription"></a>
@@ -169,7 +169,7 @@ Gets the key description for the given key ID.
 | --- | --- | --- |
 | options | <code>object</code> | The options to use. |
 | [options.keyId] | <code>string</code> | The ID of the key. |
-| [options.capability] | <code>string</code> | The zCAP-LD authorization   capability to use to authorize the invocation of this operation. |
+| [options.capability] | <code>string</code> | The authorization   capability to use to authorize the invocation of this operation. |
 | options.invocationSigner | <code>object</code> | An API with an   `id` property and a `sign` function for signing a capability invocation. |
 
 <a name="webkms_revokeCapability"></a>
@@ -200,7 +200,7 @@ Wraps a cryptographic key using a key encryption key (KEK).
 | options | <code>object</code> | The options to use. |
 | options.kekId | <code>string</code> | The ID of the wrapping key to use. |
 | options.unwrappedKey | <code>Uint8Array</code> | The unwrapped key material as   a Uint8Array. |
-| [options.capability] | <code>string</code> | The zCAP-LD authorization   capability to use to authorize the invocation of this operation. |
+| [options.capability] | <code>string</code> | The authorization   capability to use to authorize the invocation of this operation. |
 | options.invocationSigner | <code>object</code> | An API with an   `id` property and a `sign` function for signing a capability invocation. |
 
 <a name="webkms_unwrapKey"></a>
@@ -217,7 +217,7 @@ Unwraps a cryptographic key using a key encryption key (KEK).
 | options | <code>object</code> | The options to use. |
 | options.kekId | <code>string</code> | The ID of the unwrapping key to use. |
 | options.wrappedKey | <code>string</code> | The wrapped key material as a   base64url-encoded string. |
-| [options.capability] | <code>string</code> | The zCAP-LD authorization   capability to use to authorize the invocation of this operation. |
+| [options.capability] | <code>string</code> | The authorization   capability to use to authorize the invocation of this operation. |
 | options.invocationSigner | <code>object</code> | An API with an   `id` property and a `sign` function for signing a capability invocation. |
 
 <a name="webkms_sign"></a>
@@ -236,7 +236,7 @@ wisely.
 | options | <code>object</code> | The options to use. |
 | options.keyId | <code>string</code> | The ID of the signing key to use. |
 | options.data | <code>Uint8Array</code> | The data to sign as a Uint8Array. |
-| [options.capability] | <code>string</code> | The zCAP-LD authorization   capability to use to authorize the invocation of this operation. |
+| [options.capability] | <code>string</code> | The authorization   capability to use to authorize the invocation of this operation. |
 | options.invocationSigner | <code>object</code> | An API with an   `id` property and a `sign` function for signing a capability invocation. |
 
 <a name="webkms_verify"></a>
@@ -256,7 +256,7 @@ wisely.
 | options.keyId | <code>string</code> | The ID of the signing key to use. |
 | options.data | <code>Uint8Array</code> | The data to verify as a Uint8Array. |
 | options.signature | <code>string</code> | The base64url-encoded signature to   verify. |
-| [options.capability] | <code>string</code> | The zCAP-LD authorization   capability to use to authorize the invocation of this operation. |
+| [options.capability] | <code>string</code> | The authorization   capability to use to authorize the invocation of this operation. |
 | options.invocationSigner | <code>object</code> | An API with an   `id` property and a `sign` function for signing a capability invocation. |
 
 <a name="webkms_deriveSecret"></a>
@@ -275,7 +275,7 @@ to produce a shared key.
 | options | <code>object</code> | The options to use. |
 | options.keyId | <code>string</code> | The ID of the key agreement key to use. |
 | options.publicKey | <code>object</code> | The public key to compute the shared   secret against; the public key type must match the key agreement key's   type. |
-| [options.capability] | <code>string</code> | The zCAP-LD authorization   capability to use to authorize the invocation of this operation. |
+| [options.capability] | <code>string</code> | The authorization   capability to use to authorize the invocation of this operation. |
 | options.invocationSigner | <code>object</code> | An API with an   `id` property and a `sign` function for signing a capability invocation. |
 
 <a name="webkms_enableCapability"></a>
@@ -291,7 +291,7 @@ its designated invoker.
 | --- | --- | --- |
 | options | <code>object</code> | The options to use. |
 | options.capabilityToEnable | <code>object</code> | The capability to enable. |
-| [options.capability] | <code>string</code> | The zCAP-LD authorization   capability to use to authorize the invocation of this operation. |
+| [options.capability] | <code>string</code> | The authorization   capability to use to authorize the invocation of this operation. |
 | options.invocationSigner | <code>object</code> | An API with an   `id` property and a `sign` function for signing a capability invocation. |
 
 <a name="webkms_disableCapability"></a>
@@ -308,7 +308,7 @@ it from being invoked by its designated invoker.
 | --- | --- | --- |
 | options | <code>object</code> | The options to use. |
 | options.id | <code>object</code> | The ID of the capability to revoke. |
-| [options.capability] | <code>string</code> | The zCAP-LD authorization   capability to use to authorize the invocation of this operation. |
+| [options.capability] | <code>string</code> | The authorization   capability to use to authorize the invocation of this operation. |
 | options.invocationSigner | <code>object</code> | An API with an   `id` property and a `sign` function for signing a capability invocation. |
 
 <a name="webkms_createKeystore"></a>
