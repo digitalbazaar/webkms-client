@@ -4,7 +4,7 @@
 import base64url from 'base64url-universal';
 import {httpClient, DEFAULT_HEADERS} from '@digitalbazaar/http-client';
 import {signCapabilityInvocation} from 'http-signature-zcap-invoke';
-import webkmsContext from 'webkms-context';
+import webkmsContext from '@digitalbazaar/webkms-context';
 
 const {CONTEXT_URL: WEBKMS_CONTEXT_URL} = webkmsContext;
 
