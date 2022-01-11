@@ -1,6 +1,6 @@
 # webkms-client ChangeLog
 
-## 9.0.0 - 2022-01-xx
+## 9.0.0 - 2022-01-11
 
 ### Changed
 - **BREAKING**: Key constructors cannot be called directly when using a
