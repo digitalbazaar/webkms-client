@@ -50,7 +50,7 @@ export class KmsClient {
    *   or 'Ed25519VerificationKey2020').
    * @param {string} options.suiteContextUrl - The LD suite context for the key
    *   type (e.g. 'https://w3id.org/security/suites/ed25519-2020/v1').
-   * @param {string} [options.capability] - The zCAP-LD authorization
+   * @param {string} [options.capability] - The authorization
    *   capability to use to authorize the invocation of this operation.
    * @param {object} options.invocationSigner - An API with an
    *   `id` property and a `sign` function for signing a capability invocation.
@@ -135,7 +135,7 @@ export class KmsClient {
    *
    * @param {object} options - The options to use.
    * @param {string} [options.keyId] - The ID of the key.
-   * @param {string} [options.capability] - The zCAP-LD authorization
+   * @param {string} [options.capability] - The authorization
    *   capability to use to authorize the invocation of this operation.
    * @param {object} options.invocationSigner - An API with an
    *   `id` property and a `sign` function for signing a capability invocation.
@@ -249,7 +249,7 @@ export class KmsClient {
    * @param {string} options.kekId - The ID of the wrapping key to use.
    * @param {Uint8Array} options.unwrappedKey - The unwrapped key material as
    *   a Uint8Array.
-   * @param {string} [options.capability] - The zCAP-LD authorization
+   * @param {string} [options.capability] - The authorization
    *   capability to use to authorize the invocation of this operation.
    * @param {object} options.invocationSigner - An API with an
    *   `id` property and a `sign` function for signing a capability invocation.
@@ -306,7 +306,7 @@ export class KmsClient {
    * @param {string} options.kekId - The ID of the unwrapping key to use.
    * @param {Uint8Array|string} options.wrappedKey - The wrapped key material
    *   as a Uint8Array or base64url-encoded string.
-   * @param {string} [options.capability] - The zCAP-LD authorization
+   * @param {string} [options.capability] - The authorization
    *   capability to use to authorize the invocation of this operation.
    * @param {object} options.invocationSigner - An API with an
    *   `id` property and a `sign` function for signing a capability invocation.
@@ -374,7 +374,7 @@ export class KmsClient {
    * @param {object} options - The options to use.
    * @param {string} options.keyId - The ID of the signing key to use.
    * @param {Uint8Array} options.data - The data to sign as a Uint8Array.
-   * @param {string} [options.capability] - The zCAP-LD authorization
+   * @param {string} [options.capability] - The authorization
    *   capability to use to authorize the invocation of this operation.
    * @param {object} options.invocationSigner - An API with an
    *   `id` property and a `sign` function for signing a capability invocation.
@@ -434,7 +434,7 @@ export class KmsClient {
    * @param {Uint8Array} options.data - The data to verify as a Uint8Array.
    * @param {Uint8Array|string} options.signature - The signature to verify;
    *   it may be passed either a base64url-encoded string or a Uint8Array.
-   * @param {string} [options.capability] - The zCAP-LD authorization
+   * @param {string} [options.capability] - The authorization
    *   capability to use to authorize the invocation of this operation.
    * @param {object} options.invocationSigner - An API with an
    *   `id` property and a `sign` function for signing a capability invocation.
@@ -501,7 +501,7 @@ export class KmsClient {
    * @param {object} options.publicKey - The public key to compute the shared
    *   secret against; the public key type must match the key agreement key's
    *   type.
-   * @param {string} [options.capability] - The zCAP-LD authorization
+   * @param {string} [options.capability] - The authorization
    *   capability to use to authorize the invocation of this operation.
    * @param {object} options.invocationSigner - An API with an
    *   `id` property and a `sign` function for signing a capability invocation.
