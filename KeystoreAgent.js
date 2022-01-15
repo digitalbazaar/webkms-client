@@ -60,6 +60,9 @@ export class KeystoreAgent {
    *
    * @param {object} options - The options to use.
    * @param {string} options.type - The type of key to create (e.g., `hmac`).
+   * @param {string} [options.maxCapabilityChainLength] - The max acceptable
+   *   length of a capability chain associated with a zcap invocation at
+   *   the key's URL.
    * @param {string} [options.publicAlias] - The public alias to use for the
    *   key, if it is an asymmetric key.
    * @param {string} [options.publicAliasTemplate] - The public alias template
@@ -72,13 +75,10 @@ export class KeystoreAgent {
    *   instance.
    */
   async generateKey({
-    type, publicAlias, publicAliasTemplate, version = 'recommended'
+    type, maxCapabilityChainLength, publicAlias, publicAliasTemplate,
+    version = 'recommended'
   } = {}) {
     _assertVersion(version);
-    if(publicAlias && publicAliasTemplate) {
-      throw new Error(
-        'Only one of "publicAlias" and "publicAliasTemplate" may be given.');
-    }
 
     // for the time being, fips and recommended are the same; there is no
     // other standardized key wrapping algorithm
@@ -92,7 +92,7 @@ export class KeystoreAgent {
     const invocationSigner = capabilityAgent.getSigner();
     const {keyId, keyDescription} = await kmsClient.generateKey({
       type: fullType, suiteContextUrl, invocationSigner,
-      publicAlias, publicAliasTemplate
+      maxCapabilityChainLength, publicAlias, publicAliasTemplate
     });
     const {id} = keyDescription;
     ({type} = keyDescription);

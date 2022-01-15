@@ -55,6 +55,9 @@ export class KmsClient {
    *   capability to use to authorize the invocation of this operation.
    * @param {object} options.invocationSigner - An API with an
    *   `id` property and a `sign` function for signing a capability invocation.
+   * @param {string} [options.maxCapabilityChainLength] - The max acceptable
+   *   length of a capability chain associated with a zcap invocation at
+   *   the key's URL.
    * @param {string} [options.publicAlias] - The public alias to use for the
    *   key, if it is an asymmetric key.
    * @param {string} [options.publicAliasTemplate] - The public alias template
@@ -64,10 +67,17 @@ export class KmsClient {
    */
   async generateKey({
     type, suiteContextUrl, capability, invocationSigner,
-    publicAlias, publicAliasTemplate
+    maxCapabilityChainLength, publicAlias, publicAliasTemplate
   }) {
     _assert(type, 'type', 'string');
     _assert(invocationSigner, 'invocationSigner', 'object');
+    if(maxCapabilityChainLength !== undefined &&
+      !(typeof maxCapabilityChainLength === 'number' &&
+      maxCapabilityChainLength >= 1 &&
+      maxCapabilityChainLength <= 10)) {
+      throw new Error(
+        '"maxCapabilityChainLength" must be an integer between 1 and 10.');
+    }
     if(publicAlias !== undefined) {
       _assert(publicAlias, 'publicAlias', 'string');
     }
@@ -84,6 +94,10 @@ export class KmsClient {
       type: 'GenerateKeyOperation',
       invocationTarget: {type}
     };
+    if(maxCapabilityChainLength) {
+      operation.invocationTarget.maxCapabilityChainLength =
+        maxCapabilityChainLength;
+    }
     if(publicAlias) {
       operation.invocationTarget.publicAlias = publicAlias;
     } else if(publicAliasTemplate) {

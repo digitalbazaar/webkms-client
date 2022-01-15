@@ -1,5 +1,13 @@
 # webkms-client ChangeLog
 
+## 9.1.0 - 2022-01-xx
+
+### Added
+- Allow `maxCapabilityChainLength` to be specified when generating a key. This
+  field can be used to express the maximum acceptable length of a capability
+  chain associated with a capability invocation at an invocation target, i.e.,
+  at a key URL.
+
 ## 9.0.0 - 2022-01-11
 
 ### Changed
