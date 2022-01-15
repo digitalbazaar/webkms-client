@@ -1,6 +1,6 @@
 # webkms-client ChangeLog
 
-## 9.1.0 - 2022-01-xx
+## 9.1.0 - 2022-01-14
 
 ### Added
 - Allow `maxCapabilityChainLength` to be specified when generating a key. This
