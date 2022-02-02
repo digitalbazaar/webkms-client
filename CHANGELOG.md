@@ -1,6 +1,6 @@
 # webkms-client ChangeLog
 
-## 9.2.0 - 2022-02-xx
+## 9.2.0 - 2022-02-02
 
 ### Fixed
 - Fix `fromCapability` static helper functions so that a default `KmsClient`
