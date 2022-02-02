@@ -118,7 +118,9 @@ export class AsymmetricKey {
    *
    * @returns {AsymmetricKey} The new AsymmetricKey instance.
    */
-  static async fromCapability({capability, invocationSigner, kmsClient}) {
+  static async fromCapability({
+    capability, invocationSigner, kmsClient = new KmsClient()
+  }) {
     // get key description via capability
     const keyDescription = await kmsClient.getKeyDescription(
       {capability, invocationSigner});
