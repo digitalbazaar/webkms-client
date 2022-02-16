@@ -181,7 +181,8 @@ export class KmsClient {
     } catch(e) {
       _handleClientError({
         message: 'Error fetching key description.',
-        notFoundMessage: 'Key description not found.'
+        notFoundMessage: 'Key description not found.',
+        cause: e
       });
     }
   }

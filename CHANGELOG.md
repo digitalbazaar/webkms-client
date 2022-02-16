@@ -1,5 +1,10 @@
 # webkms-client ChangeLog
 
+## 9.2.1 - 2022-02-xx
+
+### Fixed
+- Fix missing `cause` param.
+
 ## 9.2.0 - 2022-02-02
 
 ### Fixed
