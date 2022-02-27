@@ -10,6 +10,9 @@
 - Change underlying cache implementation in `Hmac` to use
   `@digitalbazaar/lru-memoize` to improve maintainability and code reuse.
 
+### Fixed
+- Ensure `cache` is marked as a private member `_cache` of `Hmac`.
+
 ## 9.2.1 - 2022-02-16
 
 ### Fixed

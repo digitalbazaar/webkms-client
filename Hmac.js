@@ -2,8 +2,8 @@
  * Copyright (c) 2019-2022 Digital Bazaar, Inc. All rights reserved.
  */
 import base64url from 'base64url-universal';
-import {LruCache} from '@digitalbazaar/lru-memoize';
 import {KmsClient} from './KmsClient.js';
+import {LruCache} from '@digitalbazaar/lru-memoize';
 
 const MAX_CACHE_AGE = 3000;
 const MAX_CACHE_SIZE = 100;
