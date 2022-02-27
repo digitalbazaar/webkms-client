@@ -1,6 +1,6 @@
 # webkms-client ChangeLog
 
-## 9.3.0 - 2022-02-xx
+## 9.3.0 - 2022-02-27
 
 ### Added
 - Allow `kmsId` to be set in `Hmac` instances (and default to `id`) for
