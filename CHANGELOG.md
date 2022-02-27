@@ -1,5 +1,15 @@
 # webkms-client ChangeLog
 
+## 9.3.0 - 2022-02-xx
+
+### Added
+- Allow `kmsId` to be set in `Hmac` instances (and default to `id`) for
+  consistency with other keys.
+
+### Changed
+- Change underlying cache implementation in `Hmac` to use
+  `@digitalbazaar/lru-memoize` to improve maintainability and code reuse.
+
 ## 9.2.1 - 2022-02-16
 
 ### Fixed

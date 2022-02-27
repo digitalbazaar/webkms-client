@@ -2,7 +2,7 @@
  * Copyright (c) 2019-2022 Digital Bazaar, Inc. All rights reserved.
  */
 import base64url from 'base64url-universal';
-import LRU from 'lru-cache';
+import {LruCache} from '@digitalbazaar/lru-memoize';
 import {KmsClient} from './KmsClient.js';
 
 const MAX_CACHE_AGE = 3000;
@@ -17,6 +17,8 @@ export class Hmac {
    *
    * @param {object} options - The options to use.
    * @param {string} options.id - The ID for the hmac key.
+   * @param {string} [options.kmsId=options.id] - The key ID used to
+   *   identify the key with the KMS.
    * @param {string} options.type - The type for the hmac.
    * @param {object} [options.capability] - Do not pass "capability" here;
    *   use `.fromCapability` instead.
@@ -28,7 +30,7 @@ export class Hmac {
    * @see https://tools.ietf.org/html/rfc2104
    */
   constructor({
-    id, type, capability, invocationSigner,
+    id, kmsId = id, type, capability, invocationSigner,
     kmsClient = new KmsClient()
   }) {
     if(capability) {
@@ -37,6 +39,7 @@ export class Hmac {
         'use ".fromCapability" instead.');
     }
     this.id = id;
+    this.kmsId = kmsId;
     this.type = type;
     this.algorithm = JOSE_ALGORITHM_MAP[type];
     if(!this.algorithm) {
@@ -44,12 +47,12 @@ export class Hmac {
     }
     this.invocationSigner = invocationSigner;
     this.kmsClient = kmsClient;
-    this.cache = new LRU({
+    this.capability = undefined;
+    this._cache = new LruCache({
       max: MAX_CACHE_SIZE,
       maxAge: MAX_CACHE_AGE,
       updateAgeOnGet: true
     });
-    this.capability = undefined;
     this._pruneCacheTimer = null;
   }
 
@@ -66,37 +69,14 @@ export class Hmac {
    * @returns {Promise<Uint8Array>} The signature.
    */
   async sign({data, useCache = true}) {
-    const cacheKey = `sign-${base64url.encode(data)}`;
-    if(useCache) {
-      const signature = this.cache.get(cacheKey);
-      if(signature) {
-        return signature;
-      }
+    if(!useCache) {
+      return this._uncachedSign({data, useCache});
     }
 
-    const {id: keyId, kmsClient, capability, invocationSigner} = this;
-    const promise = kmsClient.sign({keyId, data, capability, invocationSigner});
-
-    if(useCache) {
-      // 1. Set promise in cache
-      this.cache.set(cacheKey, promise);
-
-      // 2. Schedule cache pruning if not already scheduled
-      if(!this._pruneCacheTimer) {
-        this._pruneCacheTimer = setTimeout(
-          () => this._pruneCache(), MAX_CACHE_AGE);
-      }
-    }
-
-    try {
-      const signature = await promise;
-      return signature;
-    } catch(e) {
-      if(useCache) {
-        this.cache.del(cacheKey);
-      }
-      throw e;
-    }
+    return this._cache.memoize({
+      key: `sign-${base64url.encode(data)}`,
+      fn: () => this._uncachedSign({data, useCache})
+    });
   }
 
   /**
@@ -114,38 +94,14 @@ export class Hmac {
    * @returns {Promise<boolean>} `true` if verified, `false` if not.
    */
   async verify({data, signature, useCache = true}) {
-    const cacheKey = `verify-${base64url.encode(data)}`;
-    if(useCache) {
-      const verified = this.cache.get(cacheKey);
-      if(verified !== undefined) {
-        return verified;
-      }
+    if(!useCache) {
+      return this._uncachedVerify({data, signature, useCache});
     }
 
-    const {id: keyId, kmsClient, capability, invocationSigner} = this;
-    const promise = kmsClient.verify(
-      {keyId, data, signature, capability, invocationSigner});
-
-    if(useCache) {
-      // 1. Set promise in cache
-      this.cache.set(cacheKey, promise);
-
-      // 2. Schedule cache pruning if not already scheduled
-      if(!this._pruneCacheTimer) {
-        this._pruneCacheTimer = setTimeout(
-          () => this._pruneCache(), MAX_CACHE_AGE);
-      }
-    }
-
-    try {
-      const verified = await promise;
-      return verified;
-    } catch(e) {
-      if(useCache) {
-        this.cache.del(cacheKey);
-      }
-      throw e;
-    }
+    return this._cache.memoize({
+      key: `verify-${base64url.encode(data)}`,
+      fn: () => this._uncachedVerify({data, signature, useCache})
+    });
   }
 
   /**
@@ -176,14 +132,43 @@ export class Hmac {
   }
 
   _pruneCache() {
-    this.cache.prune();
-    if(this.cache.length === 0) {
+    this._cache.cache.prune();
+    if(this._cache.cache.length === 0) {
       // cache is empty, do not schedule pruning
       this._pruneCacheTimer = null;
     } else {
       // schedule another run
-      this._pruneCacheTimer = setTimeout(() =>
-        this._pruneCache(), MAX_CACHE_AGE);
+      this._schedulePruning();
     }
+  }
+
+  _schedulePruning() {
+    this._pruneCacheTimer = setTimeout(
+      () => this._pruneCache(), MAX_CACHE_AGE);
+  }
+
+  async _uncachedSign({data, useCache}) {
+    const {id: keyId, kmsClient, capability, invocationSigner} = this;
+    const promise = kmsClient.sign({keyId, data, capability, invocationSigner});
+
+    // schedule cache pruning if not already scheduled
+    if(useCache && !this._pruneCacheTimer) {
+      this._schedulePruning();
+    }
+
+    return promise;
+  }
+
+  async _uncachedVerify({data, signature, useCache}) {
+    const {id: keyId, kmsClient, capability, invocationSigner} = this;
+    const promise = kmsClient.verify(
+      {keyId, data, signature, capability, invocationSigner});
+
+    // schedule cache pruning if not already scheduled
+    if(useCache && !this._pruneCacheTimer) {
+      this._schedulePruning();
+    }
+
+    return promise;
   }
 }
