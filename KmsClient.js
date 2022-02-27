@@ -3,6 +3,7 @@
  */
 import base64url from 'base64url-universal';
 import {httpClient, DEFAULT_HEADERS} from '@digitalbazaar/http-client';
+import {LruCache} from '@digitalbazaar/lru-memoize';
 import {signCapabilityInvocation} from
   '@digitalbazaar/http-signature-zcap-invoke';
 import webkmsContext from '@digitalbazaar/webkms-context';
@@ -10,6 +11,14 @@ import webkmsContext from '@digitalbazaar/webkms-context';
 const {CONTEXT_URL: WEBKMS_CONTEXT_URL} = webkmsContext;
 
 const ZCAP_ROOT_PREFIX = 'urn:zcap:root:';
+
+// process-wide shared cache for key descriptions:
+const KEY_DESCRIPTION_CACHE = new LruCache({
+  // 1000 keys at ~1 KiB each would be only ~1 MiB cache size
+  max: 1000,
+  // 5 min TTL (key descriptions rarely, if ever, change)
+  maxAge: 1000 * 60 * 5
+});
 
 /**
  * @class
@@ -154,10 +163,14 @@ export class KmsClient {
    *   capability to use to authorize the invocation of this operation.
    * @param {object} options.invocationSigner - An API with an
    *   `id` property and a `sign` function for signing a capability invocation.
+   * @param {boolean} [options.useCache=true] - `true` to use a cache when
+   *   retrieving the key description, `false` not to.
    *
    * @returns {Promise<object>} The key description.
    */
-  async getKeyDescription({keyId, capability, invocationSigner}) {
+  async getKeyDescription({
+    keyId, capability, invocationSigner, useCache = true
+  }) {
     _assert(invocationSigner, 'invocationSigner', 'object');
 
     let url;
@@ -168,23 +181,17 @@ export class KmsClient {
       capability = _getRootZcapId({keyId});
     }
 
-    try {
-      const headers = await signCapabilityInvocation({
-        url, method: 'get', headers: this.defaultHeaders,
-        capability, invocationSigner, capabilityAction: 'read'
-      });
-
-      // send request
-      const {agent} = this;
-      const result = await httpClient.get(url, {agent, headers});
-      return result.data;
-    } catch(e) {
-      _handleClientError({
-        message: 'Error fetching key description.',
-        notFoundMessage: 'Key description not found.',
-        cause: e
-      });
+    if(!useCache) {
+      return this._getUncachedKeyDescription(
+        {url, capability, invocationSigner});
     }
+
+    return KEY_DESCRIPTION_CACHE.memoize({
+      key: JSON.stringify(
+        [url, capability.id || capability, invocationSigner.id]),
+      fn: () => this._getUncachedKeyDescription(
+        {url, capability, invocationSigner})
+    });
   }
 
   /**
@@ -710,6 +717,28 @@ export class KmsClient {
     } catch(e) {
       _handleClientError({
         message: 'Error during "create keystore" operation.',
+        cause: e
+      });
+    }
+  }
+
+  async _getUncachedKeyDescription({url, capability, invocationSigner}) {
+    _assert(invocationSigner, 'invocationSigner', 'object');
+
+    try {
+      const headers = await signCapabilityInvocation({
+        url, method: 'get', headers: this.defaultHeaders,
+        capability, invocationSigner, capabilityAction: 'read'
+      });
+
+      // send request
+      const {agent} = this;
+      const result = await httpClient.get(url, {agent, headers});
+      return result.data;
+    } catch(e) {
+      _handleClientError({
+        message: 'Error fetching key description.',
+        notFoundMessage: 'Key description not found.',
         cause: e
       });
     }
