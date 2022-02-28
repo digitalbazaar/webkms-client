@@ -229,8 +229,9 @@ export class KmsClient {
       keystoreId = invocationTarget.substr(0, idx);
     }
 
+    const revokePath = `${keystoreId}/zcaps/revocations`;
     const url = KmsClient._getInvocationTarget({capability}) ||
-      `${keystoreId}/revocations/${encodeURIComponent(capabilityToRevoke.id)}`;
+      `${revokePath}/${encodeURIComponent(capabilityToRevoke.id)}`;
     if(!capability) {
       capability = `${ZCAP_ROOT_PREFIX}${encodeURIComponent(url)}`;
     }
