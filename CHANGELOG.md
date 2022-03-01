@@ -1,5 +1,11 @@
 # webkms-client ChangeLog
 
+## 10.0.0 - 2022-03-xx
+
+### Changed
+- **BREAKING**: Better future proof zcap endpoints by posting zcap
+  revocations to `/zcaps/revocations` instead of just `/revocations`.
+
 ## 9.3.0 - 2022-02-27
 
 ### Added
