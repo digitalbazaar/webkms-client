@@ -1,20 +1,20 @@
 /*!
  * Copyright (c) 2020-2021 Digital Bazaar, Inc. All rights reserved.
  */
-const chai = require('chai');
+import chai from 'chai';
 const should = chai.should();
 
-const kmsClient = require('..');
+import * as kmsClient from '../lib/index.js';
 
 describe('webkms-client API', () => {
   it('should have proper exports', async () => {
     should.exist(kmsClient);
-    kmsClient.should.have.property('AsymmetricKey');
-    kmsClient.should.have.property('CapabilityAgent');
-    kmsClient.should.have.property('Hmac');
-    kmsClient.should.have.property('Kek');
-    kmsClient.should.have.property('KeyAgreementKey');
-    kmsClient.should.have.property('KeystoreAgent');
-    kmsClient.should.have.property('KmsClient');
+    should.exist(kmsClient.AsymmetricKey);
+    should.exist(kmsClient.CapabilityAgent);
+    should.exist(kmsClient.Hmac);
+    should.exist(kmsClient.Kek);
+    should.exist(kmsClient.KeyAgreementKey);
+    should.exist(kmsClient.KeystoreAgent);
+    should.exist(kmsClient.KmsClient);
   });
 });
