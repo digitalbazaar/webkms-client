@@ -28,14 +28,16 @@ TBD
 
 ## Install
 
-- Node.js 14+ is required.
+- Browsers and Node.js 14+ are supported.
+- [Web Crypto API][] required. Older browsers and Node.js 14 must use a
+  polyfill.
 
 ### NPM
 
 To install via NPM:
 
 ```
-npm install --save @digitalbazaar/webkms-client
+npm install @digitalbazaar/webkms-client
 ```
 
 ### Development
@@ -374,3 +376,5 @@ Digital Bazaar: support@digitalbazaar.com
 ## License
 
 [New BSD License (3-clause)](LICENSE) © Digital Bazaar
+
+[Web Crypto API]: https://developer.mozilla.org/en-US/docs/Web/API/Web_Crypto_API
