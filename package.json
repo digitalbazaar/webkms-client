@@ -9,7 +9,7 @@
     "./lib/crypto.js": "./lib/crypto-browser.js"
   },
   "files": [
-    "lib"
+    "lib/**/*.js"
   ],
   "scripts": {
     "test": "npm run lint && npm run test-node && npm run test-karma",
