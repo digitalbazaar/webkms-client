@@ -1,5 +1,11 @@
 # webkms-client ChangeLog
 
+## 12.0.0 - 2022-08-xx
+
+### Removed
+- Remove seed cache feature. It is typically (if not always) unused and
+  unnecessary; removing it reduces attack surface.
+
 ## 11.1.0 - 2022-08-02
 
 ### Added
