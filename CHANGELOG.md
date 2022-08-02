@@ -1,5 +1,10 @@
 # webkms-client ChangeLog
 
+## 11.1.0 - 2022-08-xx
+
+### Added
+- Enable passing `capability` as an option to `KeystoreAgent.generateKey`.
+
 ## 11.0.0 - 2022-06-09
 
 ### Changed
