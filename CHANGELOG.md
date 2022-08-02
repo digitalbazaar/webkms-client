@@ -1,10 +1,11 @@
 # webkms-client ChangeLog
 
-## 12.0.0 - 2022-08-xx
+## 12.0.0 - 2022-08-02
 
 ### Removed
-- Remove seed cache feature. It is typically (if not always) unused and
-  unnecessary; removing it reduces attack surface.
+- Remove `CapabilityAgent` seed cache feature (including `fromCache` API). It
+  is typically (if not always) unused and unnecessary; removing it reduces
+  attack surface.
 
 ## 11.1.0 - 2022-08-02
 
