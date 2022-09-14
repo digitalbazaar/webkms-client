@@ -3,7 +3,7 @@
 ## 12.1.0 -
 
 ### Added
-- AsymmetricKey now sets algorithm using the prefix of the `publicKeyMultibase`.
+- `AsymmetricKey` now sets `algorithm` using the prefix of the `publicKeyMultibase`.
 
 ## 12.0.0 - 2022-08-02
 
