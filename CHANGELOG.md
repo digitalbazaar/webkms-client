@@ -1,6 +1,6 @@
 # webkms-client ChangeLog
 
-## 12.1.0 - 2022-09-xx
+## 12.1.0 - 2022-09-15
 
 ### Added
 - `AsymmetricKey` now sets `algorithm` using the prefix of the
