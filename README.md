@@ -95,22 +95,11 @@ as one parameter for computing a shared key. It should not be used as
 a shared key itself, but rather input into a key derivation function (KDF)
 to produce a shared key.</p>
 </dd>
-<dt><a href="#webkms_enableCapability">webkms:enableCapability(options)</a> ⇒ <code>Promise.&lt;object&gt;</code></dt>
-<dd><p>Stores a delegated authorization capability, enabling it to be invoked by
-its designated invoker.</p>
-</dd>
-<dt><a href="#webkms_disableCapability">webkms:disableCapability(options)</a> ⇒ <code>Promise.&lt;boolean&gt;</code></dt>
-<dd><p>Removes a previously stored delegated authorization capability, preventing
-it from being invoked by its designated invoker.</p>
-</dd>
 <dt><a href="#webkms_createKeystore">webkms:createKeystore(options)</a> ⇒ <code>Promise.&lt;object&gt;</code></dt>
 <dd><p>Creates a new keystore using the given configuration.</p>
 </dd>
 <dt><a href="#webkms_getKeystore">webkms:getKeystore(options)</a> ⇒ <code>Promise.&lt;object&gt;</code></dt>
 <dd><p>Gets the configuration for a keystore by its ID.</p>
-</dd>
-<dt><a href="#webkms_findKeystore">webkms:findKeystore(options)</a> ⇒ <code>Promise.&lt;object&gt;</code></dt>
-<dd><p>Finds the configuration for a keystore by its controller and reference ID.</p>
 </dd>
 </dl>
 
@@ -185,7 +174,7 @@ Store a capability revocation.
 | Param | Type | Description |
 | --- | --- | --- |
 | options | <code>object</code> | The options to use. |
-| options.capabilityToRevoke | <code>object</code> | The capability to enable. |
+| options.capabilityToRevoke | <code>object</code> | The capability to revoke. |
 | [options.capability] | <code>string</code> | The zcap authorization   capability to use to authorize the invocation of this operation. |
 | options.invocationSigner | <code>object</code> | An API with an   `id` property and a `sign` function for signing a capability invocation. |
 
@@ -277,39 +266,6 @@ to produce a shared key.
 | options | <code>object</code> | The options to use. |
 | options.keyId | <code>string</code> | The ID of the key agreement key to use. |
 | options.publicKey | <code>object</code> | The public key to compute the shared   secret against; the public key type must match the key agreement key's   type. |
-| [options.capability] | <code>string</code> | The authorization   capability to use to authorize the invocation of this operation. |
-| options.invocationSigner | <code>object</code> | An API with an   `id` property and a `sign` function for signing a capability invocation. |
-
-<a name="webkms_enableCapability"></a>
-
-### webkms:enableCapability(options) ⇒ <code>Promise.&lt;object&gt;</code>
-Stores a delegated authorization capability, enabling it to be invoked by
-its designated invoker.
-
-**Kind**: global function
-**Returns**: <code>Promise.&lt;object&gt;</code> - Resolves once the operation completes.
-
-| Param | Type | Description |
-| --- | --- | --- |
-| options | <code>object</code> | The options to use. |
-| options.capabilityToEnable | <code>object</code> | The capability to enable. |
-| [options.capability] | <code>string</code> | The authorization   capability to use to authorize the invocation of this operation. |
-| options.invocationSigner | <code>object</code> | An API with an   `id` property and a `sign` function for signing a capability invocation. |
-
-<a name="webkms_disableCapability"></a>
-
-### webkms:disableCapability(options) ⇒ <code>Promise.&lt;boolean&gt;</code>
-Removes a previously stored delegated authorization capability, preventing
-it from being invoked by its designated invoker.
-
-**Kind**: global function
-**Returns**: <code>Promise.&lt;boolean&gt;</code> - Resolves to `true` if the document was deleted
-  and `false` if it did not exist.
-
-| Param | Type | Description |
-| --- | --- | --- |
-| options | <code>object</code> | The options to use. |
-| options.id | <code>object</code> | The ID of the capability to revoke. |
 | [options.capability] | <code>string</code> | The authorization   capability to use to authorize the invocation of this operation. |
 | options.invocationSigner | <code>object</code> | An API with an   `id` property and a `sign` function for signing a capability invocation. |
 
