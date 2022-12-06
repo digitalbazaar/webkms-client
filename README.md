@@ -356,7 +356,6 @@ Finds the configuration for a keystore by its controller and reference ID.
 | options | <code>object</code> | The options to use. |
 | [options.url] | <code>string</code> | The url to query. |
 | options.controller | <code>string</code> | The keystore's controller. |
-| options.referenceId | <code>string</code> | The keystore's reference ID. |
 | [options.httpsAgent] | <code>object</code> | An optional   node.js `https.Agent` instance to use when making requests. |
 
 ## Contribute
