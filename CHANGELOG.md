@@ -1,5 +1,16 @@
 # webkms-client ChangeLog
 
+## 12.2.0 - 2023-02-dd
+
+### Added
+- Add the ability to set http options (for retries, etc.) for operations that
+  use existing keys (e.g., does not apply to key generation). These options
+  can be passed to the `KmsClient` constructor via the new
+  `keyOperationHttpClientOptions` parameter. The default for the new parameter
+  provides basic resiliency with up to four retries after the initial key
+  operation fails. Retries will only be triggered when an HTTP error status
+  code indicates a retry is acceptable.
+
 ## 12.1.0 - 2022-09-15
 
 ### Added
