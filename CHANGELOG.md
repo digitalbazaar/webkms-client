@@ -1,5 +1,11 @@
 # webkms-client ChangeLog
 
+## 12.1.1 - 2023-08-xx
+
+### Fixed
+- Ensure that when using a root zcap with `fromCapability` static helper
+  functions, the invocation target is calculated correctly.
+
 ## 12.1.0 - 2022-09-15
 
 ### Added
