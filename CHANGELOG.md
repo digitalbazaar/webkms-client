@@ -1,6 +1,6 @@
 # webkms-client ChangeLog
 
-## 12.1.1 - 2023-08-xx
+## 12.1.1 - 2023-08-22
 
 ### Fixed
 - Ensure that when using a root zcap with `fromCapability` static helper
