@@ -4,6 +4,7 @@
 
 ### Fixed
 - Do not overwrite an existing `error.cause` value.
+- Utilize the `message` parameter passed to the `_handleClientError` helper.
 
 ## 12.1.1 - 2023-08-22
 
