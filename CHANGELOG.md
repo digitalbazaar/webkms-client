@@ -1,6 +1,6 @@
 # webkms-client ChangeLog
 
-## 12.1.2 - 2023-09-xx
+## 12.1.2 - 2023-09-12
 
 ### Fixed
 - Do not overwrite an existing `error.cause` value.
