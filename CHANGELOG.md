@@ -1,5 +1,11 @@
 # webkms-client ChangeLog
 
+## 13.0.0 - 2023-09-xx
+
+### Changed
+- **BREAKING**: Drop support for Node.js < 18.
+- Use `@digitalbazaar/http-client@4` which requires Node.js 18+.
+
 ## 12.1.2 - 2023-09-12
 
 ### Fixed
