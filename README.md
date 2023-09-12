@@ -28,9 +28,8 @@ TBD
 
 ## Install
 
-- Browsers and Node.js 14+ are supported.
-- [Web Crypto API][] required. Older browsers and Node.js 14 must use a
-  polyfill.
+- Browsers and Node.js 18+ are supported.
+- [Web Crypto API][] required. Older browsers must use a polyfill.
 
 ### NPM
 
