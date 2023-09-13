@@ -1,6 +1,6 @@
 # webkms-client ChangeLog
 
-## 13.0.0 - 2023-09-xx
+## 13.0.0 - 2023-09-13
 
 ### Changed
 - **BREAKING**: Drop support for Node.js < 18.
