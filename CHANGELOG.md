@@ -1,6 +1,6 @@
 # webkms-client ChangeLog
 
-## 13.0.1 - 2023-09-xx
+## 13.0.1 - 2023-09-20
 
 ### Fixed
 - Assign `cause.data` to `error.data` in `_handleClientError` helper.
