@@ -1,5 +1,13 @@
 # webkms-client ChangeLog
 
+## 14.0.0 - 2024-mm-dd
+
+### Changed
+- **BREAKING**: Remove contexts from WebKMS payloads. WebKMS payloads are
+  now treated as JSON instead of JSON-LD invocation of a method must be
+  done using an authz mechanism that treats operations as such, e.g., zcap
+  invocation using HTTP signatures.
+
 ## 13.0.1 - 2023-09-20
 
 ### Fixed
