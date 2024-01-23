@@ -13,7 +13,7 @@
   ],
   "scripts": {
     "test": "npm run test-node",
-    "test-node": "cross-env NODE_ENV=test mocha --preserve-symlinks -t 30000 -A -R ${REPORTER:-spec} -r tests/node.js tests/*.spec.js",
+    "test-node": "cross-env NODE_ENV=test mocha --preserve-symlinks -t 30000 -A -R ${REPORTER:-spec} tests/*.spec.js",
     "test-karma": "karma start karma.conf.cjs",
     "coverage": "cross-env NODE_ENV=test c8 npm run test-node",
     "coverage-ci": "cross-env NODE_ENV=test c8 --reporter=lcovonly --reporter=text-summary --reporter=text npm run test-node",
@@ -35,7 +35,6 @@
     "eslint-config-digitalbazaar": "^5.0.1",
     "eslint-plugin-jsdoc": "^48.0.2",
     "eslint-plugin-unicorn": "^50.0.1",
-    "isomorphic-webcrypto": "^2.3.8",
     "karma": "^6.3.20",
     "karma-chai": "^0.1.0",
     "karma-chrome-launcher": "^3.1.1",
