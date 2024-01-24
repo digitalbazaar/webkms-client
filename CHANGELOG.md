@@ -1,6 +1,6 @@
 # webkms-client ChangeLog
 
-## 14.0.0 - 2024-mm-dd
+## 14.0.0 - 2024-01-24
 
 ### Changed
 - **BREAKING**: Remove contexts from WebKMS payloads. WebKMS payloads are
