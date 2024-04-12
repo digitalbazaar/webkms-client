@@ -1,6 +1,6 @@
 # WebKMS Client _(@digitalbazaar/webkms-client)_
 
-[![Build status](https://img.shields.io/github/workflow/status/digitalbazaar/webkms-client/Node.js%20CI)](https://github.com/digitalbazaar/webkms-client/actions?query=workflow%3A%22Node.js+CI%22)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/digitalbazaar/webkms-client/main.yml)](https://github.com/digitalbazaar/webkms-client/actions/workflows/main.yml)
 [![Coverage status](https://img.shields.io/codecov/c/github/digitalbazaar/webkms-client)](https://codecov.io/gh/digitalbazaar/webkms-client)
 [![NPM Version](https://img.shields.io/npm/v/@digitalbazaar/webkms-client.svg)](https://npm.im/@digitalbazaar/webkms-client)
 
