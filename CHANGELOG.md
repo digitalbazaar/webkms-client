@@ -1,5 +1,10 @@
 # webkms-client ChangeLog
 
+## 14.1.0 - 2024-04-dd
+
+### Added
+- Add support for BLS12-381 keys.
+
 ## 14.0.0 - 2024-01-24
 
 ### Changed
