@@ -1,6 +1,6 @@
 # webkms-client ChangeLog
 
-## 14.1.1 - 2024-07-xx
+## 14.1.1 - 2024-07-10
 
 ### Added
 - Assert `KmsClient.createKeystore()` return value is well-formed.
