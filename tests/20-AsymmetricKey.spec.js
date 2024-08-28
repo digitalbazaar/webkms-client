@@ -18,6 +18,12 @@ const keys = new Map([
   ['secp256k1', 'did:key:zQ3shokFTS3brHcDQrn82RUDfCZESWL1ZdCEJwekUDPQiYBme']
 ]);
 
+const badKeys = new Map([
+  // key from a test with unkonwn 'zUC6' prefix
+  // eslint-disable-next-line
+  ['Bls12381G2', 'did:key:zUC6zwkczByHEDfap8UJdBwLDeiTYn2xUBq5AhYDnH3Actf9RgdvVF3Rqc2DaYh8j6JysZ6HLidVxM2Y2AhTtM7a5GefA2DGv6JJuSaTJ7ov1jtCnQLmAFYJoovhdzj2kivX9ev'],
+]);
+
 describe('AsymmetricKey API', () => {
   describe('should create key from keyDescription', () => {
     for(const [keyType, did] of keys) {
@@ -35,6 +41,26 @@ describe('AsymmetricKey API', () => {
           keyType,
           `Expected "key.algorithm" to be ${keyType}`
         );
+      });
+    }
+  });
+  describe('should fail for bad keys', () => {
+    for(const [keyType, did] of badKeys) {
+      it(`key type ${keyType}`, async () => {
+        let error;
+        let key;
+        try {
+          const keyDescription = {
+            id: did,
+            type: keyType,
+            publicKeyMultibase: did.slice(8)
+          };
+          key = new AsymmetricKey({keyDescription});
+        } catch(e) {
+          error = e;
+        }
+        should.exist(error, 'Expected error to exist');
+        should.not.exist(key, 'Expected key to not exist');
       });
     }
   });
