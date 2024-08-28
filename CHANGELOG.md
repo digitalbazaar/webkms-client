@@ -1,5 +1,12 @@
 # webkms-client ChangeLog
 
+## 14.1.2 - 2024-xx-xx
+
+### Changed
+- Throw error from `AsymmetricKey.getAlgorithm()` if an unsupported encoded key
+  algorithm is found. This may be indirectly called from the constructor and
+  other functions.
+
 ## 14.1.1 - 2024-07-10
 
 ### Added
