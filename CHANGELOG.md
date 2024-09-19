@@ -1,5 +1,10 @@
 # webkms-client ChangeLog
 
+## 14.1.2 - 2024-09-dd
+
+### Fixed
+- Allow `zUC6` multibase header for `Bls12381G2` keys.
+
 ## 14.1.1 - 2024-07-10
 
 ### Added
