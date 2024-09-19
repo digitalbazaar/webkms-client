@@ -1,6 +1,6 @@
 {
   "name": "@digitalbazaar/webkms-client",
-  "version": "14.1.2-0",
+  "version": "14.1.2",
   "description": "JavaScript WebKMS client",
   "license": "BSD-3-Clause",
   "type": "module",
