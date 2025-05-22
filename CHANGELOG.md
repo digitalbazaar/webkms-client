@@ -1,5 +1,10 @@
 # webkms-client ChangeLog
 
+## 14.2.0 - 2025-05-dd
+
+### Changed
+- Use `@digitalbazaar/lru-memoize@4`.
+
 ## 14.1.2 - 2024-09-19
 
 ### Fixed
