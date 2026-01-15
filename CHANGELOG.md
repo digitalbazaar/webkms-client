@@ -1,5 +1,10 @@
 # webkms-client ChangeLog
 
+## 14.3.0 - 2025-01-dd
+
+### Changed
+- Update generateKey to create a specific, non-recommended key type.
+
 ## 14.2.0 - 2025-05-22
 
 ### Changed
