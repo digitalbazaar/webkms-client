@@ -2,8 +2,14 @@
 
 ## 14.3.0 - 2025-01-dd
 
-### Changed
-- Update generateKey to create a specific, non-recommended key type.
+### Added
+- Allow a more specific key type to be specified in `generateKey()`. This
+  change is backwards compatible, however, the `type` parameter should
+  now carry the specific key type whereas it was previously used to specify
+  the key category (e.g., `asymmetric`, `symmetric`). This key category
+  should now be specified via the new parameter `category`. The existing
+  category values are still usable in the `type` parameter, but this use
+  is deprecated.
 
 ## 14.2.0 - 2025-05-22
 
