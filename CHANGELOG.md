@@ -1,6 +1,6 @@
 # webkms-client ChangeLog
 
-## 14.3.0 - 2025-01-dd
+## 14.3.0 - 2025-01-17
 
 ### Added
 - Allow a more specific key type to be specified in `generateKey()`. This
