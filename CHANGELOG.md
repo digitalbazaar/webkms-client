@@ -1,5 +1,16 @@
 # webkms-client ChangeLog
 
+## 14.3.1 - TBD
+
+### Fixed
+- `CapabilityAgent.fromSecret` no longer collapses distinct binary
+  (`Uint8Array`) secrets to the same key. The salted-hash input previously
+  decoded the secret through `TextDecoder` (UTF-8), mapping invalid byte
+  sequences to U+FFFD, so different binary secrets could derive an identical
+  seed and `did:key`. Binary secrets are now hashed as raw bytes. String-secret
+  derivation is unchanged (verified byte-identical), so only keys derived from
+  binary secrets are affected.
+
 ## 14.3.0 - 2025-01-17
 
 ### Added
