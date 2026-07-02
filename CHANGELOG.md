@@ -1,6 +1,6 @@
 # webkms-client ChangeLog
 
-## 14.3.1 - 2026-mm-dd
+## 14.3.1 - 2026-07-02
 
 ### Fixed
 - Ensure HMAC verify cache key includes signature value.
